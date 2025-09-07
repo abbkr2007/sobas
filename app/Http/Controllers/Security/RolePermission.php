@@ -10,7 +10,7 @@ class RolePermission extends Controller
 {
     public function index(Request $request)
     {
-        $roles = Role::get();
+     $roles = Role::get();
         $permissions = Permission::get();
         return view('role-permission.permissions', compact('roles', 'permissions'));
     }

@@ -104,10 +104,10 @@ class UsersDataTable extends DataTable
             ['data' => 'full_name', 'name' => 'full_name', 'title' => 'FULL NAME', 'orderable' => false],
             ['data' => 'phone_number', 'name' => 'phone_number', 'title' => 'Phone Number'],
             ['data' => 'email', 'name' => 'email', 'title' => 'Email'],
-            ['data' => 'userProfile.country', 'name' => 'userProfile.country', 'title' => 'Country'],
+            // ['data' => 'userProfile.country', 'name' => 'userProfile.country', 'title' => 'Zone'],
             ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
-            ['data' => 'userProfile.company_name', 'name' => 'userProfile.company_name', 'title' => 'Company'],
-            ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Join Date'],
+            // ['data' => 'userProfile.company_name', 'name' => 'userProfile.company_name', 'title' => 'Branch'],
+            ['data' => 'created_at', 'name' => 'created_at', 'title' => 'AMOUNT INVEST'],
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

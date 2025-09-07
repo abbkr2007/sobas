@@ -15,6 +15,7 @@ class RoleController extends Controller
      */
     public function index()
     {
+
         //code here
     }
 
@@ -27,7 +28,7 @@ class RoleController extends Controller
     {
         $data = $request->all();
         $view = view('role-permission.form-role')->render();
-        return response()->json(['data' =>  $view, 'status'=> true]);
+        return response()->json(['data' =>  $view, 'status' => true]);
     }
 
     /**
@@ -38,7 +39,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-       //code here
+        //code here
     }
 
     /**
@@ -49,7 +50,7 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-       //code here
+        //code here
     }
 
     /**
@@ -70,9 +71,24 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    // In your controller (e.g., RolePermissionController)
+
+    public function update(Request $request)
     {
-        //code here
+        // Fetch all roles
+        $roles = Role::all();
+
+        // Loop through each role and sync permissions
+        foreach ($roles as $role) {
+            // Get the list of permission IDs for this role from the request
+            $permissions = $request->input('permission')[$role->name] ?? [];
+
+            // Sync the permissions for the role
+            $role->syncPermissions($permissions);
+        }
+
+        // Redirect with success message
+        return redirect()->route('role.permission.list')->with('success', 'Permissions updated successfully');
     }
 
     /**
@@ -83,6 +99,6 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-       //code here
+        //code here
     }
 }

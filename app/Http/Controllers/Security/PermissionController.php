@@ -27,7 +27,7 @@ class PermissionController extends Controller
     {
         $data = $request->all();
         $view = view('role-permission.form-permission')->render();
-        return response()->json(['data' =>  $view, 'status'=> true]);
+        return response()->json(['data' =>  $view,'status' => true]);
     }
 
     /**
@@ -38,8 +38,21 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        //code here
+        // Validate the request
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        // Create a new permission
+        $permission = new Permission();
+        $permission->name = $request->input('title');
+        $permission->title = $request->input('title');
+        $permission->save();
+
+        return redirect()->back()->with('success', 'Permission created successfully!');
     }
+
+
 
     /**
      * Display the specified resource.
@@ -60,7 +73,7 @@ class PermissionController extends Controller
      */
     public function edit($id)
     {
-       //code here
+        //code here
     }
 
     /**

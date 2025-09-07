@@ -13,6 +13,16 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+// config/services.php
+
+
+    // Other services...
+
+    'zeptomail' => [
+        'base_url' => 'https://zeptomail.zeptoapi.com/api/v1.1',  // Correct base URL
+        'api_key' => env('ZEPTOMAIL_API_KEY'),
+    ],
+
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

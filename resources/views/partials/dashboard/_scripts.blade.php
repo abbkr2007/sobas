@@ -48,5 +48,11 @@
 <script src="{{asset('js/plugins/prism.mini.js')}}"></script>
 
 <!-- Custom JavaScript -->
+<script>
+    var signupUrl = "{{ url('auth/signup') }}";
+    var csrfToken = "{{ csrf_token() }}";
+</script>
+<script src="{{ asset('js/custom.js') }}"></script>
 <script src="{{asset('js/hope-ui.js') }}"></script>
 <script src="{{asset('js/modelview.js')}}"></script>
+

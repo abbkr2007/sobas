@@ -10,12 +10,29 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/register', [RegisteredUserController::class, 'create'])
-                ->middleware('guest')
-                ->name('register');
+//email test
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SomeMail;
 
-Route::post('/register', [RegisteredUserController::class, 'store'])
-                ->middleware('guest');
+// Route::get('/test-email', function () {
+//     Mail::to('abbkr2007@gmail.com')->send(new SomeMail());
+//     return 'Email sent!';
+// });
+
+//email test
+Route::get('/', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+
+Route::post('/', [RegisteredUserController::class, 'store']);
+
+Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])
+    ->middleware('guest')
+    ->name('payment.callback');
+
+Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])
+    ->middleware('guest')
+    ->name('payment.redirectToGateway');
 
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
                 ->middleware('guest')
@@ -62,3 +79,4 @@ Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->middleware('auth')
                 ->name('logout');
+                

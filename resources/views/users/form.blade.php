@@ -93,7 +93,7 @@
             <div class="card">
                <div class="card-header d-flex justify-content-between">
                   <div class="header-title">
-                     <h4 class="card-title">{{$id !== null ? 'Update' : 'New' }} User Information</h4>
+                     <h4 class="card-title">{{$id !== null ? 'Update' : 'New' }} User Informationnnnnn</h4>
                   </div>
                   <div class="card-action">
                         <a href="{{route('users.index')}}" class="btn btn-sm btn-primary" role="button">Back</a>
@@ -103,8 +103,26 @@
                   <div class="new-user-info">
                         <div class="row">
                            <div class="form-group col-md-6">
-                              <label class="form-label" for="fname">First Name: <span class="text-danger">*</span></label>
-                              {{ Form::text('first_name', old('first_name'), ['class' => 'form-control', 'placeholder' => 'First Name', 'required']) }}
+                              <label for="zone" class="form-label">Select Zone:</label>
+                                 <select id="zone" class="form-control">
+                                    <option value="">--------------------Select--------------------</option>
+                                    @foreach ($zones as $zone)
+                                       <option value="{{ $zone->id }}">{{ $zone->name }}</option>
+                                    @endforeach
+                                    <!-- Add more options here if needed -->
+                                 </select>
+                           </div>
+                           <div class="form-group col-md-6">
+                              <label for="zone" class="form-label">Select branch:</label>
+                              <select id="branch" class="form-control">
+                                 <option value="">--------------------Select--------------------</option>
+                                 @foreach($branches as $branch)
+                                 <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+      
+                             @endforeach
+                                 
+                                 <!-- Add more options here if needed -->
+                              </select>
                            </div>
                            <div class="form-group col-md-6">
                               <label class="form-label" for="lname">Last Name: <span class="text-danger">*</span></label>

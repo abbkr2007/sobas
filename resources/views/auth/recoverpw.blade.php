@@ -1,46 +1,73 @@
 <x-guest-layout>
    <section class="login-content">
-      <div class="row m-0 align-items-center bg-white vh-100">
-         <div class="col-md-6 d-md-block d-none bg-primary p-0 mt-n1 vh-100 overflow-hidden">
-            <img src="{{asset('images/auth/02.png')}}" class="img-fluid gradient-main animated-scaleX" alt="images">
+      <div class="row m-0 align-items-center bg-white min-vh-100">            
+         <!-- Left Image Section -->
+         <div class="col-lg-6 d-none d-lg-flex bg-success p-0 vh-100 overflow-hidden">
+           <img src="{{asset('/images/dashboard/maxresdefault.jpg')}}" 
+                 class="w-100 h-100 object-fit-cover gradient-main animated-scaleX" alt="images">
          </div>
-         <div class="col-md-6 p-0">               
-            <div class="card card-transparent auth-card shadow-none d-flex justify-content-center mb-0">
-               <div class="card-body">
-                  <a href="{{route('dashboard')}}" class="navbar-brand d-flex align-items-center mb-3">
-                     <svg width="30" class="text-primary" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2" transform="rotate(-45 -0.757324 19.2427)" fill="currentColor"/>
-                        <rect x="7.72803" y="27.728" width="28" height="4" rx="2" transform="rotate(-45 7.72803 27.728)" fill="currentColor"/>
-                        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2" transform="rotate(45 10.5366 16.3945)" fill="currentColor"/>
-                        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2" transform="rotate(45 10.5562 -0.556152)" fill="currentColor"/>
-                     </svg>
-                     <h4 class="logo-title ms-3">{{env('APP_NAME')}}</h4>
-                  </a>
-                  <h2 class="mb-2">Reset Password</h2>
-                  <p>Enter your email address and we'll send you an email with instructions to reset your password.</p>
-                  <x-auth-validation-errors class="mb-4" :errors="$errors" />
-                  <form>
-                     <div class="row">
-                        <div class="col-lg-12">
-                           <div class="floating-label form-group">
-                              <label for="email" class="form-label">Email</label>
-                              <input type="email" class="form-control" id="email" aria-describedby="email" placeholder=" ">
-                           </div>
+
+         <!-- Right Form Section -->
+         <div class="col-lg-6 col-md-12 px-4">
+            <div class="d-flex justify-content-center align-items-center min-vh-100">
+               <div class="w-100" style="max-width: 600px;">
+                  <div class="card shadow-lg border-0 rounded-3">
+                     <div class="card-body p-4 p-md-5">
+                                                   <!-- Logo Section -->
+                           <a href="{{ route('dashboard') }}" 
+                              class="navbar-brand d-flex align-items-center justify-content-center bg-success p-2 rounded-3 shadow-sm">
+                              <img src="{{ asset('images/logo.png') }}" 
+                                    alt="Site Logo" 
+                                    width="140" 
+                                    class="logo-global img-fluid">
+                           </a>
                         </div>
+                        <!-- Heading -->
+                        <h1 class="h4 text-center fw-bold text-success mb-3">
+                           Reset Password
+                        </h1>
+                        <p class="text-center text-muted mb-4">
+                           Enter your email address and we'll send you instructions to reset your password.
+                        </p>
+
+                        <!-- Session & Validation -->
+                        <x-auth-session-status class="mb-3" :status="session('status')" />
+                        @if (session('status'))
+                           <div class="alert alert-success">{{ session('status') }}</div>
+                        @endif
+                        <x-auth-validation-errors class="mb-3" :errors="$errors" />
+
+                        <!-- Reset Email Form -->
+                        <form method="POST" action="{{ route('password.email') }}" novalidate>
+                           @csrf
+                           <div class="row g-3">
+                              <div class="col-12">
+                                 <label for="email" class="form-label text-success">Email</label>
+                                 <input type="email" class="form-control border-success" 
+                                        id="email" name="email" 
+                                        placeholder="Enter your email" required>
+                              </div>
+                           </div>
+
+                           <!-- Submit Button -->
+                           <div class="d-grid mt-4">
+                              <button type="submit" class="btn btn-success btn-lg text-white">
+                                 {{ __('Reset') }}
+                              </button>
+                           </div>
+
+                           <!-- Back to login link -->
+                           <p class="mt-3 text-center text-muted">
+                              Remember your password? 
+                              <a href="{{route('auth.signin')}}" class="fw-semibold text-success text-decoration-none">
+                                 Sign In
+                              </a>
+                           </p>
+                        </form>
+
                      </div>
-                     <button type="submit" class="btn btn-primary btn-block">  {{ __('Reset') }}</button>
-                  </form>
+                  </div>
                </div>
-            </div>               
-            <div class="sign-bg sign-bg-right">
-               <svg width="280" height="230" viewBox="0 0 431 398" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g opacity="0.05">
-                  <rect x="-157.085" y="193.773" width="543" height="77.5714" rx="38.7857" transform="rotate(-45 -157.085 193.773)" fill="#3B8AFF"/>
-                  <rect x="7.46875" y="358.327" width="543" height="77.5714" rx="38.7857" transform="rotate(-45 7.46875 358.327)" fill="#3B8AFF"/>
-                  <rect x="61.9355" y="138.545" width="310.286" height="77.5714" rx="38.7857" transform="rotate(45 61.9355 138.545)" fill="#3B8AFF"/>
-                  <rect x="62.3154" y="-190.173" width="543" height="77.5714" rx="38.7857" transform="rotate(45 62.3154 -190.173)" fill="#3B8AFF"/>
-                  </g>
-               </svg>
             </div>
          </div>
       </div>

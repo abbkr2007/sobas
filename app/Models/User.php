@@ -21,7 +21,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
      * @var array
      */
     protected $fillable = [
-        'username',
+        'organization_id',
+        'other_organizations',
         'first_name',
         'last_name',
         'phone_number',
@@ -29,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'banned',
         'email',
         'password',
+        'plain_password', // Ensure this is included
     ];
 
     /**

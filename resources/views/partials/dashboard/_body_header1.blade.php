@@ -1,6 +1,6 @@
 <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
   <div class="container-fluid navbar-inner">
-    <button data-trigger="navbar_main" class="d-xl-none btn btn-primary rounded-pill p-1 pt-0" type="button">
+    <!-- <button data-trigger="navbar_main" class="d-xl-none btn btn-primary rounded-pill p-1 pt-0" type="button"> -->
       <svg width="20px" height="20px" viewBox="0 0 24 24">
         <path fill="currentColor" d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"></path>
     </svg>
@@ -199,13 +199,13 @@
           <img src="{{asset('images/avatars/avtar_5.png')}}" alt="User-Profile" class="theme-color-yellow-img img-fluid avatar avatar-50 avatar-rounded">
           <img src="{{asset('images/avatars/avtar_3.png')}}" alt="User-Profile" class="theme-color-pink-img img-fluid avatar avatar-50 avatar-rounded">
             <div class="caption ms-3 ">
-                <h6 class="mb-0 caption-title">{{ auth()->user()->name ?? 'Austin Robertson'  }}</h6>
+                <h6 class="mb-0 caption-title">{{ auth()->user()->first_name ?? 'Austin Robertson'  }}</h6>
                 <p class="mb-0 caption-sub-title">Marketing Administrator</p>
             </div>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{{route('users.show', auth()->id() || 1)}}">Profile</a></li>
-            <li><a class="dropdown-item" href="{{route('auth.userprivacysetting')}}">Privacy Setting</a></li>
+            <!-- <li><a class="dropdown-item" href="{{route('auth.userprivacysetting')}}">Privacy Setting</a></li> -->
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{{route('auth.signin')}}">Logout</a></li>
           </ul>
