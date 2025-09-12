@@ -19,6 +19,6 @@ class SlipController extends Controller
         $user = User::find($userId);
         $payment = Payment::where('user_id', $userId)->latest()->first();
 
-        return view('slip', compact('user', 'payment'));
+        return view('auth.slip', compact('user', 'payment'));
     }
 }
