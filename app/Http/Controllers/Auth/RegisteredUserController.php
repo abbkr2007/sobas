@@ -1,144 +1,132 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Mail\UserRegisteredMail;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Payment;
-use App\Providers\RouteServiceProvider;
 use Paystack;
-use App\Models\Organization;
-use App\Events\Registered;
-use App\Notifications\UserRegistered;
-use Illuminate\Support\Facades\Notification;
-
 
 class RegisteredUserController extends Controller
 {
+    // Show registration form on homepage
+    public function create()
+    {
+        return view('auth.register');
+    }
+
+    // Store user info in session before payment
     public function store(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:8',
+            'first_name'   => 'required|string|max:255',
+            'last_name'    => 'required|string|max:255',
+            'email'        => 'required|string|email|max:255|unique:users',
+            'phone_number' => 'required|string|max:20',
         ]);
-        // Assuming you want to charge 500 NGN
-        $amountInKobo = "630000"; // 500 NGN in Kobo
 
-        // Store the request data temporarily in the session
+        $amountInKobo = 630000; // ₦6,300
+
         $request->session()->put('user_data', [
-            
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
+            'first_name'   => $request->first_name,
+            'last_name'    => $request->last_name,
             'phone_number' => $request->phone_number,
-            'email' => $request->email,
-            'password' => $request->password,  // Do not hash the password yet
-            'user_type' => 'user',
-            'amount' => $amountInKobo // Store the amount
+            'email'        => $request->email,
+            'amount'       => $amountInKobo
         ]);
 
-        // Redirect to payment gateway
         return redirect()->route('payment.redirectToGateway');
     }
 
-    public function create()
-    {
-        $organizations = Organization::all();
-
-        // Check what data is being fetched
-        // if ($organizations->isEmpty()) {
-        //     \Log::info('No organizations found in the database.');
-        // } else {
-        //     \Log::info('Organizations found:', $organizations->toArray());
-        // }
-
-        return view('auth.register', compact('organizations'));
-    }
-
+    // Redirect to Paystack
     public function redirectToGateway(Request $request)
     {
-        try {
-            // Retrieve the amount from the session
-            $userData = $request->session()->get('user_data');
-            $amount = $userData['amount']; // Amount in kobo
+        $userData = $request->session()->get('user_data');
 
-            \Log::info('Amount sent to Paystack: ' . $amount);
-
-            // Get authorization URL
-            return Paystack::getAuthorizationUrl([
-                'amount' => $amount, // Amount in kobo
-                'email' => $userData['email'], // Required email field
-            ])->redirectNow();
-        } catch (\Exception $e) {
-            \Log::error('Paystack redirect error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'The Paystack token has expired. Please refresh the page and try again.');
-        }
+        return Paystack::getAuthorizationUrl([
+            'email'  => $userData['email'],
+            'amount' => $userData['amount'],
+        ])->redirectNow();
     }
 
-
-public function handleGatewayCallback(Request $request)
+    // Handle Paystack callback
+  public function handleGatewayCallback(Request $request)
 {
     try {
+        // Get payment data from Paystack
         $paymentDetails = Paystack::getPaymentData();
+        \Log::info('Paystack callback fired', ['paymentDetails' => $paymentDetails]);
 
-        \Log::info('Payment details: ' . json_encode($paymentDetails));
+        // Retrieve user data from session
+        $userData = $request->session()->get('user_data');
+        \Log::info('Session user_data', ['userData' => $userData]);
+
+        if (!$userData) {
+            return redirect('/')->with('error', 'Session expired or user data missing.');
+        }
 
         // Check if payment was successful
-        if ($paymentDetails['status'] == 'true' && $paymentDetails['data']['status'] == 'success') {
-            // Retrieve user data from session
-            $userData = $request->session()->get('user_data');
+        if ($paymentDetails['status'] && $paymentDetails['data']['status'] === 'success') {
 
-            // Capture the plain password
-            $plainPassword = $userData['password'];
-            // dd($plainPassword);
-           // Create the user and log them in
+            // Generate a random password
+            $randomPassword = \Illuminate\Support\Str::random(10);
+
+            // Create user
             $user = User::create([
-
                 'first_name' => $userData['first_name'],
-                'last_name' => $userData['last_name'],
+                'last_name'  => $userData['last_name'],
                 'phone_number' => $userData['phone_number'],
-                'password' => Hash::make($userData['password']),
-                'plain_password' => $plainPassword,
-                'user_type' => $userData['user_type'],
+                'email'      => $userData['email'],
+                'password'   => Hash::make($randomPassword),
+                'user_type'  => 'user',
             ]);
-            // Save payment data to the database
-            $payment = new Payment();
-            $payment->reference = $paymentDetails['data']['reference'];
-            $payment->user_id = $user->id;
-            $payment->transaction_id = $paymentDetails['data']['id'];
-            $payment->amount = $paymentDetails['data']['amount'];
-            $payment->currency = $paymentDetails['data']['currency'];
-            $payment->status = $paymentDetails['data']['status'];
-            $payment->save();
 
-            // Send registration email
-            // Mail::to($user->email)->send(new UserRegisteredMail($user));
+            if (!$user) {
+                \Log::error('User creation failed.');
+                return redirect('/')->with('error', 'Failed to create user.');
+            }
 
+            // Save payment record
+            $payment = Payment::create([
+                'user_id'       => $user->id,
+                'reference'     => $paymentDetails['data']['reference'],
+                'transaction_id'=> $paymentDetails['data']['id'],
+                'amount'        => $paymentDetails['data']['amount'],
+                'currency'      => $paymentDetails['data']['currency'],
+                'status'        => $paymentDetails['data']['status'],
+            ]);
+
+            if (!$payment) {
+                \Log::error('Payment creation failed.');
+                return redirect('/')->with('error', 'Failed to save payment.');
+            }
+
+            // Optional: send email
             Mail::to($user->email)->send(new UserRegisteredMail($user));
-            $user->plain_password = null;
-            $user->save();
-            // Clear the session data
-            $request->session()->forget('user_data');
 
-            return redirect()->route('slip')->with('success', 'Payment successful and Kindly check your mailbox for more informations.');
+            // Clear session data
+            $request->session()->forget('user_data');
+            $request->session()->put('last_user_id', $user->id);
+
+            // Redirect to slip page
+            return redirect()->route('slip')->with('success', 'Payment successful!');
+
         } else {
-            \Log::error('Payment failed or status not success: ' . json_encode($paymentDetails));
-            return redirect()->route('slip')->with('error', 'Payment failed. Please try again.');
+            \Log::error('Payment failed', ['paymentDetails' => $paymentDetails]);
+            return redirect('/')->with('error', 'Payment failed. Please try again.');
         }
+
     } catch (\Exception $e) {
-        \Log::error('Paystack callback error: ' . $e->getMessage());
-        \Log::error('Stack trace: ' . $e->getTraceAsString());
-        return redirect()->route('slip')->with('error', 'An error occurred during Registration.');
+        \Log::error('Exception in Paystack callback', [
+            'message' => $e->getMessage(),
+            'trace'   => $e->getTraceAsString()
+        ]);
+        return redirect('/')->with('error', 'An error occurred during registration.');
     }
 }
-
-
 }
-
-
-

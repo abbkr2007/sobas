@@ -14,7 +14,6 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SlipController;
 
-
 // Packages
 
 
@@ -73,6 +72,7 @@ Route::get('/clear', function () {
 
 Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])->name('payment.redirectToGateway');
 Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
+
 Route::get('/slip', [SlipController::class, 'index'])->name('slip');
 
 
