@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\SlipController;
+
 
 // Packages
 
@@ -67,6 +71,9 @@ Route::get('/clear', function () {
 
 });
 
+Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])->name('payment.redirectToGateway');
+Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
+Route::get('/slip', [SlipController::class, 'index'])->name('slip');
 
 
 Route::group(['middleware' => 'auth'], function () {
@@ -74,7 +81,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/role-permission', [RolePermission::class, 'index'])->name('role.permission.list');
     Route::resource('permission', PermissionController::class);
     Route::resource('role', RoleController::class);
+    Route::get('/application', [ApplicationController::class, 'showForm'])->name('application.show');
+  
 
+    Route::post('/application/submit', [ApplicationController::class, 'submitForm'])->name('application.submit');
+
+    // Paystack payment
+
+
+    Route::get('/application/slip', [ApplicationController::class, 'slip'])->name('application.slip');
     // Dashboard Routes
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/submit-paper', [HomeController::class, 'submit_paper'])->name('submit-paper');

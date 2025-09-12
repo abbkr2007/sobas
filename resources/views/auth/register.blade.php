@@ -75,7 +75,7 @@
                            <!-- Submit Button -->
                            <div class="d-grid mt-4">
                               <button type="submit" class="btn btn-success btn-lg text-white">
-                                 {{ __('Register') }}
+                                 {{ __('Buy Form') }}
                               </button>
                            </div>
 

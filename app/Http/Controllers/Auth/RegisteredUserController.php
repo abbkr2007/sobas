@@ -28,12 +28,11 @@ class RegisteredUserController extends Controller
             'password' => 'required|string|confirmed|min:8',
         ]);
         // Assuming you want to charge 500 NGN
-        $amountInKobo = "500000"; // 500 NGN in Kobo
+        $amountInKobo = "630000"; // 500 NGN in Kobo
 
         // Store the request data temporarily in the session
         $request->session()->put('user_data', [
-            'organization_id' => $request->organization_id,
-            'other_organizations' => $request->other_organizations,
+            
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'phone_number' => $request->phone_number,
@@ -99,12 +98,10 @@ public function handleGatewayCallback(Request $request)
             // dd($plainPassword);
            // Create the user and log them in
             $user = User::create([
-                'organization_id' => $userData['organization_id'],
-                'other_organizations' => $userData['other_organizations'],
+
                 'first_name' => $userData['first_name'],
                 'last_name' => $userData['last_name'],
                 'phone_number' => $userData['phone_number'],
-                'email' => $userData['email'],
                 'password' => Hash::make($userData['password']),
                 'plain_password' => $plainPassword,
                 'user_type' => $userData['user_type'],
@@ -128,15 +125,15 @@ public function handleGatewayCallback(Request $request)
             // Clear the session data
             $request->session()->forget('user_data');
 
-            return redirect()->route('register')->with('success', 'Payment successful and Kindly check your mailbox for more informations.');
+            return redirect()->route('slip')->with('success', 'Payment successful and Kindly check your mailbox for more informations.');
         } else {
             \Log::error('Payment failed or status not success: ' . json_encode($paymentDetails));
-            return redirect()->route('register')->with('error', 'Payment failed. Please try again.');
+            return redirect()->route('slip')->with('error', 'Payment failed. Please try again.');
         }
     } catch (\Exception $e) {
         \Log::error('Paystack callback error: ' . $e->getMessage());
         \Log::error('Stack trace: ' . $e->getTraceAsString());
-        return redirect()->route('register')->with('error', 'An error occurred during Registration.');
+        return redirect()->route('slip')->with('error', 'An error occurred during Registration.');
     }
 }
 
