@@ -1,16 +1,19 @@
 <x-guest-layout>
     <section style="padding: 40px; display: flex; justify-content: center; font-family: Arial, sans-serif;">
-        <div style="border: 3px solid #28a745; padding: 30px; max-width: 500px; width: 100%; border-radius: 10px; background-color: #f9fff9;">
+        <div style="border: 1.5px solid #28a745; padding: 25px; max-width: 500px; width: 100%; border-radius: 10px; background-color: #f9fff9;">
             
-            <!-- Header -->
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2 style="color: #28a745; margin: 0; font-size: 26px; font-weight: bold;">Payment Slip</h2>
-                <p style="margin: 5px 0 0; font-size: 12px; color: #555;">Official receipt for your payment</p>
-                <hr style="margin-top: 15px; border-top: 2px solid #28a745;">
+            <!-- Logo and Header -->
+            <div style="text-align: center; margin-bottom: 15px;">
+                <a href="{{ route('dashboard') }}" class="d-inline-block mb-2">
+                    <img src="{{ asset('images/logo.png') }}" alt="Site Logo" width="120">
+                </a>
+                <h2 style="color: #28a745; margin: 0; font-size: 24px; font-weight: bold;">Payment Slip</h2>
+                <p style="margin: 3px 0 0; font-size: 12px; color: #555;">Official receipt for your payment</p>
+                <hr style="margin-top: 10px; border-top: 1.5px solid #28a745;">
             </div>
 
             <!-- User Info Table -->
-            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                 <tr>
                     <td style="border: 1px solid #28a745; padding: 8px; font-weight: bold; width: 40%;">Name</td>
                     <td style="border: 1px solid #28a745; padding: 8px;">{{ $user->first_name }} {{ $user->last_name }}</td>
@@ -44,7 +47,7 @@
             </table>
 
             <!-- Buttons -->
-            <div style="text-align: center; margin-top: 25px;">
+            <div style="text-align: center; margin-top: 20px;">
                 <button onclick="window.print()" 
                         style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-right: 10px;">
                     Print Slip
@@ -56,7 +59,7 @@
             </div>
 
             <!-- Footer -->
-            <div style="text-align: center; font-size: 10px; color: #555; margin-top: 20px;">
+            <div style="text-align: center; font-size: 10px; color: #555; margin-top: 15px;">
                 This is a system-generated payment slip. Keep it safe for your records.
             </div>
         </div>
