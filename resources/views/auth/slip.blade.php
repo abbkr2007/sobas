@@ -1,36 +1,36 @@
 <x-guest-layout>
-    <section class="slip-content py-10">
-        <div class="container mx-auto max-w-lg bg-white border-2 border-green-600 rounded-lg shadow-lg p-6">
+    <section style="padding: 30px; display: flex; justify-content: center;">
+        <div style="border: 2px solid green; padding: 20px; max-width: 500px; width: 100%; border-radius: 8px;">
             <!-- Header -->
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-green-700 mb-1">Payment Slip</h2>
-                <p class="text-gray-600 text-sm">Keep this for your records</p>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: green; margin: 0;">Payment Slip</h2>
+                <p style="margin: 0; font-size: 12px; color: gray;">Keep this for your records</p>
             </div>
 
             <!-- User Info -->
-            <div class="space-y-2 text-gray-700">
-                <p><span class="font-semibold">Name:</span> {{ $user->first_name }} {{ $user->last_name }}</p>
-                <p><span class="font-semibold">Email:</span> {{ $user->email }}</p>
-                <p><span class="font-semibold">Phone:</span> {{ $user->phone_number ?? 'N/A' }}</p>
-                <p><span class="font-semibold">Amount Paid:</span> ₦{{ number_format($payment->amount / 100, 2) }}</p>
-                <p><span class="font-semibold">Reference:</span> {{ $payment->reference }}</p>
-                <p><span class="font-semibold">Status:</span> 
-                    <span class="{{ $payment->status == 'success' ? 'text-green-600 font-bold' : 'text-red-600 font-bold' }}">
+            <div style="line-height: 1.6; color: #333;">
+                <p><strong>Name:</strong> {{ $user->first_name }} {{ $user->last_name }}</p>
+                <p><strong>Email:</strong> {{ $user->email }}</p>
+                <p><strong>Phone:</strong> {{ $user->phone_number ?? 'N/A' }}</p>
+                <p><strong>Amount Paid:</strong> ₦{{ number_format($payment->amount / 100, 2) }}</p>
+                <p><strong>Reference:</strong> {{ $payment->reference }}</p>
+                <p><strong>Status:</strong> 
+                    <span style="color: {{ $payment->status == 'success' ? 'green' : 'red' }}; font-weight: bold;">
                         {{ ucfirst($payment->status) }}
                     </span>
                 </p>
-                <p><span class="font-semibold">Date:</span> {{ \Carbon\Carbon::parse($payment->created_at)->format('d M, Y H:i') }}</p>
+                <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($payment->created_at)->format('d M, Y H:i') }}</p>
             </div>
 
             <!-- Print Button -->
-            <div class="text-center mt-6">
-                <button onclick="window.print()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="window.print()" 
+                        style="background-color: green; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">
                     Print Slip
                 </button>
             </div>
 
-            <!-- Footer -->
-            <div class="mt-4 text-xs text-gray-400 text-center">
+            <div style="text-align: center; font-size: 10px; color: gray; margin-top: 10px;">
                 This is a system-generated payment slip.
             </div>
         </div>
@@ -41,10 +41,10 @@
             body * {
                 visibility: hidden;
             }
-            .slip-content, .slip-content * {
+            section, section * {
                 visibility: visible;
             }
-            .slip-content {
+            section {
                 position: absolute;
                 left: 0;
                 top: 0;
