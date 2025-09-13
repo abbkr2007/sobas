@@ -53,7 +53,7 @@
                            {{csrf_field()}}
                            <div class="row g-3">
                               <div class="col-12">
-                                 <label class="form-label text-success">Email<span class="text-danger">*</span></label>
+                                 <label class="form-label text-success">Email or Matric Number<span class="text-danger">*</span></label>
                                  <input id="email" type="email" name="email" 
                                         value="{{ env('IS_DEMO') ? 'admin@example.com' : old('email') }}" 
                                         class="form-control border-success" placeholder="Enter your email" required autofocus>
