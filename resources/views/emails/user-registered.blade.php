@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Registration Slip</title>
+    <title>Application Slip</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -68,7 +68,7 @@
     <div class="slip">
         <div class="header">
             <!-- Your logo here -->
-            <img src="{{ asset('images/logo.png') }}" alt="ASUU Conference Logo">
+             <img src="https://sobas.cloud/images/logo.png" alt="ASUU Conference Logo">
             <h2>Portal of School of Basic and Advanced Studies</h2>
             <p>Registration Confirmation Slip</p>
         </div>
