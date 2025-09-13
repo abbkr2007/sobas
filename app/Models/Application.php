@@ -10,7 +10,7 @@ class Application extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'surname', 'firstname', 'middlename', 'phone', 'email',
+        'mat_id', 'surname', 'firstname', 'middlename', 'phone', 'email',
         'dob', 'place_of_birth', 'gender', 'state', 'lga', 'town', 'country',
         'home_address', 'guardian', 'guardian_address', 'guardian_phone',
         'application_type', 'qualification', 'institution', 'graduation_year',
