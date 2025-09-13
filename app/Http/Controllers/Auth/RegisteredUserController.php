@@ -92,18 +92,18 @@ class RegisteredUserController extends Controller
                 ]);
 
                 // Save payment
-               $payment = Payment::create([
-                'user_id'        => $user->id,
-                'reference'      => $paymentDetails['data']['reference'],
-                'transaction_id' => $paymentDetails['data']['id'],
-                'amount'         => $paymentDetails['data']['amount'],
-                'currency'       => $paymentDetails['data']['currency'],
-                'status'         => $paymentDetails['data']['status'],
-            ]);
+                $payment = Payment::create([
+                    'user_id'        => $user->id,
+                    'reference'      => $paymentDetails['data']['reference'],
+                    'transaction_id' => $paymentDetails['data']['id'],
+                    'amount'         => $paymentDetails['data']['amount'],
+                    'currency'       => $paymentDetails['data']['currency'],
+                    'status'         => $paymentDetails['data']['status'],
+                ]);
 
-            // ✅ FIXED: pass both user and payment
-            Mail::to($user->email)->send(new UserRegisteredMail($user, $payment));
-
+                // Send registration email
+                Mail::to($user->email)->send(new UserRegisteredMail($user));
+                
 
                 // Store user ID for slip page
                 $request->session()->put('last_user_id', $user->id);

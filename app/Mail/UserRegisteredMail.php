@@ -11,33 +11,26 @@ class UserRegisteredMail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
-    public $payment;
 
     /**
      * Create a new message instance.
      *
      * @param \App\Models\User $user
-     * @param \App\Models\Payment $payment
      */
-    public function __construct($user, $payment)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->payment = $payment;
     }
 
     /**
      * Build the message.
-     *
-     * @return $this
      */
     public function build()
     {
-        return $this->from(config('mail.from.address'), config('mail.from.name'))
-                    ->subject('Portal Of School Of Basic And Advanced Studies - Registration Slip')
-                    ->view('emails.user-registered-slip')    // the email Blade
+        return $this->subject('ASUU National Conference 2024 Registration Slip')
+                    ->view('emails.user-registered')
                     ->with([
-                        'user' => $this->user,
-                        'payment' => $this->payment,
+                        'user' => $this->user
                     ]);
     }
 }
