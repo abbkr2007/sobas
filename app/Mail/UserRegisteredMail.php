@@ -27,7 +27,7 @@ class UserRegisteredMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('ASUU National Conference 2024 Registration Slip')
+        return $this->subject('Portal of School of Basic and Advanced Studies Application Slip')
                     ->view('emails.user-registered')
                     ->with([
                         'user' => $this->user
