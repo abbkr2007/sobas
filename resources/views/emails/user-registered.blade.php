@@ -82,7 +82,7 @@
         </div>
 
         <div class="footer">
-            Please keep this slip safe — it will be needed to log in and attend the conference.
+            Please keep this slip safe — it will be needed to login into your Application.
         </div>
     </div>
 </body>
