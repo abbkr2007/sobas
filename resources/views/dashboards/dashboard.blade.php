@@ -161,7 +161,7 @@
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label fw-semibold small mb-1">Application Type</label>
                                       <select name="application_type" class="form-select form-select-sm border-success" required>
-                                		<option selected></option> 
+                                		<option selected>-- Application Type: --</option> 
                                         <option>Matric Science</option>
                                         <option>Remedial Science</option>
                                         <option>Remedial French</option>
