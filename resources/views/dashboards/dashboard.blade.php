@@ -37,9 +37,12 @@
                             </div>
 
                             <div class="row g-2">
-                                <div class="col-md-3 mb-2">
+                              <div class="col-md-3 mb-2">
                                     <label class="form-label fw-semibold small mb-1">Matric Number</label>
-                                    <input type="text" name="application_id" class="form-control form-control-sm border-success" required>
+                                    <input type="text" name="application_id" 
+                                        class="form-control form-control-sm border-success" 
+                                        value="{{ $user->mat_id ?? '' }}" 
+                                        readonly>
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label fw-semibold small mb-1">Surname</label>
