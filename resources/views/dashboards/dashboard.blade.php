@@ -41,7 +41,7 @@
                                     <label class="form-label fw-semibold small mb-1">Matric Number</label>
                                     <input type="text" name="application_id" 
                                         class="form-control form-control-sm border-success" 
-                                        value="{{ $user->mat_id ?? '' }}" 
+                                        value="{{ auth()->user()->mat_id }}" 
                                         readonly>
                                 </div>
                                 <div class="col-md-3 mb-2">
