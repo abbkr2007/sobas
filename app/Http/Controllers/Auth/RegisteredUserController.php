@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
             'phone_number' => 'required|string|max:20',
         ]);
 
-        $amountInKobo = 630000; // ₦6,300 -> Paystack expects kobo
+        $amountInKobo = 630000; // ₦6,300
 
         $request->session()->put('user_data', [
             'first_name'   => $request->first_name,
@@ -47,10 +47,6 @@ class RegisteredUserController extends Controller
     public function redirectToGateway(Request $request)
     {
         $userData = $request->session()->get('user_data');
-
-        if (!$userData) {
-            return redirect()->route('register')->with('error', 'Session expired. Please re-enter your details.');
-        }
 
         return Paystack::getAuthorizationUrl([
             'email'  => $userData['email'],
@@ -69,10 +65,10 @@ class RegisteredUserController extends Controller
                 return redirect('/')->with('error', 'Session expired or user data missing.');
             }
 
-            if (!empty($paymentDetails['status']) && $paymentDetails['data']['status'] === 'success') {
+            if ($paymentDetails['status'] && $paymentDetails['data']['status'] === 'success') {
 
                 // Generate MAT ID
-                $year = date('y'); // last 2 digits
+                $year = date('y'); // last 2 digits of year
                 $prefix = 'MAT'.$year;
                 $lastUser = User::where('mat_id', 'like', $prefix.'%')
                                 ->orderBy('id', 'desc')
@@ -80,7 +76,7 @@ class RegisteredUserController extends Controller
                 $number = $lastUser ? (int) substr($lastUser->mat_id, 5) + 1 : 1;
                 $matId = $prefix . str_pad($number, 5, '0', STR_PAD_LEFT);
 
-                // Generate random password (temporary)
+                // Generate random password
                 $plainPassword = Str::random(10);
 
                 // Create user
@@ -105,8 +101,8 @@ class RegisteredUserController extends Controller
                     'status'         => $paymentDetails['data']['status'],
                 ]);
 
-                // Send registration email (pass both user and payment)
-                Mail::to($user->email)->send(new UserRegisteredMail($user, $payment));
+                // Send registration email
+                Mail::to($user->email)->send(new UserRegisteredMail($user));
 
                 // Store user ID for slip page
                 $request->session()->put('last_user_id', $user->id);
@@ -121,27 +117,5 @@ class RegisteredUserController extends Controller
             \Log::error('Paystack callback error: '.$e->getMessage());
             return redirect('/')->with('error', 'An error occurred during registration.');
         }
-    }
-
-    /**
-     * Display slip in browser (uses session('last_user_id'))
-     */
-    public function slip(Request $request)
-    {
-        $lastUserId = $request->session()->get('last_user_id');
-
-        if (!$lastUserId) {
-            return redirect('/')->with('error', 'No recent registration slip found.');
-        }
-
-        $user = User::find($lastUserId);
-        $payment = Payment::where('user_id', $lastUserId)->orderBy('id','desc')->first();
-
-        if (!$user || !$payment) {
-            return redirect('/')->with('error', 'Slip not found.');
-        }
-
-        // optionally pass data to view
-        return view('slip', compact('user','payment'));
     }
 }
