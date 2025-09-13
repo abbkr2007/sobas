@@ -160,13 +160,24 @@
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label fw-semibold small mb-1">Application Type</label>
-                                    <select name="application_type" class="form-select form-select-sm border-success" required>
-                                        <option value="">-- Select --</option>
-                                        <option>Undergraduate</option>
-                                        <option>Postgraduate</option>
-                                        <option>Diploma</option>
-                                        <option>Certificate</option>
-                                    </select>
+                                      <select name="application_type" class="form-select form-select-sm border-success" required>
+                                		<option selected></option> 
+                                        <option>Matric Science</option>
+                                        <option>Remedial Science</option>
+                                        <option>Remedial French</option>
+                                        <option>Jamb Training Science</option>
+                                        
+                                        <option>Jamb Training Accounting</option>
+                                        <option>Jamb Training Economics</option>
+                                        <option>Jamb Training Political Science</option>
+                                        <option>Jamb Training Sociology</option>
+                                        
+                                        <option>Jamb Training Business Admin</option>
+                                        <option>Jamb Training Public Admin</option>
+                                        <option>Extra Moral Class</option>
+                                </select> 
+                                  
+                                        
                                 </div>
                             </div>
                         </div>
