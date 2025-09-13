@@ -86,7 +86,7 @@
                            <!-- Already have account -->
                            <p class="mt-3 text-center text-muted">
                               Don’t have an account?
-                              <a href="{{route('register')}}" class="fw-semibold text-success text-decoration-none">Register here...</a>
+                              <a href="{{route('register')}}" class="fw-semibold text-success text-decoration-none">Buy Form here...</a>
                            </p>
                         </form>
 
