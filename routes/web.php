@@ -70,13 +70,13 @@ Route::get('/clear', function () {
 
 });
 
-Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])->name('payment.redirectToGateway');
-Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
+    Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])->name('payment.redirectToGateway');
+    Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
 
-Route::get('/slip', [SlipController::class, 'index'])->name('slip');
+    Route::get('/slip', [SlipController::class, 'index'])->name('slip');
 
 
-Route::group(['middleware' => 'auth'], function () {
+    Route::group(['middleware' => 'auth'], function () {
     // Permission Module
     Route::get('/role-permission', [RolePermission::class, 'index'])->name('role.permission.list');
     Route::resource('permission', PermissionController::class);
