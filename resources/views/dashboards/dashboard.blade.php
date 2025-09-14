@@ -214,9 +214,147 @@
                             </div>
                         </div>
 
-                        <!-- Step 3: Documents -->
-                        <div class="step-content d-none" id="step-3">
-                            <h5 class="fw-bold text-success mb-3">Documents</h5>
+                      <!-- Step 3: Academic Records & Documents -->
+                    <div class="step-content d-none" id="step-3">
+                        <h5 class="fw-bold text-success mb-3">Academic Records & Documents</h5>
+
+                        <!-- Schools Attended -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-success mb-2">Schools Attended</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">School</label>
+                                    <input type="text" name="school_name" class="form-control form-control-sm border-success">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">From</label>
+                                    <input type="date" name="school_from" class="form-control form-control-sm border-success">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">To</label>
+                                    <input type="date" name="school_to" class="form-control form-control-sm border-success">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-success btn-sm mt-2">Save</button>
+                        </div>
+
+                        <!-- Examination Records -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-success mb-2">Examination Records</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">Examination</label>
+                                    <input type="text" name="exam_name" class="form-control form-control-sm border-success">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">Exam. Year</label>
+                                    <select name="exam_year" class="form-select form-select-sm border-success">
+                                        <option value="">Year</option>
+                                        <!-- Add years dynamically -->
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">Exam No</label>
+                                    <input type="text" name="exam_no" class="form-control form-control-sm border-success">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label small fw-semibold">Centre No</label>
+                                    <input type="text" name="centre_no" class="form-control form-control-sm border-success">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-success btn-sm mt-2">Save</button>
+                        </div>
+
+                        <!-- O'Level Results -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-success mb-2">O'Level Results</h6>
+                            <p class="small text-muted">NOTE: If you are combining two results, fill first and second sittings before submitting.</p>
+
+                            <!-- First Sitting -->
+                            <div class="mb-3 border rounded p-3">
+                                <h6 class="fw-semibold text-success mb-2">First Sitting</h6>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Exam Type</label>
+                                        <input type="text" name="first_exam_type" class="form-control form-control-sm border-success">
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">ENGLISH</label>
+                                        <input type="text" name="english1" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">MATHEMATICS</label>
+                                        <input type="text" name="math1" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">BIOLOGY</label>
+                                        <input type="text" name="bio1" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">CHEMISTRY</label>
+                                        <input type="text" name="chem1" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">PHYSICS</label>
+                                        <input type="text" name="phy1" class="form-control form-control-sm border-success">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Second Sitting -->
+                            <div class="border rounded p-3">
+                                <h6 class="fw-semibold text-success mb-2">Second Sitting</h6>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Exam Type</label>
+                                        <input type="text" name="second_exam_type" class="form-control form-control-sm border-success">
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">ENGLISH</label>
+                                        <input type="text" name="english2" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">MATHEMATICS</label>
+                                        <input type="text" name="math2" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">BIOLOGY</label>
+                                        <input type="text" name="bio2" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">CHEMISTRY</label>
+                                        <input type="text" name="chem2" class="form-control form-control-sm border-success">
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">PHYSICS</label>
+                                        <input type="text" name="phy2" class="form-control form-control-sm border-success">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- JAMB Details -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-success mb-2">JAMB Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label small fw-semibold">JAMB No</label>
+                                    <input type="text" name="jamb_no" class="form-control form-control-sm border-success">
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label small fw-semibold">Score</label>
+                                    <input type="text" name="jamb_score" class="form-control form-control-sm border-success">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document Uploads -->
+                        <div>
+                            <h6 class="fw-semibold text-success mb-2">Upload Documents</h6>
                             <div class="row g-2">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label fw-semibold small mb-1">Upload Resume</label>
@@ -228,6 +366,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                         <!-- Step 4: Review -->
                         <div class="step-content d-none" id="step-4">
