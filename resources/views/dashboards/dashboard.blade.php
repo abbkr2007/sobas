@@ -256,68 +256,123 @@
       </div>
     </div>
   </div>
+    <!-- O'Level Results -->
+<div class="card border-success mb-3">
+  <div class="card-header bg-success text-white">O'Level Results</div>
+  <div class="card-body">
 
-  <!-- O'Level Results -->
-  <div class="card border-success mb-3">
-    <div class="card-header bg-success text-white">O'Level Results</div>
-    <div class="card-body">
-
-      <h6 class="fw-semibold text-success">First Sitting</h6>
-      <div class="row g-2 mb-2">
-        <div class="col-md-6 mb-2">
-          <div class="d-flex gap-2">
-            <select name="first_subject[]" class="form-select form-select-sm border-success">
-              <option value="">Select Subject</option>
-              <option>English Language</option>
-              <option>Mathematics</option>
-              <option>Biology</option>
-              <option>Chemistry</option>
-              <option>Physics</option>
-              <option>Agricultural Science</option>
-              <option>Economics</option>
-              <option>Government</option>
-              <option>Literature in English</option>
-              <option>Geography</option>
-            </select>
-            <select name="first_grade[]" class="form-select form-select-sm border-success">
-              <option value="">Grade</option>
-              <option>A1</option><option>B2</option><option>B3</option>
-              <option>C4</option><option>C5</option><option>C6</option>
-              <option>D7</option><option>E8</option><option>F9</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <h6 class="fw-semibold text-success">Second Sitting</h6>
-      <div class="row g-2 mb-2">
-        <div class="col-md-6 mb-2">
-          <div class="d-flex gap-2">
-            <select name="second_subject[]" class="form-select form-select-sm border-success">
-              <option value="">Select Subject</option>
-              <option>English Language</option>
-              <option>Mathematics</option>
-              <option>Biology</option>
-              <option>Chemistry</option>
-              <option>Physics</option>
-              <option>Agricultural Science</option>
-              <option>Economics</option>
-              <option>Government</option>
-              <option>Literature in English</option>
-              <option>Geography</option>
-            </select>
-            <select name="second_grade[]" class="form-select form-select-sm border-success">
-              <option value="">Grade</option>
-              <option>A1</option><option>B2</option><option>B3</option>
-              <option>C4</option><option>C5</option><option>C6</option>
-              <option>D7</option><option>E8</option><option>F9</option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <!-- First Sitting -->
+    <h6 class="fw-bold text-success mb-3">First Sitting</h6>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered table-sm align-middle">
+        <thead class="table-success">
+          <tr>
+            <th>Subject</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for ($i = 1; $i <= 9; $i++)
+          <tr>
+            <td>
+              <select name="first_subject[]" class="form-select form-select-sm border-success" required>
+                <option value="">-- Select Subject --</option>
+                <option>English Language</option>
+                <option>Mathematics</option>
+                <option>Biology</option>
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>Economics</option>
+                <option>Geography</option>
+                <option>Government</option>
+                <option>Literature in English</option>
+                <option>Commerce</option>
+                <option>Accounting</option>
+                <option>Agricultural Science</option>
+                <option>CRS / IRS</option>
+                <option>Civic Education</option>
+                <option>Further Mathematics</option>
+                <option>Technical Drawing</option>
+              </select>
+            </td>
+            <td>
+              <select name="first_grade[]" class="form-select form-select-sm border-success" required>
+                <option value="">-- Grade --</option>
+                <option>A1</option>
+                <option>B2</option>
+                <option>B3</option>
+                <option>C4</option>
+                <option>C5</option>
+                <option>C6</option>
+                <option>D7</option>
+                <option>E8</option>
+                <option>F9</option>
+              </select>
+            </td>
+          </tr>
+          @endfor
+        </tbody>
+      </table>
     </div>
-  </div>
 
+    <!-- Second Sitting -->
+    <h6 class="fw-bold text-success mb-3">Second Sitting</h6>
+    <div class="table-responsive">
+      <table class="table table-bordered table-sm align-middle">
+        <thead class="table-success">
+          <tr>
+            <th>Subject</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for ($i = 1; $i <= 9; $i++)
+          <tr>
+            <td>
+              <select name="second_subject[]" class="form-select form-select-sm border-success">
+                <option value="">-- Select Subject --</option>
+                <option>English Language</option>
+                <option>Mathematics</option>
+                <option>Biology</option>
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>Economics</option>
+                <option>Geography</option>
+                <option>Government</option>
+                <option>Literature in English</option>
+                <option>Commerce</option>
+                <option>Accounting</option>
+                <option>Agricultural Science</option>
+                <option>CRS / IRS</option>
+                <option>Civic Education</option>
+                <option>Further Mathematics</option>
+                <option>Technical Drawing</option>
+              </select>
+            </td>
+            <td>
+              <select name="second_grade[]" class="form-select form-select-sm border-success">
+                <option value="">-- Grade --</option>
+                <option>A1</option>
+                <option>B2</option>
+                <option>B3</option>
+                <option>C4</option>
+                <option>C5</option>
+                <option>C6</option>
+                <option>D7</option>
+                <option>E8</option>
+                <option>F9</option>
+              </select>
+            </td>
+          </tr>
+          @endfor
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+  
   <!-- JAMB Details -->
   <div class="card border-success mb-3">
     <div class="card-header bg-success text-white">JAMB Details</div>
