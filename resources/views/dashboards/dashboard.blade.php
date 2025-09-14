@@ -182,59 +182,33 @@
                             </div>
                         </div>
 
-                        <!-- Step 2: Education -->
-                        <div class="step-content d-none" id="step-2">
-                            <h5 class="fw-bold text-success mb-3">Education</h5>
-                            <div class="row g-2">
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Highest Qualification</label>
-                                    <select name="qualification" class="form-control form-control-sm border-success" required>
-                                        <option value="" selected disabled>-- Select Qualification --</option>
-                                        <option value="SSCE">SSCE / O'Level</option>
-                                        <option value="ND">National Diploma (ND)</option>
-                                        <option value="NCE">NCE</option>
-                                        <option value="HND">Higher National Diploma (HND)</option>
-                                        <option value="BSc">Bachelor’s Degree (B.Sc / B.A / B.Ed)</option>
-                                        <option value="PGD">Postgraduate Diploma (PGD)</option>
-                                        <option value="MSc">Master’s Degree (M.Sc / M.A / M.Ed)</option>
-                                        <option value="PhD">Doctorate (Ph.D)</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Institution</label>
-                                    <input type="text" name="institution" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Graduation Year</label>
-                                    <select name="graduation_year" id="graduation_year" class="form-control form-control-sm border-success" required>
-                                        <option value="" selected disabled>-- Select Year --</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                    
 
                       <!-- Step 3: Academic Records & Documents -->
-<div class="step-content" id="step-3">
+<div class="step-content" id="step-2">
   <h5 class="fw-bold text-success mb-3">Academic Records</h5>
 
   <!-- Schools Attended -->
-  <div class="card border-success mb-3">
-    <div class="card-header bg-success text-white">Schools Attended</div>
-    <div class="card-body">
-      <div class="row g-2 mb-2">
-        <div class="col-md-6">
-          <input type="text" name="school_name[]" placeholder="School Name" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-3">
-          <input type="text" name="school_from[]" placeholder="From (YYYY)" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-3">
-          <input type="text" name="school_to[]" placeholder="To (YYYY)" class="form-control form-control-sm border-success">
-        </div>
+<div class="card border-success mb-3">
+  <div class="card-body p-2">
+    <div class="row g-2 align-items-center mb-2">
+      <div class="col-6 col-md-6">
+        <input type="text" name="school_name[]" placeholder="School Name"
+               class="form-control form-control-sm border-success">
+      </div>
+      <div class="col-3 col-md-3">
+        <input type="text" name="school_from[]" placeholder="From (YYYY)"
+               class="form-control form-control-sm border-success">
+      </div>
+      <div class="col-3 col-md-3">
+        <input type="text" name="school_to[]" placeholder="To (YYYY)"
+               class="form-control form-control-sm border-success">
       </div>
     </div>
   </div>
+</div>
+
+
 
   <!-- O'Level Results -->
 <div class="card border-success mb-3">
@@ -436,7 +410,7 @@
 
 
                         <!-- Step 4: Review -->
-                        <div class="step-content d-none" id="step-4">
+                        <div class="step-content d-none" id="step-3">
                             <h5 class="fw-bold text-success mb-3">Review & Submit</h5>
                             <p class="text-muted">Kindly review your details before final submission.</p>
                             <button type="submit" class="btn btn-success w-100 btn-lg">
@@ -457,7 +431,7 @@
         <!-- Scripts -->
         <script>
             let currentStep = 1;
-            const totalSteps = 4;
+            const totalSteps = 3;
 
             function updateProgressBar(step) {
                 const progress = (step / totalSteps) * 100;
