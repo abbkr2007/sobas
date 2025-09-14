@@ -256,7 +256,7 @@
       </div>
     </div>
   </div>
-   <!-- O'Level Results -->
+  <!-- O'Level Results -->
 <div class="card border-success mb-3">
   <div class="card-header bg-success text-white">O'Level Results</div>
   <div class="card-body">
@@ -265,6 +265,33 @@
       <!-- First Sitting -->
       <div class="col-md-6">
         <h6 class="fw-bold text-success mb-3 text-center">First Sitting</h6>
+
+        <!-- Exam Details -->
+        <div class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Exam Type</label>
+            <select name="first_exam_type" class="form-select form-select-sm border-success" required>
+              <option value="">-- Select Exam Type --</option>
+              <option>WAEC</option>
+              <option>NECO</option>
+              <option>GCE</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Exam Year</label>
+            <input type="number" name="first_exam_year" class="form-control form-control-sm border-success" placeholder="e.g. 2022" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Exam Number</label>
+            <input type="text" name="first_exam_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345678" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Center Number</label>
+            <input type="text" name="first_center_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345" required>
+          </div>
+        </div>
+
+        <!-- Subjects Table -->
         <div class="table-responsive mb-4">
           <table class="table table-bordered table-sm align-middle">
             <thead class="table-success">
@@ -323,6 +350,33 @@
       <!-- Second Sitting -->
       <div class="col-md-6">
         <h6 class="fw-bold text-success mb-3 text-center">Second Sitting</h6>
+
+        <!-- Exam Details -->
+        <div class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Exam Type</label>
+            <select name="second_exam_type" class="form-select form-select-sm border-success">
+              <option value="">-- Select Exam Type --</option>
+              <option>WAEC</option>
+              <option>NECO</option>
+              <option>GCE</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Exam Year</label>
+            <input type="number" name="second_exam_year" class="form-control form-control-sm border-success" placeholder="e.g. 2022">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Exam Number</label>
+            <input type="text" name="second_exam_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345678">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small mb-1">Center Number</label>
+            <input type="text" name="second_center_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345">
+          </div>
+        </div>
+
+        <!-- Subjects Table -->
         <div class="table-responsive mb-4">
           <table class="table table-bordered table-sm align-middle">
             <thead class="table-success">
