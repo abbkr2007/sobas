@@ -433,24 +433,7 @@
     </div>
   </div>
 
-  <!-- Documents -->
-  <div class="card border-success">
-    <div class="card-header bg-success text-white">Documents</div>
-    <div class="card-body">
-      <div class="row g-2">
-        <div class="col-md-6 mb-2">
-          <label class="small mb-1">Upload Resume</label>
-          <input type="file" name="resume" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-6 mb-2">
-          <label class="small mb-1">Supporting Document</label>
-          <input type="file" name="supporting_document" class="form-control form-control-sm border-success">
-        </div>
-      </div>
-    </div>
-  </div>
 
-</div>
 
 
                         <!-- Step 4: Review -->
