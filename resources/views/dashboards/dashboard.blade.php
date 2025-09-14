@@ -432,8 +432,7 @@
       </div>
     </div>
   </div>
-
-
+</div>
 
 
                         <!-- Step 4: Review -->
