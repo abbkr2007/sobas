@@ -236,26 +236,6 @@
     </div>
   </div>
 
-  <!-- Examination Records -->
-  <div class="card border-success mb-3">
-    <div class="card-header bg-success text-white">Examination Records</div>
-    <div class="card-body">
-      <div class="row g-2 mb-2">
-        <div class="col-md-4">
-          <input type="text" name="exam_name[]" placeholder="Examination" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-2">
-          <input type="text" name="exam_year[]" placeholder="Year" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-3">
-          <input type="text" name="exam_no[]" placeholder="Exam No" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-3">
-          <input type="text" name="centre_no[]" placeholder="Centre No" class="form-control form-control-sm border-success">
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- O'Level Results -->
 <div class="card border-success mb-3">
   <div class="card-header bg-success text-white">O'Level Results</div>
