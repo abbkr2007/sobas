@@ -215,158 +215,143 @@
                         </div>
 
                       <!-- Step 3: Academic Records & Documents -->
-                    <div class="step-content d-none" id="step-3">
-                        <h5 class="fw-bold text-success mb-3">Academic Records & Documents</h5>
+<div class="step-content" id="step-3">
+  <h5 class="fw-bold text-success mb-3">Academic Records</h5>
 
-                        <!-- Schools Attended -->
-                        <div class="mb-4">
-                            <h6 class="fw-semibold text-success mb-2">Schools Attended</h6>
-                            <div class="row g-2">
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">School</label>
-                                    <input type="text" name="school_name" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">From</label>
-                                    <input type="date" name="school_from" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">To</label>
-                                    <input type="date" name="school_to" class="form-control form-control-sm border-success">
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-success btn-sm mt-2">Save</button>
-                        </div>
+  <!-- Schools Attended -->
+  <div class="card border-success mb-3">
+    <div class="card-header bg-success text-white">Schools Attended</div>
+    <div class="card-body">
+      <div class="row g-2 mb-2">
+        <div class="col-md-6">
+          <input type="text" name="school_name[]" placeholder="School Name" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-3">
+          <input type="text" name="school_from[]" placeholder="From (YYYY)" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-3">
+          <input type="text" name="school_to[]" placeholder="To (YYYY)" class="form-control form-control-sm border-success">
+        </div>
+      </div>
+    </div>
+  </div>
 
-                        <!-- Examination Records -->
-                        <div class="mb-4">
-                            <h6 class="fw-semibold text-success mb-2">Examination Records</h6>
-                            <div class="row g-2">
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">Examination</label>
-                                    <input type="text" name="exam_name" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">Exam. Year</label>
-                                    <select name="exam_year" class="form-select form-select-sm border-success">
-                                        <option value="">Year</option>
-                                        <!-- Add years dynamically -->
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">Exam No</label>
-                                    <input type="text" name="exam_no" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label small fw-semibold">Centre No</label>
-                                    <input type="text" name="centre_no" class="form-control form-control-sm border-success">
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-success btn-sm mt-2">Save</button>
-                        </div>
+  <!-- Examination Records -->
+  <div class="card border-success mb-3">
+    <div class="card-header bg-success text-white">Examination Records</div>
+    <div class="card-body">
+      <div class="row g-2 mb-2">
+        <div class="col-md-4">
+          <input type="text" name="exam_name[]" placeholder="Examination" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-2">
+          <input type="text" name="exam_year[]" placeholder="Year" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-3">
+          <input type="text" name="exam_no[]" placeholder="Exam No" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-3">
+          <input type="text" name="centre_no[]" placeholder="Centre No" class="form-control form-control-sm border-success">
+        </div>
+      </div>
+    </div>
+  </div>
 
-                        <!-- O'Level Results -->
-                        <div class="mb-4">
-                            <h6 class="fw-semibold text-success mb-2">O'Level Results</h6>
-                            <p class="small text-muted">NOTE: If you are combining two results, fill first and second sittings before submitting.</p>
+  <!-- O'Level Results -->
+  <div class="card border-success mb-3">
+    <div class="card-header bg-success text-white">O'Level Results</div>
+    <div class="card-body">
 
-                            <!-- First Sitting -->
-                            <div class="mb-3 border rounded p-3">
-                                <h6 class="fw-semibold text-success mb-2">First Sitting</h6>
-                                <div class="row g-2 mb-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-semibold">Exam Type</label>
-                                        <input type="text" name="first_exam_type" class="form-control form-control-sm border-success">
-                                    </div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">ENGLISH</label>
-                                        <input type="text" name="english1" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">MATHEMATICS</label>
-                                        <input type="text" name="math1" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">BIOLOGY</label>
-                                        <input type="text" name="bio1" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">CHEMISTRY</label>
-                                        <input type="text" name="chem1" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">PHYSICS</label>
-                                        <input type="text" name="phy1" class="form-control form-control-sm border-success">
-                                    </div>
-                                </div>
-                            </div>
+      <h6 class="fw-semibold text-success">First Sitting</h6>
+      <div class="row g-2 mb-2">
+        <div class="col-md-6 mb-2">
+          <div class="d-flex gap-2">
+            <select name="first_subject[]" class="form-select form-select-sm border-success">
+              <option value="">Select Subject</option>
+              <option>English Language</option>
+              <option>Mathematics</option>
+              <option>Biology</option>
+              <option>Chemistry</option>
+              <option>Physics</option>
+              <option>Agricultural Science</option>
+              <option>Economics</option>
+              <option>Government</option>
+              <option>Literature in English</option>
+              <option>Geography</option>
+            </select>
+            <select name="first_grade[]" class="form-select form-select-sm border-success">
+              <option value="">Grade</option>
+              <option>A1</option><option>B2</option><option>B3</option>
+              <option>C4</option><option>C5</option><option>C6</option>
+              <option>D7</option><option>E8</option><option>F9</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-                            <!-- Second Sitting -->
-                            <div class="border rounded p-3">
-                                <h6 class="fw-semibold text-success mb-2">Second Sitting</h6>
-                                <div class="row g-2 mb-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-semibold">Exam Type</label>
-                                        <input type="text" name="second_exam_type" class="form-control form-control-sm border-success">
-                                    </div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">ENGLISH</label>
-                                        <input type="text" name="english2" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">MATHEMATICS</label>
-                                        <input type="text" name="math2" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">BIOLOGY</label>
-                                        <input type="text" name="bio2" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">CHEMISTRY</label>
-                                        <input type="text" name="chem2" class="form-control form-control-sm border-success">
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="form-label small">PHYSICS</label>
-                                        <input type="text" name="phy2" class="form-control form-control-sm border-success">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+      <h6 class="fw-semibold text-success">Second Sitting</h6>
+      <div class="row g-2 mb-2">
+        <div class="col-md-6 mb-2">
+          <div class="d-flex gap-2">
+            <select name="second_subject[]" class="form-select form-select-sm border-success">
+              <option value="">Select Subject</option>
+              <option>English Language</option>
+              <option>Mathematics</option>
+              <option>Biology</option>
+              <option>Chemistry</option>
+              <option>Physics</option>
+              <option>Agricultural Science</option>
+              <option>Economics</option>
+              <option>Government</option>
+              <option>Literature in English</option>
+              <option>Geography</option>
+            </select>
+            <select name="second_grade[]" class="form-select form-select-sm border-success">
+              <option value="">Grade</option>
+              <option>A1</option><option>B2</option><option>B3</option>
+              <option>C4</option><option>C5</option><option>C6</option>
+              <option>D7</option><option>E8</option><option>F9</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                        <!-- JAMB Details -->
-                        <div class="mb-4">
-                            <h6 class="fw-semibold text-success mb-2">JAMB Details</h6>
-                            <div class="row g-2">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label small fw-semibold">JAMB No</label>
-                                    <input type="text" name="jamb_no" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label small fw-semibold">Score</label>
-                                    <input type="text" name="jamb_score" class="form-control form-control-sm border-success">
-                                </div>
-                            </div>
-                        </div>
+  <!-- JAMB Details -->
+  <div class="card border-success mb-3">
+    <div class="card-header bg-success text-white">JAMB Details</div>
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <input type="text" name="jamb_no" placeholder="JAMB No" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-6">
+          <input type="text" name="jamb_score" placeholder="Score" class="form-control form-control-sm border-success">
+        </div>
+      </div>
+    </div>
+  </div>
 
-                        <!-- Document Uploads -->
-                        <div>
-                            <h6 class="fw-semibold text-success mb-2">Upload Documents</h6>
-                            <div class="row g-2">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Upload Resume</label>
-                                    <input type="file" name="resume" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Supporting Document</label>
-                                    <input type="file" name="supporting_document" class="form-control form-control-sm border-success">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <!-- Documents -->
+  <div class="card border-success">
+    <div class="card-header bg-success text-white">Documents</div>
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col-md-6 mb-2">
+          <label class="small mb-1">Upload Resume</label>
+          <input type="file" name="resume" class="form-control form-control-sm border-success">
+        </div>
+        <div class="col-md-6 mb-2">
+          <label class="small mb-1">Supporting Document</label>
+          <input type="file" name="supporting_document" class="form-control form-control-sm border-success">
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 
                         <!-- Step 4: Review -->
                         <div class="step-content d-none" id="step-4">
