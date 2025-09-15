@@ -23,17 +23,17 @@ class HomeController extends Controller
     $user = Auth::user();
     $assets = ['chart', 'animation'];
 
-    // Check if the user has already submitted an application
-   $hasSubmitted = Application::where('application_id', Auth::user()->mat_id)->exists();
-//    dd($user->mat_id, $hasSubmitted);
+    // Check if the user has submitted an application
+    $hasSubmitted = Application::where('application_id', $user->mat_id)->exists();
 
+    // Retrieve the application record if it exists (for PDF link)
+    $application = $hasSubmitted 
+        ? Application::where('application_id', $user->mat_id)->first() 
+        : null;
 
-    // Pass data to the dashboard view
-    return view('dashboards.dashboard', compact('assets', 'hasSubmitted'));
+    // Pass data to the view
+    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application'));
 }
-
-
-
 public function downloadQR()
     {
         // Get the authenticated user

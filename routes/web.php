@@ -82,6 +82,8 @@ Route::get('/clear', function () {
     Route::post('/application-submit', [ApplicationController::class, 'store'])->name('application.submit');
     Route::get('/application-preview/{id}', [ApplicationController::class, 'preview'])->name('application.preview');
     Route::get('/application/slip', [ApplicationController::class, 'slip'])->name('application.slip');
+    Route::get('/applications/{id}/acknowledgment', [ApplicationController::class, 'show'])->name('applications.show');
+
 
     // Permission Module
     Route::get('/role-permission', [RolePermission::class, 'index'])->name('role.permission.list');

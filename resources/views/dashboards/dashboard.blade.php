@@ -3,10 +3,14 @@
         <div class="container">
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
-                    @if($hasSubmitted)
-                    <div class="alert alert-success text-center">
-                        You have already submitted your application.
-                    </div>
+        @if($hasSubmitted)
+                <div class="alert alert-success text-center">
+                    You have already submitted your application.
+                    <br>
+                    <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-primary mt-2">
+                        View Acknowledgment Slip
+                    </a>
+                </div>
                 @else
                     <!-- Heading -->
                     <div class="text-center mb-5">

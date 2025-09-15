@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class ApplicationController extends Controller
 {
@@ -58,9 +59,21 @@ class ApplicationController extends Controller
         $data['second_subjects'] = $request->second_subject ?? [];
         $data['second_grades'] = $request->second_grade ?? [];
 
-        Application::create($data);
+        $application = Application::create($data);
 
-        return back()->with('success','Application submitted successfully!');
+        // Redirect to the acknowledgment slip view
+        return redirect()->route('applications.show', $application->id)
+                         ->with('success','Application submitted successfully!');
+    }
+
+    // New method to show acknowledgment slip
+    public function show($id)
+    {
+        $application = Application::findOrFail($id);
+
+        // Generate PDF and stream it in the browser
+        $pdf = PDF::loadView('applications.acknowledgment', compact('application'));
+
+        return $pdf->stream('Acknowledgment_Slip_'.$application->application_id.'.pdf');
     }
 }
-    
