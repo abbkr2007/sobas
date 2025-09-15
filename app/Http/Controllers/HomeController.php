@@ -14,68 +14,27 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
 
+use App\Models\Application;
+
 class HomeController extends Controller
 {
-    public function index(Request $request)
-    {
-        // Get the authenticated user
-        $user = Auth::user();
+   public function index(Request $request)
+{
+    $user = Auth::user();
+    $assets = ['chart', 'animation'];
 
-        // Define the available themes for filtering
-        $themes = [
-            'Party politics and Development in Nigeria (An Open Forum)',
-            'Capacity for development',
-            'Distorted and dependent Model of Capitalism',
-            'Leadership, Politics and (Mis)Governance',
-            'Citizenship, National Vision and Nation Building',
-            'National Security and Socio-Economic Development',
-            'Class Conflicts, Egalitarianism and Social Justice',
-            'Patriotism, National Interest and the Future of Nigeria'
-        ];
+    // Check if the user has already submitted an application
+   $hasSubmitted = Application::where('application_id', Auth::user()->mat_id)->exists();
+//    dd($user->mat_id, $hasSubmitted);
 
-        // Check if a theme filter is applied
-        $themeFilter = $request->get('theme');
 
-        if ($user->user_type === 'admin') {
-            // Fetch all documents with pagination if the user is an admin
-            $query = Document::query();
+    // Pass data to the dashboard view
+    return view('dashboards.dashboard', compact('assets', 'hasSubmitted'));
+}
 
-            if ($themeFilter && $themeFilter !== 'all') {
-                // Apply theme filter if selected
-                $query->where('theme', $themeFilter);
-            }
 
-            $documents = $query->paginate(10); // Adjust the number as needed
-            // Get the count of all submissions (for admin)
-            $submissionCount = Document::count();
-        } else {
-            // Fetch only the documents associated with the authenticated user with pagination
-            $query = Document::where('created_by', $user->id);
 
-            if ($themeFilter && $themeFilter !== 'all') {
-                // Apply theme filter if selected
-                $query->where('theme', $themeFilter);
-            }
-
-            $documents = $query->paginate(10);
-            // Get the count of submissions for the authenticated user
-            $submissionCount = Document::where('created_by', $user->id)->count();
-        }
-
-        // Generate QR code for the user (based on email or ID)
-        $barcode = QrCode::size(120)->generate($user->email); // You can change to $user->id
-
-        // Assets for the dashboard view
-        $assets = ['chart', 'animation'];
-
-        // Pass data to the view
-        // return view('dashboards.dashboard', compact('assets', 'documents', 'submissionCount', 'themes', 'themeFilter'));
-
-        return view('dashboards.dashboard', compact('assets', 'documents', 'submissionCount', 'themes', 'themeFilter', 'barcode'));
-
-    }
-
-    public function downloadQR()
+public function downloadQR()
     {
         // Get the authenticated user
         $user = Auth::user();

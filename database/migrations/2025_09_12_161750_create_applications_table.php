@@ -9,7 +9,14 @@ return new class extends Migration {
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
-            $table->string('application_id');
+
+            // Link to users.mat_id
+            $table->string('application_id', 255);
+            $table->foreign('application_id')
+                  ->references('mat_id')
+                  ->on('users')
+                  ->onDelete('cascade');
+
             $table->string('surname');
             $table->string('firstname');
             $table->string('middlename')->nullable();
@@ -30,10 +37,8 @@ return new class extends Migration {
             $table->string('application_type');
             $table->string('photo')->nullable();
 
-            // academic
             $table->json('schools')->nullable();
 
-            // O'level 1
             $table->string('first_exam_type')->nullable();
             $table->string('first_exam_year')->nullable();
             $table->string('first_exam_number')->nullable();
@@ -41,7 +46,6 @@ return new class extends Migration {
             $table->json('first_subjects')->nullable();
             $table->json('first_grades')->nullable();
 
-            // O'level 2
             $table->string('second_exam_type')->nullable();
             $table->string('second_exam_year')->nullable();
             $table->string('second_exam_number')->nullable();

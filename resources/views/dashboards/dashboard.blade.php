@@ -3,7 +3,11 @@
         <div class="container">
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
-
+                    @if($hasSubmitted)
+                    <div class="alert alert-success text-center">
+                        You have already submitted your application.
+                    </div>
+                @else
                     <!-- Heading -->
                     <div class="text-center mb-5">
                         <h2 class="fw-bold text-success mb-2">Application Form</h2>
@@ -185,29 +189,31 @@
                     
 
                       <!-- Step 3: Academic Records & Documents -->
-<div class="step-content" id="step-2">
-  <h5 class="fw-bold text-success mb-3">Academic Records</h5>
+                    <div class="step-content" id="step-2">
+                    <h5 class="fw-bold text-success mb-3">Academic Records</h5>
 
-  <!-- Schools Attended -->
-<div class="card border-success mb-3">
-  <div class="card-body p-2">
-    <div class="row g-2 align-items-center mb-2">
-      <div class="col-6 col-md-6">
-        <input type="text" name="school_name[]" placeholder="School Name"
-               class="form-control form-control-sm border-success">
-      </div>
-      <div class="col-3 col-md-3">
-        <input type="text" name="school_from[]" placeholder="From (YYYY)"
-               class="form-control form-control-sm border-success">
-      </div>
-      <div class="col-3 col-md-3">
-        <input type="text" name="school_to[]" placeholder="To (YYYY)"
-               class="form-control form-control-sm border-success">
-      </div>
-    </div>
-  </div>
-</div>
-
+                    <!-- Schools Attended -->
+                    <div class="card border-success mb-3" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-header bg-success text-white py-1 px-2" style="font-size: 0.9rem;">
+                        Schools Attended
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <input type="text" name="school_name[]" placeholder="School Name"
+                                class="form-control form-control-sm border-success">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="school_from[]" placeholder="From (YYYY)"
+                                class="form-control form-control-sm border-success">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="school_to[]" placeholder="To (YYYY)"
+                                class="form-control form-control-sm border-success">
+                        </div>
+                        </div>
+                    </div>
+                    </div>
 
 
   <!-- O'Level Results -->
@@ -540,4 +546,5 @@ const lgas = {
             }
         </script>
     </section>
+    @endif
 </x-app-layout>
