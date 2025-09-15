@@ -9,13 +9,13 @@ return new class extends Migration {
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
-            $table->string('application_id')->nullable();
+            $table->string('application_id');
             $table->string('surname');
             $table->string('firstname');
             $table->string('middlename')->nullable();
             $table->string('phone');
             $table->string('email');
-            $table->string('dob'); // we'll accept dd/mm/YYYY string
+            $table->string('dob');
             $table->string('place_of_birth')->nullable();
             $table->string('gender');
             $table->string('state');
@@ -28,12 +28,27 @@ return new class extends Migration {
             $table->string('guardian_address')->nullable();
             $table->string('guardian_phone')->nullable();
             $table->string('application_type');
-            $table->string('photo')->nullable(); // store path
+            $table->string('photo')->nullable();
+
+            // academic
             $table->json('schools')->nullable();
-            $table->json('first_sitting')->nullable();
-            $table->json('second_sitting')->nullable();
-            $table->string('jamb_no')->nullable();
-            $table->string('jamb_score')->nullable();
+
+            // O'level 1
+            $table->string('first_exam_type')->nullable();
+            $table->string('first_exam_year')->nullable();
+            $table->string('first_exam_number')->nullable();
+            $table->string('first_center_number')->nullable();
+            $table->json('first_subjects')->nullable();
+            $table->json('first_grades')->nullable();
+
+            // O'level 2
+            $table->string('second_exam_type')->nullable();
+            $table->string('second_exam_year')->nullable();
+            $table->string('second_exam_number')->nullable();
+            $table->string('second_center_number')->nullable();
+            $table->json('second_subjects')->nullable();
+            $table->json('second_grades')->nullable();
+
             $table->timestamps();
         });
     }

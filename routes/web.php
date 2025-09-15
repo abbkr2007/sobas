@@ -72,31 +72,22 @@ Route::get('/clear', function () {
 
     Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])->name('payment.redirectToGateway');
     Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
-
     Route::get('/slip', [SlipController::class, 'index'])->name('slip');
 
 
     Route::group(['middleware' => 'auth'], function () {
-    
-   
 
-Route::get('/application', [ApplicationController::class, 'create'])->name('application.form');
-Route::post('/application-submit', [ApplicationController::class, 'store'])->name('application.submit');
-Route::get('/application-preview/{id}', [ApplicationController::class, 'preview'])->name('application.preview');
+    // Application Form
+    Route::get('/application', [ApplicationController::class, 'create'])->name('application.form');
+    Route::post('/application-submit', [ApplicationController::class, 'store'])->name('application.submit');
+    Route::get('/application-preview/{id}', [ApplicationController::class, 'preview'])->name('application.preview');
+    Route::get('/application/slip', [ApplicationController::class, 'slip'])->name('application.slip');
 
     // Permission Module
     Route::get('/role-permission', [RolePermission::class, 'index'])->name('role.permission.list');
     Route::resource('permission', PermissionController::class);
     Route::resource('role', RoleController::class);
-    Route::get('/application', [ApplicationController::class, 'showForm'])->name('application.show');
-  
 
-    Route::post('/application/submit', [ApplicationController::class, 'submitForm'])->name('application.submit');
-
-    // Paystack payment
-
-
-    Route::get('/application/slip', [ApplicationController::class, 'slip'])->name('application.slip');
     // Dashboard Routes
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/submit-paper', [HomeController::class, 'submit_paper'])->name('submit-paper');
@@ -104,9 +95,7 @@ Route::get('/application-preview/{id}', [ApplicationController::class, 'preview'
     Route::get('/documents/{id}', [DocumentController::class, 'download'])->name('documents.download');
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
-    Route::get('/download-qr', [HomeController::class, 'downloadQR'])->name('download.qr');
-    Route::get('/documents/update-status/{id}/{status}', [DocumentController::class, 'updateStatus'])->name('documents.updateStatus');
-
+   
 
 
 
