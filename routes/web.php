@@ -77,6 +77,13 @@ Route::get('/clear', function () {
 
 
     Route::group(['middleware' => 'auth'], function () {
+    
+   
+
+Route::get('/application', [ApplicationController::class, 'create'])->name('application.form');
+Route::post('/application-submit', [ApplicationController::class, 'store'])->name('application.submit');
+Route::get('/application-preview/{id}', [ApplicationController::class, 'preview'])->name('application.preview');
+
     // Permission Module
     Route::get('/role-permission', [RolePermission::class, 'index'])->name('role.permission.list');
     Route::resource('permission', PermissionController::class);
@@ -98,7 +105,6 @@ Route::get('/clear', function () {
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     Route::get('/download-qr', [HomeController::class, 'downloadQR'])->name('download.qr');
-    
     Route::get('/documents/update-status/{id}/{status}', [DocumentController::class, 'updateStatus'])->name('documents.updateStatus');
 
 
