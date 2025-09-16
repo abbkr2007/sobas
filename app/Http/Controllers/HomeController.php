@@ -34,6 +34,8 @@ class HomeController extends Controller
     // Pass data to the view
     return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application'));
 }
+
+
 public function downloadQR()
     {
         // Get the authenticated user

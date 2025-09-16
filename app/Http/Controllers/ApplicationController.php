@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -35,8 +36,24 @@ class ApplicationController extends Controller
         ]);
 
         // handle photo upload
-        if($request->hasFile('photo')){
-            $data['photo'] = $request->file('photo')->store('photos','public');
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $extension = strtolower($photo->getClientOriginalExtension());
+
+            $filename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+
+            // If JPEG/JPG, convert to PNG
+            if (in_array($extension, ['jpeg', 'jpg'])) {
+                $image = Image::make($photo->getRealPath())->encode('png');
+                $filename .= '.png';
+                Storage::disk('public')->put('photos/' . $filename, (string) $image);
+            } else {
+                // For PNG or other formats, store as-is
+                $filename .= '.' . $extension;
+                $photo->storeAs('photos', $filename, 'public');
+            }
+
+            $data['photo'] = 'photos/' . $filename;
         }
 
         // combine schools
@@ -74,6 +91,8 @@ class ApplicationController extends Controller
         // Generate PDF and stream it in the browser
         $pdf = PDF::loadView('applications.acknowledgment', compact('application'));
 
-        return $pdf->stream('Acknowledgment_Slip_'.$application->application_id.'.pdf');
+        return $pdf->stream('Biodata_'.$application->application_id.'.pdf');
+        $pdf->setOptions(['isRemoteEnabled' => true]);
+        
     }
 }
