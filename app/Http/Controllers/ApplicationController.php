@@ -84,15 +84,11 @@ class ApplicationController extends Controller
     }
 
     // New method to show acknowledgment slip
-    public function show($id)
-    {
-        $application = Application::findOrFail($id);
+public function show($id)
+{
+    $application = Application::findOrFail($id);
 
-        // Generate PDF and stream it in the browser
-        $pdf = PDF::loadView('applications.acknowledgment', compact('application'));
-
-        return $pdf->stream('Biodata_'.$application->application_id.'.pdf');
-        $pdf->setOptions(['isRemoteEnabled' => true]);
-        
-    }
+    // Load an HTML view instead of PDF
+    return view('applications.acknowledgment', compact('application'));
+}
 }
