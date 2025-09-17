@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
             'phone_number' => 'required|string|max:20',
         ]);
 
-        $amountInKobo = 630000; // ₦6,300
+        $amountInKobo = 650000; // ₦6,300
 
         $request->session()->put('user_data', [
             'first_name'   => $request->first_name,
