@@ -95,8 +95,9 @@
             <div class="header-center">
                 <img src="{{ asset('images/logo.png') }}" class="logo" alt="Logo">
                 <div class="title">Bio Data Form</div>
-                <div class="subtitle">Application ID: <strong>{{ $application->application_id }}</strong></div>
                 <div class="fullname">Full Name: <strong>{{ $application->surname }} {{ $application->firstname }} {{ $application->middlename }}</strong></div>
+                 <div class="fullname">Application Type: <strong>{{ $application->application_type }}</strong></div>
+                <div class="subtitle">Application ID: <strong>{{ $application->application_id }}</strong></div>
             </div>
             <img src="{{ asset($application->photo) }}" class="photo" alt="Photo">
 
@@ -111,9 +112,9 @@
                 <tr><td><strong>Gender:</strong> {{ $application->gender }}</td><td><strong>State:</strong> {{ $application->state }}</td></tr>
                 <tr><td><strong>LGA:</strong> {{ $application->lga }}</td><td><strong>Town:</strong> {{ $application->town }}</td></tr>
                 <tr><td><strong>Country:</strong> {{ $application->country }}</td><td><strong>Foreign Country:</strong> {{ $application->foreign_country }}</td></tr>
-                <tr><td><strong>Home Address:</strong> {{ $application->home_address }}</td><td><strong>Application Type:</strong> {{ $application->application_type }}</td></tr>
-                <tr><td><strong>Guardian:</strong> {{ $application->guardian }}</td><td><strong>Guardian Phone:</strong> {{ $application->guardian_phone }}</td></tr>
-                <tr><td colspan="2"><strong>Guardian Address:</strong> {{ $application->guardian_address }}</td></tr>
+                <tr><td><strong>Home Address:</strong> {{ $application->home_address }}</td><td><strong>Guardian:</strong> {{ $application->guardian }}</td></tr>
+                <tr><td><strong>Guardian Phone:</strong> {{ $application->guardian_phone }}</td><td colspan="2"><strong>Guardian Address:</strong> {{ $application->guardian_address }}</td></tr>
+            
             </table>
         </div>
 
