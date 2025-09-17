@@ -29,176 +29,199 @@
 
                         <!-- Step 1: Bio Data -->
                         <div class="step-content" id="step-1">
-                            <h5 class="fw-bold text-success mb-3" style="font-size:1.2rem;">Bio Data</h5>
+                        <h5 class="fw-bold text-success mb-3" style="font-size:1.2rem;">Bio Data</h5>
 
-                            <!-- Photo Centered -->
-                            <div class="text-center mb-4">
-                                <label class="form-label fw-semibold small mb-1 d-block">Passport Photo</label>
-                                <div class="border border-success rounded-3 mb-2 mx-auto"
-                                    style="width:140px; height:140px; overflow:hidden;">
-                                    <img id="photoPreview" src="{{ asset('images/person.png') }}" 
-                                        alt="Photo Preview" class="img-fluid w-100 h-100" style="object-fit:cover;">
-                                </div>
-                                <input type="file" name="photo" accept="image/*"
-                                    class="form-control form-control-sm border-success w-auto mx-auto"
-                                    onchange="previewPhoto(event)" required>
+                        <!-- Photo Centered -->
+                        <div class="text-center mb-4">
+                            <label class="form-label fw-semibold small mb-1 d-block">Passport Photo</label>
+                            <div class="border border-success rounded-3 mb-2 mx-auto"
+                                style="width:140px; height:140px; overflow:hidden;">
+                                <img id="photoPreview" src="{{ asset('images/person.png') }}" 
+                                    alt="Photo Preview" class="img-fluid w-100 h-100" style="object-fit:cover;">
+                            </div>
+                            <input type="file" name="photo" accept="image/*"
+                                class="form-control form-control-sm border-success w-auto mx-auto"
+                                onchange="previewPhoto(event)" required>
+                            @error('photo')<div class="text-danger small">{{ $message }}</div>@enderror
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Matric Number</label>
+                                <input type="text" name="application_id" 
+                                    class="form-control form-control-sm border-success" 
+                                    value="{{ auth()->user()->mat_id }}" readonly>
                             </div>
 
-                            <div class="row g-2">
-                              <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Matric Number</label>
-                                    <input type="text" name="application_id" 
-                                        class="form-control form-control-sm border-success" 
-                                        value="{{ auth()->user()->mat_id }}" 
-                                        readonly>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Surname</label>
-                                    <input type="text" name="surname" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Firstname</label>
-                                    <input type="text" name="firstname" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Middlename</label>
-                                    <input type="text" name="middlename" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Phone Number</label>
-                                    <input type="text" name="phone" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Email Address</label>
-                                    <input type="email" name="email" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Date of Birth</label>
-                                    <input type="text" name="dob" class="form-control form-control-sm border-success" placeholder="dd/mm/yyyy" required>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Place of Birth</label>
-                                    <input type="text" name="place_of_birth" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Gender</label>
-                                    <select name="gender" class="form-select form-select-sm border-success" required>
-                                        <option value="">-- Select --</option>
-                                        <option>Male</option>
-                                        <option>Female</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">State</label>
-                                    <select name="state" id="state" class="form-select form-select-sm border-success" required onchange="populateLGA()">
-                                        <option value="">-- Select --</option>
-                                        <option>Abia</option>
-                                        <option>Adamawa</option>
-                                        <option>Akwa Ibom</option>
-                                        <option>Anambra</option>
-                                        <option>Bauchi</option>
-                                        <option>Bayelsa</option>
-                                        <option>Benue</option>
-                                        <option>Borno</option>
-                                        <option>Cross River</option>
-                                        <option>Delta</option>
-                                        <option>Ebonyi</option>
-                                        <option>Edo</option>
-                                        <option>Ekiti</option>
-                                        <option>Enugu</option>
-                                        <option>FCT</option>
-                                        <option>Gombe</option>
-                                        <option>Imo</option>
-                                        <option>Jigawa</option>
-                                        <option>Kaduna</option>
-                                        <option>Kano</option>
-                                        <option>Katsina</option>
-                                        <option>Kebbi</option>
-                                        <option>Kogi</option>
-                                        <option>Kwara</option>
-                                        <option>Lagos</option>
-                                        <option>Nasarawa</option>
-                                        <option>Niger</option>
-                                        <option>Ogun</option>
-                                        <option>Ondo</option>
-                                        <option>Osun</option>
-                                        <option>Oyo</option>
-                                        <option>Plateau</option>
-                                        <option>Rivers</option>
-                                        <option>Sokoto</option>
-                                        <option>Taraba</option>
-                                        <option>Yobe</option>
-                                        <option>Zamfara</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">LGA</label>
-                                    <select name="lga" id="lga" class="form-select form-select-sm border-success" required>
-                                        <option value="">-- Select State First --</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Town</label>
-                                    <input type="text" name="town" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Country</label>
-                                    <input type="text" name="country" class="form-control form-control-sm border-success" required>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Specify (Foreign Students)</label>
-                                    <input type="text" name="foreign_country" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Home Address</label>
-                                    <input type="text" name="home_address" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Guardian</label>
-                                    <input type="text" name="guardian" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Guardian Address</label>
-                                    <input type="text" name="guardian_address" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Guardian Phone</label>
-                                    <input type="text" name="guardian_phone" class="form-control form-control-sm border-success">
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label fw-semibold small mb-1">Application Type</label>
-                                      <select name="application_type" class="form-select form-select-sm border-success" required>
-                                		<option selected>-- Application Type: --</option> 
-                                        <option>Matric Arts</option>
-                                        <option>Matric Arabic & Islamic Studies</option>
-                                        <option>Matric Management Sciences</option>
-                                        <option>Matric Science</option>
-                                        <option>Matric Social Sciences</option>
-                                        <option>Matric Law</option>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Surname</label>
+                                <input type="text" name="surname" class="form-control form-control-sm border-success" required>
+                                @error('surname')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
 
-                                        <option>Remedial Arts</option>
-                                        <option>Remedial Arabic & Islamic Studies</option>
-                                        <option>Remedial Management Sciences</option>
-                                        <option>Remedial Science</option>
-                                        <option>Remedial Social Sciences</option>
-                                        <option>Remedial Law</option>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Firstname</label>
+                                <input type="text" name="firstname" class="form-control form-control-sm border-success" required>
+                                @error('firstname')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
 
-                                        <option>JAMB Training Science</option>
-                                        <option>JAMB Training Accounting</option>
-                                        <option>JAMB Training Economics</option>
-                                        <option>JAMB Training Political Science</option>
-                                        <option>JAMB Training Sociology</option>
-                                        <option>JAMB Training Business Admin</option>
-                                        <option>JAMB Training Public Admin</option>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Middlename</label>
+                                <input type="text" name="middlename" class="form-control form-control-sm border-success">
+                            </div>
 
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Phone Number</label>
+                                <input type="text" name="phone" class="form-control form-control-sm border-success" required>
+                                @error('phone')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
 
-                                </select> 
-                                  
-                                        
-                                </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Email Address</label>
+                                <input type="email" name="email" class="form-control form-control-sm border-success" required>
+                                @error('email')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Date of Birth</label>
+                                <input type="text" name="dob" class="form-control form-control-sm border-success" placeholder="dd/mm/yyyy" required>
+                                @error('dob')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Place of Birth</label>
+                                <input type="text" name="place_of_birth" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Gender</label>
+                                <select name="gender" class="form-select form-select-sm border-success" required>
+                                    <option value="">-- Select --</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                                @error('gender')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">State</label>
+                                <select name="state" id="state" class="form-select form-select-sm border-success" required onchange="populateLGA()">
+                                    <option value="">-- Select --</option>
+                                    <option>Abia</option>
+                                    <option>Adamawa</option>
+                                    <option>Akwa Ibom</option>
+                                    <option>Anambra</option>
+                                    <option>Bauchi</option>
+                                    <option>Bayelsa</option>
+                                    <option>Benue</option>
+                                    <option>Borno</option>
+                                    <option>Cross River</option>
+                                    <option>Delta</option>
+                                    <option>Ebonyi</option>
+                                    <option>Edo</option>
+                                    <option>Ekiti</option>
+                                    <option>Enugu</option>
+                                    <option>FCT</option>
+                                    <option>Gombe</option>
+                                    <option>Imo</option>
+                                    <option>Jigawa</option>
+                                    <option>Kaduna</option>
+                                    <option>Kano</option>
+                                    <option>Katsina</option>
+                                    <option>Kebbi</option>
+                                    <option>Kogi</option>
+                                    <option>Kwara</option>
+                                    <option>Lagos</option>
+                                    <option>Nasarawa</option>
+                                    <option>Niger</option>
+                                    <option>Ogun</option>
+                                    <option>Ondo</option>
+                                    <option>Osun</option>
+                                    <option>Oyo</option>
+                                    <option>Plateau</option>
+                                    <option>Rivers</option>
+                                    <option>Sokoto</option>
+                                    <option>Taraba</option>
+                                    <option>Yobe</option>
+                                    <option>Zamfara</option>
+                                </select>
+                                @error('state')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">LGA</label>
+                                <select name="lga" id="lga" class="form-select form-select-sm border-success" required>
+                                    <option value="">-- Select State First --</option>
+                                </select>
+                                @error('lga')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Town</label>
+                                <input type="text" name="town" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Country</label>
+                                <input type="text" name="country" class="form-control form-control-sm border-success" required>
+                                @error('country')<div class="text-danger small">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Specify (Foreign Students)</label>
+                                <input type="text" name="foreign_country" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Home Address</label>
+                                <input type="text" name="home_address" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Guardian</label>
+                                <input type="text" name="guardian" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Guardian Address</label>
+                                <input type="text" name="guardian_address" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Guardian Phone</label>
+                                <input type="text" name="guardian_phone" class="form-control form-control-sm border-success">
+                            </div>
+
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-semibold small mb-1">Application Type</label>
+                                <select name="application_type" class="form-select form-select-sm border-success" required>
+                                    <option value="">-- Application Type: --</option> 
+                                    <option>Matric Arts</option>
+                                    <option>Matric Arabic & Islamic Studies</option>
+                                    <option>Matric Management Sciences</option>
+                                    <option>Matric Science</option>
+                                    <option>Matric Social Sciences</option>
+                                    <option>Matric Law</option>
+                                    <option>Remedial Arts</option>
+                                    <option>Remedial Arabic & Islamic Studies</option>
+                                    <option>Remedial Management Sciences</option>
+                                    <option>Remedial Science</option>
+                                    <option>Remedial Social Sciences</option>
+                                    <option>Remedial Law</option>
+                                    <option>JAMB Training Science</option>
+                                    <option>JAMB Training Accounting</option>
+                                    <option>JAMB Training Economics</option>
+                                    <option>JAMB Training Political Science</option>
+                                    <option>JAMB Training Sociology</option>
+                                    <option>JAMB Training Business Admin</option>
+                                    <option>JAMB Training Public Admin</option>
+                                </select>
+                                @error('application_type')<div class="text-danger small">{{ $message }}</div>@enderror
                             </div>
                         </div>
+                    </div>
+
 
                     
 
