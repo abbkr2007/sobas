@@ -98,7 +98,8 @@
                 <div class="subtitle">Application ID: <strong>{{ $application->application_id }}</strong></div>
                 <div class="fullname">Full Name: <strong>{{ $application->surname }} {{ $application->firstname }} {{ $application->middlename }}</strong></div>
             </div>
-            <img src="{{ asset('images/photos/' . basename($application->photo)) }}" class="photo" alt="Photo">
+            <img src="{{ asset($application->photo) }}" class="photo" alt="Photo">
+
         </div>
 
         <!-- Personal Details -->

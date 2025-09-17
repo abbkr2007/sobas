@@ -84,7 +84,7 @@
 
                             <div class="col-md-3 mb-2">
                                 <label class="form-label fw-semibold small mb-1">Date of Birth</label>
-                                <input type="text" name="dob" class="form-control form-control-sm border-success" placeholder="dd/mm/yyyy" required>
+                                <input type="date" name="dob" class="form-control form-control-sm border-success" placeholder="dd/mm/yyyy" required>
                                 @error('dob')<div class="text-danger small">{{ $message }}</div>@enderror
                             </div>
 
