@@ -170,19 +170,29 @@
                                     <label class="form-label fw-semibold small mb-1">Application Type</label>
                                       <select name="application_type" class="form-select form-select-sm border-success" required>
                                 		<option selected>-- Application Type: --</option> 
+                                        <option>Matric Arts</option>
+                                        <option>Matric Arabic & Islamic Studies</option>
+                                        <option>Matric Management Sciences</option>
                                         <option>Matric Science</option>
+                                        <option>Matric Social Sciences</option>
+                                        <option>Matric Law</option>
+
+                                        <option>Remedial Arts</option>
+                                        <option>Remedial Arabic & Islamic Studies</option>
+                                        <option>Remedial Management Sciences</option>
                                         <option>Remedial Science</option>
-                                        <option>Remedial French</option>
-                                        <option>Jamb Training Science</option>
-                                        
-                                        <option>Jamb Training Accounting</option>
-                                        <option>Jamb Training Economics</option>
-                                        <option>Jamb Training Political Science</option>
-                                        <option>Jamb Training Sociology</option>
-                                        
-                                        <option>Jamb Training Business Admin</option>
-                                        <option>Jamb Training Public Admin</option>
-                                        <option>Extra Moral Class</option>
+                                        <option>Remedial Social Sciences</option>
+                                        <option>Remedial Law</option>
+
+                                        <option>JAMB Training Science</option>
+                                        <option>JAMB Training Accounting</option>
+                                        <option>JAMB Training Economics</option>
+                                        <option>JAMB Training Political Science</option>
+                                        <option>JAMB Training Sociology</option>
+                                        <option>JAMB Training Business Admin</option>
+                                        <option>JAMB Training Public Admin</option>
+
+
                                 </select> 
                                   
                                         
