@@ -6,7 +6,8 @@
     <div class="col-12 col-lg-6 d-flex justify-content-center align-items-start p-3 p-lg-5">
         <div class="w-100 p-4 p-lg-5 shadow-sm rounded" 
              style="background-color: #ffffff; color: #333;">
-            <h3 class="fw-bold mb-4 display-6 text-primary">Guidelines for Online Application</h3>
+           <h5 class="fw-bold mb-4 text-primary">Guidelines for Online Application</h5>
+
             <ol class="fs-6" style="line-height: 2;">
                 <li>🖥️ Visit <a href="https://sobas.cloud/" class="text-primary text-decoration-underline fw-bold" target="_blank">https://sobas.cloud/</a> to access the online application portal.</li>
                 <li>✏️ Fill in all required fields carefully with accurate personal information, including <strong>First Name, Last Name, Email, and Mobile Number</strong>.</li>
