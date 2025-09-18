@@ -3,31 +3,25 @@
         <div class="container">
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
-                 @if(session('success'))
-                  <!-- <div class="alert alert-success text-center">
-                      {{ session('success') }}
-                  </div> -->
+              <div class="container py-5">
+              @if(auth()->check() && auth()->user()->user_type === 'admin')
+                  <div class="alert alert-success text-center">
+                      Welcome, Admin!
+                  </div>
+              @endif
 
+              @if(session('success'))
                   <script>
                       // open acknowledgment page in new tab
                       window.open("{{ route('applications.show', session('application_id')) }}", "_blank");
 
-                      // refresh the form page after 1 second
+                      // refresh the form page after 6 seconds
                       setTimeout(() => {
                           window.location.reload();
                       }, 6000);
                   </script>
 
               @elseif($hasSubmitted)
-                  <div class="alert alert-success text-center">
-                      You have already submitted your application.
-                      <br>
-                      <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-primary mt-2">
-                          View Acknowledgment Slip
-                      </a>
-                  </div>
-
-              @else
                     <!-- Heading -->
                     <div class="text-center mb-5">
                         <h2 class="fw-bold text-success mb-2">Application Form</h2>
@@ -72,19 +66,19 @@
 
                             <div class="col-md-3 mb-2">
                                 <label class="form-label fw-semibold small mb-1">Surname</label>
-                                <input type="text" name="surname" class="form-control form-control-sm border-success" required>
+                                <input type="text" name="surname" class="form-control form-control-sm border-success" value="{{ auth()->user()->last_name }}"required>
                                 @error('surname')<div class="text-danger small">{{ $message }}</div>@enderror
                             </div>
 
                             <div class="col-md-3 mb-2">
                                 <label class="form-label fw-semibold small mb-1">Firstname</label>
-                                <input type="text" name="firstname" class="form-control form-control-sm border-success" required>
+                                <input type="text" name="firstname" class="form-control form-control-sm border-success" value="{{ auth()->user()->first_name }}" required>
                                 @error('firstname')<div class="text-danger small">{{ $message }}</div>@enderror
                             </div>
 
                             <div class="col-md-3 mb-2">
                                 <label class="form-label fw-semibold small mb-1">Middlename</label>
-                                <input type="text" name="middlename" class="form-control form-control-sm border-success">
+                                 <input type="email" name="middlename" class="form-control form-control-sm border-success" required>
                             </div>
 
                             <div class="col-md-3 mb-2">
@@ -95,7 +89,7 @@
 
                             <div class="col-md-3 mb-2">
                                 <label class="form-label fw-semibold small mb-1">Email Address</label>
-                                <input type="email" name="email" class="form-control form-control-sm border-success" value="{{ auth()->user()->email }}" readonly>
+                                <input type="email" name="email" class="form-control form-control-sm border-success" value="{{ auth()->user()->email }}" required>
                                 
                                 @error('email')<div class="text-danger small">{{ $message }}</div>@enderror
                             </div>
@@ -248,27 +242,38 @@
                     <h5 class="fw-bold text-success mb-3">Academic Records</h5>
 
                     <!-- Schools Attended -->
-                    <div class="card border-success mb-3" style="max-width: 600px; margin: 0 auto;">
-                    <div class="card-header bg-success text-white py-1 px-2" style="font-size: 0.9rem;">
-                        Schools Attended
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="row g-2 mb-2">
-                        <div class="col-md-6">
-                            <input type="text" name="school_name[]" placeholder="School Name"
-                                class="form-control form-control-sm border-success">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" name="school_from[]" placeholder="From (YYYY)"
-                                class="form-control form-control-sm border-success">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" name="school_to[]" placeholder="To (YYYY)"
-                                class="form-control form-control-sm border-success">
-                        </div>
-                        </div>
-                    </div>
-                    </div>
+                                  <div class="row g-2 mb-2">
+                  <div class="col-md-6">
+                      <input type="text" 
+                            name="school_name[]" 
+                            placeholder="School Name"
+                            class="form-control form-control-sm border-success"
+                            required>
+                      @error('school_name.*')
+                          <div class="text-danger small">{{ $message }}</div>
+                      @enderror
+                  </div>
+                  <div class="col-md-3">
+                      <input type="text" 
+                            name="school_from[]" 
+                            placeholder="From (YYYY)"
+                            class="form-control form-control-sm border-success"
+                            required>
+                      @error('school_from.*')
+                          <div class="text-danger small">{{ $message }}</div>
+                      @enderror
+                  </div>
+                  <div class="col-md-3">
+                      <input type="text" 
+                            name="school_to[]" 
+                            placeholder="To (YYYY)"
+                            class="form-control form-control-sm border-success"
+                            required>
+                      @error('school_to.*')
+                          <div class="text-danger small">{{ $message }}</div>
+                      @enderror
+                  </div>
+              </div>
 
 
   <!-- O'Level Results -->
@@ -277,90 +282,123 @@
   <div class="card-body">
 
     <div class="row">
-      <!-- First Sitting -->
-      <div class="col-md-6">
-        <h6 class="fw-bold text-success mb-3 text-center">First Sitting</h6>
+     <!-- First Sitting -->
+<div class="col-md-6">
+  <h6 class="fw-bold text-success mb-3 text-center">First Sitting</h6>
 
-        <!-- Exam Details -->
-        <div class="row g-2 mb-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Exam Type</label>
-            <select name="first_exam_type" class="form-select form-select-sm border-success" required>
-              <option value="">-- Select Exam Type --</option>
-              <option>WAEC</option>
-              <option>NECO</option>
-              <option>GCE</option>
+  <!-- Exam Details -->
+  <div class="row g-2 mb-3">
+    <div class="col-md-6">
+      <label class="form-label fw-semibold small mb-1">Exam Type</label>
+      <select name="first_exam_type" class="form-select form-select-sm border-success" required>
+        <option value="">-- Select Exam Type --</option>
+        <option>WAEC</option>
+        <option>NECO</option>
+        <option>GCE</option>
+      </select>
+      @error('first_exam_type')
+        <div class="text-danger small">{{ $message }}</div>
+      @enderror
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label fw-semibold small mb-1">Exam Year</label>
+      <input type="number" 
+             name="first_exam_year" 
+             class="form-control form-control-sm border-success" 
+             placeholder="e.g. 2022" 
+             required>
+      @error('first_exam_year')
+        <div class="text-danger small">{{ $message }}</div>
+      @enderror
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label fw-semibold small mb-1">Exam Number</label>
+      <input type="text" 
+             name="first_exam_number" 
+             class="form-control form-control-sm border-success" 
+             placeholder="e.g. 12345678" 
+             required>
+      @error('first_exam_number')
+        <div class="text-danger small">{{ $message }}</div>
+      @enderror
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label fw-semibold small mb-1">Center Number</label>
+      <input type="text" 
+             name="first_center_number" 
+             class="form-control form-control-sm border-success" 
+             placeholder="e.g. 12345" 
+             required>
+      @error('first_center_number')
+        <div class="text-danger small">{{ $message }}</div>
+      @enderror
+    </div>
+  </div>
+
+  <!-- Subjects Table -->
+  <div class="table-responsive mb-4">
+    <table class="table table-bordered table-sm align-middle">
+      <thead class="table-success">
+        <tr>
+          <th>Subject</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for ($i = 1; $i <= 9; $i++)
+        <tr>
+          <td>
+            <select name="first_subject[]" class="form-select form-select-sm border-success" required>
+              <option value="">-- Select Subject --</option>
+              <option>English Language</option>
+              <option>Mathematics</option>
+              <option>Biology</option>
+              <option>Physics</option>
+              <option>Chemistry</option>
+              <option>Economics</option>
+              <option>Geography</option>
+              <option>Government</option>
+              <option>Literature in English</option>
+              <option>Commerce</option>
+              <option>Accounting</option>
+              <option>Agricultural Science</option>
+              <option>Civic Education</option>
+              <option>Further Mathematics</option>
+              <option>Christian Religious Studies</option>
+              <option>Islamic Religious Studies</option>
+              <option>History</option>
+              <option>French</option>
             </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Exam Year</label>
-            <input type="number" name="first_exam_year" class="form-control form-control-sm border-success" placeholder="e.g. 2022" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Exam Number</label>
-            <input type="text" name="first_exam_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345678" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Center Number</label>
-            <input type="text" name="first_center_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345" required>
-          </div>
-        </div>
-
-        <!-- Subjects Table -->
-        <div class="table-responsive mb-4">
-          <table class="table table-bordered table-sm align-middle">
-            <thead class="table-success">
-              <tr>
-                <th>Subject</th>
-                <th>Grade</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for ($i = 1; $i <= 9; $i++)
-              <tr>
-                <td>
-                  <select name="first_subject[]" class="form-select form-select-sm border-success" required>
-                    <option value="">-- Select Subject --</option>
-                    <option>English Language</option>
-                    <option>Mathematics</option>
-                    <option>Biology</option>
-                    <option>Physics</option>
-                    <option>Chemistry</option>
-                    <option>Economics</option>
-                    <option>Geography</option>
-                    <option>Government</option>
-                    <option>Literature in English</option>
-                    <option>Commerce</option>
-                    <option>Accounting</option>
-                    <option>Agricultural Science</option>
-                    <option>Civic Education</option>
-                    <option>Further Mathematics</option>
-                    <option>Christian Religious Studies</option>
-                    <option>Islamic Religious Studies</option>
-                    <option>History</option>
-                    <option>French</option>
-                  </select>
-                </td>
-                <td>
-                  <select name="first_grade[]" class="form-select form-select-sm border-success" required>
-                    <option value="">-- Select Grade --</option>
-                    <option>A1</option>
-                    <option>B2</option>
-                    <option>B3</option>
-                    <option>C4</option>
-                    <option>C5</option>
-                    <option>C6</option>
-                    <option>D7</option>
-                    <option>E8</option>
-                    <option>F9</option>
-                  </select>
-                </td>
-              </tr>
-              @endfor
-            </tbody>
-          </table>
-        </div>
-      </div>
+          </td>
+          <td>
+            <select name="first_grade[]" class="form-select form-select-sm border-success" required>
+              <option value="">-- Select Grade --</option>
+              <option>A1</option>
+              <option>B2</option>
+              <option>B3</option>
+              <option>C4</option>
+              <option>C5</option>
+              <option>C6</option>
+              <option>D7</option>
+              <option>E8</option>
+              <option>F9</option>
+            </select>
+          </td>
+        </tr>
+        @endfor
+      </tbody>
+    </table>
+    @error('first_subject.*')
+      <div class="text-danger small">{{ $message }}</div>
+    @enderror
+    @error('first_grade.*')
+      <div class="text-danger small">{{ $message }}</div>
+    @enderror
+  </div>
+</div>
 
       <!-- Second Sitting -->
       <div class="col-md-6">
@@ -470,14 +508,14 @@
 </div>
 
 
-                        <!-- Step 4: Review -->
+                        <!-- Step 4: Review
                         <div class="step-content d-none" id="step-3">
                             <h5 class="fw-bold text-success mb-3">Review & Submit</h5>
                             <p class="text-muted">Kindly review your details before final submission.</p>
                             <button type="submit" class="btn btn-success w-100 btn-lg">
                                 Submit Application
                             </button>
-                        </div>
+                        </div> -->
 
                         <!-- Navigation Buttons -->
                         <div class="d-flex justify-content-between mt-4">
@@ -491,49 +529,54 @@
 
         <!-- Scripts -->
         <script>
-            let currentStep = 1;
-            const totalSteps = 3;
+         let currentStep = 1;
+        const totalSteps = 2;
 
-            function updateProgressBar(step) {
-                const progress = (step / totalSteps) * 100;
-                document.getElementById('progressBar').style.width = progress + '%';
-            }
+        function updateProgressBar(step) {
+            const progress = (step / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
 
-            function showStep(step) {
-                document.querySelectorAll('.step-content').forEach((el, idx) => {
-                    el.classList.add('d-none');
-                    if (idx === step - 1) el.classList.remove('d-none');
-                });
-                document.getElementById('prevBtn').classList.toggle('d-none', step === 1);
-                document.getElementById('nextBtn').innerText = step === totalSteps ? 'Finish' : 'Next';
-                updateProgressBar(step);
-            }
-
-            document.getElementById('nextBtn').addEventListener('click', () => {
-                if (currentStep < totalSteps) {
-                    currentStep++;
-                    showStep(currentStep);
-                } else {
-                    document.getElementById('applicationForm').submit();
-                }
+        function showStep(step) {
+            document.querySelectorAll('.step-content').forEach((el, idx) => {
+                el.classList.add('d-none');
+                if (idx === step - 1) el.classList.remove('d-none');
             });
+            document.getElementById('prevBtn').classList.toggle('d-none', step === 1);
 
-            document.getElementById('prevBtn').addEventListener('click', () => {
-                if (currentStep > 1) {
-                    currentStep--;
-                    showStep(currentStep);
-                }
-            });
+            // ✅ Change "Finish" to "Submit"
+            document.getElementById('nextBtn').innerText = step === totalSteps ? 'Submit Your Application form' : 'Next';
 
-            showStep(currentStep);
+            updateProgressBar(step);
+        }
 
-            function previewPhoto(event) {
-                const reader = new FileReader();
-                reader.onload = function () {
-                    document.getElementById('photoPreview').src = reader.result;
-                };
-                reader.readAsDataURL(event.target.files[0]);
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            } else {
+                // ✅ When it's the last step, submit the form
+                document.getElementById('applicationForm').submit();
             }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        showStep(currentStep);
+
+        function previewPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                document.getElementById('photoPreview').src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
 
             // === Nigerian States and LGAs ===
 const lgas = {

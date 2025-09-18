@@ -13,6 +13,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SlipController;
+use App\Http\Controllers\Auth\BulkUserController;
 
 // Packages
 
@@ -83,9 +84,16 @@ Route::get('/clear', function () {
     Route::get('/application-preview/{id}', [ApplicationController::class, 'preview'])->name('application.preview');
     Route::get('/application/slip', [ApplicationController::class, 'slip'])->name('application.slip');
     Route::get('/applications/{id}/acknowledgment', [ApplicationController::class, 'show'])->name('applications.show');
-
+    // add users
+    Route::get('/users/create', [BulkUserController::class, 'showBulkForm'])->name('users.create');
+    Route::post('/users/create', [BulkUserController::class, 'Create'])->name('users.create');
+     // Users Module
+    Route::resource('users', UserController::class);
+    // Route::get('/users/get-branches/{zone_id}', [UserController::class, 'getBranches']);
 
     // Permission Module
+
+
     Route::get('/role-permission', [RolePermission::class, 'index'])->name('role.permission.list');
     Route::resource('permission', PermissionController::class);
     Route::resource('role', RoleController::class);
@@ -113,9 +121,7 @@ Route::get('/clear', function () {
 
     Route::match(['get', 'post'], '/signup', [HomeController::class, 'signup'])->name('auth.signup');
 
-    // Users Module
-    Route::resource('users', UserController::class);
-    // Route::get('/users/get-branches/{zone_id}', [UserController::class, 'getBranches']);
+   
 
 });
 

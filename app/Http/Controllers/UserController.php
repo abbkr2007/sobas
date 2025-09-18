@@ -38,26 +38,17 @@ class UserController extends Controller
             $orgs = Org::all(); // Fetch all records from the org table
             return view('/', compact('orgs'));
         }
-    // public function create()
-    // {
+    public function create()
+    {
 
-    //     {
-    //         $roles = Role::where('status', 1)->get()->pluck('title', 'id');
-    //         $zones = org::select('id', 'name')->get();
-    //         $branches = collect(); // Pass an empty collection initially
+        {
+          
        
-    //         return view('users.form', compact('roles', 'zones','branches'));
-    //     }
-    // }
+            return view('users.form');
+        }
+    }
     
-    //     // Method to handle AJAX request for branches
-    //     public function getBranches($zone_id)
-    //     {
-    //         $branches = branch::where('zone_id', $zone_id)->get(['id', 'name']);
-    //         return response()->json($branches);
-
-    //     }
-
+    
 
 
 
@@ -67,6 +58,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    
     public function store(UserRequest $request)
     {
         $request['password'] = bcrypt($request->password);

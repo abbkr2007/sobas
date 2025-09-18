@@ -1,0 +1,13 @@
+<x-app-layout :assets="$assets ?? []">
+<div class="container">
+    <h3>Generate Users</h3>
+    <form action="{{ route('users.create') }}" method="POST">
+        @csrf
+        <div class="mb-3">
+            <label>Number of Users to Generate</label>
+            <input type="number" name="count" class="form-control" placeholder="e.g. 100" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Generate</button>
+    </form>
+</div>
+</x-app-layout>

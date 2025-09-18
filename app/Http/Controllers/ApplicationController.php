@@ -9,6 +9,7 @@ use App\Models\Application;
 class ApplicationController extends Controller
 {
     public function store(Request $request)
+    
     {
         $data = $request->validate([
             'application_id'        => 'required',
@@ -31,16 +32,16 @@ class ApplicationController extends Controller
             'guardian_phone'           => 'nullable',
             'application_type'         => 'required',
 
-            'school_name.*'             => 'nullable',
-            'school_from.*'              => 'nullable|date',
-            'school_to.*'                => 'nullable|date',
+            'school_name.*'             => 'required',
+            'school_from.*'              => 'required',
+            'school_to.*'                => 'required',
 
-            'first_exam_type'             => 'nullable',
-            'first_exam_year'              => 'nullable',
-            'first_exam_number'            => 'nullable',
-            'first_center_number'          => 'nullable',
-            'first_subject.*'               => 'nullable',
-            'first_grade.*'                  => 'nullable',
+            'first_exam_type'             => 'required',
+            'first_exam_year'              => 'required',
+            'first_exam_number'            => 'required',
+            'first_center_number'          => 'required',
+            'first_subject.*'               => 'required',
+            'first_grade.*'                  => 'required',
 
             'second_exam_type'                => 'nullable',
             'second_exam_year'                 => 'nullable',
@@ -92,7 +93,7 @@ class ApplicationController extends Controller
 
         // flash the id to session so we can open it in JS
         return redirect()->back()->with([
-            'success' => '',
+            'success' => 'application submited successfully',
             'application_id' => $application->id
         ]);
     }
