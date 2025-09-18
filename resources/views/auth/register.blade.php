@@ -82,7 +82,8 @@
                            <!-- Already have account -->
                            <p class="mt-3 text-center text-muted">
                               Already have an account?
-                              <a href="{{route('auth.signin')}}" class="fw-semibold text-success text-decoration-none">Sign In</a>
+                            <a href="{{ route('auth.signin') }}" class="fw-bold text-success text-decoration-none fs-5">Fill Form</a>
+
                            </p>
                         </form>
 
