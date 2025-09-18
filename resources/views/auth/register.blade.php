@@ -1,11 +1,25 @@
 <x-guest-layout>
    <section class="login-content">
       <div class="row m-0 align-items-center bg-white min-vh-100">            
-         <!-- Left Image Section -->
-         <div class="col-lg-6 d-none d-lg-flex bg-success p-0 vh-100 overflow-hidden">
-            <img src="{{asset('/images/dashboard/maxresdefault.jpg')}}"  class="w-100 h-100 object-fit-cover gradient-main animated-scaleX" alt="images">
-         </div>
-
+<<div class="row" style="min-height: 100vh; background-color: #f0f2f5;">
+    <!-- Guidelines Column -->
+    <div class="col-12 col-lg-6 d-flex justify-content-center align-items-start p-3 p-lg-5">
+        <div class="w-100 p-4 p-lg-5 shadow-sm rounded" 
+             style="background-color: #ffffff; color: #333;">
+            <h3 class="fw-bold mb-4 display-6 text-primary">Guidelines for Online Application</h3>
+            <ol class="fs-6" style="line-height: 2;">
+                <li>🖥️ Visit <a href="https://sobas.cloud/" class="text-primary text-decoration-underline fw-bold" target="_blank">https://sobas.cloud/</a> to access the online application portal.</li>
+                <li>✏️ Fill in all required fields carefully with accurate personal information, including <strong>First Name, Last Name, Email, and Mobile Number</strong>.</li>
+                <li>💳 Click the <strong class="fw-bold text-primary">Buy Form</strong> button to make your payment securely.</li>
+                <li>📄 After successful payment, your unique <strong>Matric Number</strong> and <strong>Password</strong> will be generated and displayed on the page.</li>
+                <li>📧 A copy of your Matric Number, Password, and payment receipt will also be sent to your registered email for your records.</li>
+                <li>🔑 Use the <strong class="fw-bold text-primary">Matric Number and Password</strong> to log in and access the full application form.</li>
+                <li>📝 Carefully complete all required fields in the application form, ensuring that your information is accurate.</li>
+                <li>✅ Review your entries thoroughly, submit the form, and <strong class="fw-bold">print your Bio-Data form</strong> for your records.</li>
+                <li>⏳ After submission, wait for the admission decision as communicated by the institution.</li>
+            </ol>
+        </div>
+    </div>
          <!-- Right Form Section -->
          <div class="col-lg-6 col-md-12 px-4">
             <div class="d-flex justify-content-center align-items-center min-vh-100">
@@ -30,10 +44,9 @@
                                     PORTAL OF SCHOOL OF BASIC <br> AND ADVANCED STUDIES
                               </h5>
                            </a>
+                     
                         </div>
-                        <p class="text-danger">
-                                    Fill in all the information here to buy the form, or click on “Fill Form” to log in using your Matric Number and password from your payment slip.
-                           </p>
+                        
                         <!-- <p class="text-center text-muted mb-4"></p> -->
 
                         <!-- Session & Validation Messages -->
