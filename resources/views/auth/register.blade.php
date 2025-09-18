@@ -29,6 +29,10 @@
                               <h3 class="h5 text-center fw-bold text-success mb-0">
                                     PORTAL OF SCHOOL OF BASIC <br> AND ADVANCED STUDIES
                               </h3>
+                              <p class="text-danger">
+    Fill in all the information here to buy the form, or click on “Fill Form” to log in using your Matric Number and password from your payment slip.
+</p>
+
                            </a>
                         </div>
                         <!-- <p class="text-center text-muted mb-4"></p> -->
