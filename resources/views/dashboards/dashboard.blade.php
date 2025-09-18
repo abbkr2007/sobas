@@ -362,7 +362,7 @@
           <td>
             <select name="first_subject[]" class="form-select form-select-sm border-success" required>
               <option value="">-- Select Subject --</option>
-              <option>English Language</option>
+             <option>English Language</option>
               <option>Mathematics</option>
               <option>Biology</option>
               <option>Physics</option>
@@ -380,6 +380,15 @@
               <option>Islamic Religious Studies</option>
               <option>History</option>
               <option>French</option>
+
+              <!-- New subjects added -->
+              <option>Computer Studies</option>
+              <option>Physical Education</option>
+              <option>Technical Drawing</option>
+              <option>Fine Arts</option>
+              <option>Music</option>
+              <option>Home Economics</option>
+              <option>Business Studies</option>
             </select>
           </td>
           <td>
@@ -453,24 +462,34 @@
                 <td>
                   <select name="second_subject[]" class="form-select form-select-sm border-success">
                     <option value="">-- Select Subject --</option>
-                    <option>English Language</option>
-                    <option>Mathematics</option>
-                    <option>Biology</option>
-                    <option>Physics</option>
-                    <option>Chemistry</option>
-                    <option>Economics</option>
-                    <option>Geography</option>
-                    <option>Government</option>
-                    <option>Literature in English</option>
-                    <option>Commerce</option>
-                    <option>Accounting</option>
-                    <option>Agricultural Science</option>
-                    <option>Civic Education</option>
-                    <option>Further Mathematics</option>
-                    <option>Christian Religious Studies</option>
-                    <option>Islamic Religious Studies</option>
-                    <option>History</option>
-                    <option>French</option>
+                  <option>English Language</option>
+                  <option>Mathematics</option>
+                  <option>Biology</option>
+                  <option>Physics</option>
+                  <option>Chemistry</option>
+                  <option>Economics</option>
+                  <option>Geography</option>
+                  <option>Government</option>
+                  <option>Literature in English</option>
+                  <option>Commerce</option>
+                  <option>Accounting</option>
+                  <option>Agricultural Science</option>
+                  <option>Civic Education</option>
+                  <option>Further Mathematics</option>
+                  <option>Christian Religious Studies</option>
+                  <option>Islamic Religious Studies</option>
+                  <option>History</option>
+                  <option>French</option>
+
+                  <!-- New subjects added -->
+                  <option>Computer Studies</option>
+                  <option>Physical Education</option>
+                  <option>Technical Drawing</option>
+                  <option>Fine Arts</option>
+                  <option>Music</option>
+                  <option>Home Economics</option>
+                  <option>Business Studies</option>
+
                   </select>
                 </td>
                 <td>
