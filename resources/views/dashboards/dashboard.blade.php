@@ -3,25 +3,34 @@
         <div class="container">
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
-              <div class="container py-5">
-              @if(auth()->check() && auth()->user()->user_type === 'admin')
-                  <div class="alert alert-success text-center">
-                      Welcome, Admin!
-                  </div>
-              @endif
+                 @if(session('success'))
+                  <!-- <div class="alert alert-success text-center">
+                      {{ session('success') }}
+                  </div> -->
 
-              @if(session('success'))
                   <script>
                       // open acknowledgment page in new tab
                       window.open("{{ route('applications.show', session('application_id')) }}", "_blank");
 
-                      // refresh the form page after 6 seconds
+                      // refresh the form page after 1 second
                       setTimeout(() => {
                           window.location.reload();
                       }, 6000);
                   </script>
-
+                @elseif(auth()->check() && auth()->user()->user_type === 'admin')
+                  <div class="alert alert-success text-center">
+                      Welcome, Admin!
+                  </div>
               @elseif($hasSubmitted)
+                  <div class="alert alert-success text-center">
+                      You have already submitted your application.
+                      <br>
+                      <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-primary mt-2">
+                          View Acknowledgment Slip
+                      </a>
+                  </div>
+                
+              @else
                     <!-- Heading -->
                     <div class="text-center mb-5">
                         <h2 class="fw-bold text-success mb-2">Application Form</h2>
@@ -545,7 +554,7 @@
             document.getElementById('prevBtn').classList.toggle('d-none', step === 1);
 
             // ✅ Change "Finish" to "Submit"
-            document.getElementById('nextBtn').innerText = step === totalSteps ? 'Submit Your Application form' : 'Next';
+            document.getElementById('nextBtn').innerText = step === totalSteps ? 'Submit Your Application' : 'Next';
 
             updateProgressBar(step);
         }
