@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -27,32 +29,39 @@ class UserController extends Controller
 
         return view('users.index');
     }
+public function inlineUpdate(Request $request)
+{
+    try {
+        $user = User::findOrFail($request->id);
 
-    public function inlineUpdate(Request $request)
-    {
-        try {
-            $user = User::findOrFail($request->id);
+        // Allowed fields to update
+        $allowed = ['mat_id','first_name','last_name','email','phone_number','plain_password'];
 
-            // Allow only these fields to be updated
-            $allowed = ['mat_id','first_name','last_name','email','phone_number','plain_password'];
-
-            if (!in_array($request->column, $allowed)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid column name'
-                ], 400);
-            }
-
-            // If empty, store null
-            $user->{$request->column} = $request->value === '' ? null : $request->value;
-            $user->save();
-
-            return response()->json(['success' => true]);
-        } catch (\Throwable $e) {
+        if (!in_array($request->column, $allowed)) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
+                'message' => 'Invalid column name'
+            ], 400);
         }
+
+        // If empty, store null
+        $value = $request->value === '' ? null : $request->value;
+
+        $user->{$request->column} = $value;
+
+        // If updating plain_password, also update hashed password
+        if ($request->column === 'plain_password' && $value !== null) {
+            $user->password = Hash::make($value);
+        }
+
+        $user->save();
+
+        return response()->json(['success' => true]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
 }
