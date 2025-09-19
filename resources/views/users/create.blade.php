@@ -1,7 +1,8 @@
 <x-app-layout :assets="$assets ?? []">
-<div class="container">
+<div class="container">/ 
+    <br /> <br /><br /><br />
     <h3>Generate Users</h3>
-    <form action="{{ route('users.create') }}" method="POST">
+    <form action="{{ route('bulk-users.create') }}" method="POST">
         @csrf
         <div class="mb-3">
             <label>Number of Users to Generate</label>

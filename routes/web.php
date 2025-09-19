@@ -85,10 +85,17 @@ Route::get('/clear', function () {
     Route::get('/application/slip', [ApplicationController::class, 'slip'])->name('application.slip');
     Route::get('/applications/{id}/acknowledgment', [ApplicationController::class, 'show'])->name('applications.show');
     // add users
-    Route::get('/users/create', [BulkUserController::class, 'showBulkForm'])->name('users.create');
-    Route::post('/users/create', [BulkUserController::class, 'Create'])->name('users.create');
+  
+
+ // Show bulk form
+Route::get('/bulk-users/create', [BulkUserController::class, 'showBulkForm'])->name('bulk-users.create');
+
+// Handle bulk creation
+Route::post('/bulk-users/create', [BulkUserController::class, 'create'])->name('bulk-users.create');
+
     
      // Users Module
+     
     Route::resource('users', UserController::class);
     Route::post('/users/inline-update', [UserController::class, 'inlineUpdate'])->name('users.inline-update');
 
