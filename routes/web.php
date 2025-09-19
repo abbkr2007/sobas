@@ -87,8 +87,13 @@ Route::get('/clear', function () {
     // add users
     Route::get('/users/create', [BulkUserController::class, 'showBulkForm'])->name('users.create');
     Route::post('/users/create', [BulkUserController::class, 'Create'])->name('users.create');
+    
      // Users Module
     Route::resource('users', UserController::class);
+    Route::post('/users/inline-update', [UserController::class, 'inlineUpdate'])->name('users.inline-update');
+
+    
+
     // Route::get('/users/get-branches/{zone_id}', [UserController::class, 'getBranches']);
 
     // Permission Module

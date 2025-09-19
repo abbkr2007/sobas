@@ -3,111 +3,81 @@
 namespace App\DataTables;
 
 use App\Models\User;
-use Yajra\DataTables\Html\Button;
-use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
+use Yajra\DataTables\Html\Column;
 
 class UsersDataTable extends DataTable
 {
-    /**
-     * Build DataTable class.
-     *
-     * @param mixed $query Results from query() method.
-     * @return \Yajra\DataTables\DataTableAbstract
-     */
     public function dataTable($query)
     {
         return datatables()
             ->eloquent($query)
-            ->editColumn('userProfile.country', function($query) {
-                return $query->userProfile->country ?? '-';
+            ->addColumn('full_name', function($user) {
+                return $user->first_name . ' ' . $user->last_name;
             })
-            ->editColumn('userProfile.company_name', function($query) {
-                return $query->userProfile->company_name ?? '-';
+            ->editColumn('email', function($user) {
+                return '<span contenteditable="true" class="editable" data-id="'.$user->id.'" data-column="email">'.$user->email.'</span>';
             })
-            ->editColumn('status', function($query) {
-                $status = 'warning';
-                switch ($query->status) {
-                    case 'active':
-                        $status = 'primary';
-                        break;
-                    case 'inactive':
-                        $status = 'danger';
-                        break;
-                    case 'banned':
-                        $status = 'dark';
-                        break;
-                }
-                return '<span class="text-capitalize badge bg-'.$status.'">'.$query->status.'</span>';
+            ->editColumn('phone_number', function($user) {
+                return '<span contenteditable="true" class="editable" data-id="'.$user->id.'" data-column="phone_number">'.$user->phone_number.'</span>';
             })
-            ->editColumn('created_at', function($query) {
-                return date('Y/m/d',strtotime($query->created_at));
+            ->editColumn('plain_password', function($user) {
+                return '<span contenteditable="true" class="editable" data-id="'.$user->id.'" data-column="plain_password">'.$user->plain_password.'</span>';
             })
-            ->filterColumn('full_name', function($query, $keyword) {
-                $sql = "CONCAT(users.first_name,' ',users.last_name)  like ?";
-                return $query->whereRaw($sql, ["%{$keyword}%"]);
-            })
-            ->filterColumn('userProfile.company_name', function($query, $keyword) {
-                return $query->orWhereHas('userProfile', function($q) use($keyword) {
-                    $q->where('company_name', 'like', "%{$keyword}%");
-                });
-            })
-            ->filterColumn('userProfile.country', function($query, $keyword) {
-                return $query->orWhereHas('userProfile', function($q) use($keyword) {
-                    $q->where('country', 'like', "%{$keyword}%");
-                });
+            ->editColumn('status', function($user) {
+                $colors = [
+                    'active' => 'primary',
+                    'inactive' => 'danger',
+                    'banned' => 'dark',
+                ];
+                $color = $colors[$user->status] ?? 'warning';
+                return '<span contenteditable="true" class="editable-status badge bg-'.$color.'" data-id="'.$user->id.'" data-column="status">'.$user->status.'</span>';
             })
             ->addColumn('action', 'users.action')
-            ->rawColumns(['action','status']);
+            ->rawColumns(['email', 'phone_number', 'plain_password', 'status', 'action']);
     }
 
-    /**
-     * Get query source of dataTable.
-     *
-     * @param \App\Models\User $model
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function query()
     {
-        $model = User::query()->with('userProfile');
-        return $this->applyScopes($model);
+        return User::select([
+            'id',
+            'mat_id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone_number',
+            'plain_password',
+            'status',
+            'created_at'
+        ]);
     }
 
-    /**
-     * Optional method if you want to use html builder.
-     *
-     * @return \Yajra\DataTables\Html\Builder
-     */
     public function html()
     {
         return $this->builder()
-                    ->setTableId('dataTable')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->dom('<"row align-items-center"<"col-md-2" l><"col-md-6" B><"col-md-4"f>><"table-responsive my-3" rt><"row align-items-center" <"col-md-6" i><"col-md-6" p>><"clear">')
-            
-                    ->parameters([
-                        "processing" => true,
-                        "autoWidth" => false,
-                    ]);
+            ->setTableId('dataTable')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->dom('<"row align-items-center"<"col-md-2" l><"col-md-6" B><"col-md-4" f>>
+                  <"table-responsive my-3" rt>
+                  <"row align-items-center"<"col-md-6" i><"col-md-6" p>><"clear">')
+            ->parameters([
+                "processing" => true,
+                "autoWidth" => false,
+            ]);
     }
 
-    /**
-     * Get columns.
-     *
-     * @return array
-     */
     protected function getColumns()
     {
         return [
-            ['data' => 'id', 'name' => 'id', 'title' => 'id'],
-            ['data' => 'full_name', 'name' => 'full_name', 'title' => 'FULL NAME', 'orderable' => false],
-            ['data' => 'phone_number', 'name' => 'phone_number', 'title' => 'Phone Number'],
-            ['data' => 'email', 'name' => 'email', 'title' => 'Email'],
-            // ['data' => 'userProfile.country', 'name' => 'userProfile.country', 'title' => 'Zone'],
-            ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
-            // ['data' => 'userProfile.company_name', 'name' => 'userProfile.company_name', 'title' => 'Branch'],
-            ['data' => 'created_at', 'name' => 'created_at', 'title' => 'AMOUNT INVEST'],
+            Column::make('id')->title('ID'),
+            Column::computed('full_name')->title('Full Name'),
+            Column::make('mat_id')->title('Matric Number'),
+            Column::make('email')->title('Email'),
+            Column::make('phone_number')->title('Phone Number'),
+            Column::make('plain_password')->title('Plain Password'),
+            Column::make('status')->title('Status'),
+            Column::make('created_at')->title('Created At'),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)
@@ -117,11 +87,6 @@ class UsersDataTable extends DataTable
         ];
     }
 
-    /**
-     * Get filename for export.
-     *
-     * @return string
-     */
     protected function filename()
     {
         return 'Users_' . date('YmdHis');

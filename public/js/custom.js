@@ -29,6 +29,36 @@
         });
     });
 
+    <script>
+$(document).ready(function() {
+    $('#dataTable').on('blur', '.editable', function() {
+        var id = $(this).data('id');
+        var column = $(this).data('column');
+        var value = $(this).text();
+
+        $.ajax({
+            url: '{{ route("users.inline-update") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                id: id,
+                column: column,
+                value: value
+            },
+            success: function(response) {
+                if(!response.success){
+                    alert('Update failed!');
+                }
+            },
+            error: function() {
+                alert('Error updating!');
+            }
+        });
+    });
+});
+</script>
+
+
 
     /*------------------------------------------
             --------------------------------------------
