@@ -1,7 +1,7 @@
 <x-app-layout :assets="['data-table']">
     <div class="container">
         <h1 class="mb-4 text-success">Users List</h1>
-
+        <a href="{{ route('bulk-users.create') }}" class="btn btn-primary">Generate Bulk Users</a>
         <table id="users-table" class="table table-bordered table-striped custom-table">
             <thead class="table-success">
                 <tr>
