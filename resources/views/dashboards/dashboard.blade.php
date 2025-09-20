@@ -23,10 +23,10 @@
                   </div>
               @elseif($hasSubmitted)
                   <div class="alert alert-success text-center">
-                      You have already submitted your application.
+                      ✅ Application submitted successfully
                       <br>
                       <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-primary mt-2">
-                          View Acknowledgment Slip
+                          Print Your Bio-Data Form
                       </a>
                   </div>
                 
