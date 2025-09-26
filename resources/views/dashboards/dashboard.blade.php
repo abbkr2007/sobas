@@ -378,6 +378,9 @@
               <option>Further Mathematics</option>
               <option>Christian Religious Studies</option>
               <option>Islamic Religious Studies</option>
+              <option>Hausa</option>
+              <option>Marketing</option>
+              <option>Data Processing</option>
               <option>History</option>
               <option>French</option>
 
@@ -478,6 +481,9 @@
                   <option>Further Mathematics</option>
                   <option>Christian Religious Studies</option>
                   <option>Islamic Religious Studies</option>
+                  <option>Hausa</option>
+                  <option>Marketing</option>
+                  <option>Data Processing</option>
                   <option>History</option>
                   <option>French</option>
 
