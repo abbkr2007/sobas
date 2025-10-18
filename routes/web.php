@@ -14,6 +14,7 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SlipController;
 use App\Http\Controllers\Auth\BulkUserController;
+use App\Http\Controllers\ApplicantController;
 
 // Packages
 
@@ -98,6 +99,10 @@ Route::post('/bulk-users/create', [BulkUserController::class, 'create'])->name('
      
     Route::resource('users', UserController::class);
     Route::post('/users/inline-update', [UserController::class, 'inlineUpdate'])->name('users.inline-update');
+
+    // Applicants Module
+    Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
 
     
 

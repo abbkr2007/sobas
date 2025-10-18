@@ -26,14 +26,32 @@
     <li class="nav-item">
         <a class="nav-link {{ activeRoute(route('users.index')) }}"
            href="{{ route('users.index') }}"
-           style="color:#28a745;">
-            <i class="icon" style="color:#28a745;">
-                <svg width="20" viewBox="0 0 24 24" fill="#28a745">
+           style="{{ activeRoute(route('users.index')) ? 'background-color:#28a745; color:#fff !important; border-left:3px solid #1e7e34;' : 'color:#28a745;' }}">
+            <i class="icon" style="{{ activeRoute(route('users.index')) ? 'color:#fff;' : 'color:#28a745;' }}">
+                <svg width="20" viewBox="0 0 24 24" fill="{{ activeRoute(route('users.index')) ? '#fff' : '#28a745' }}">
                     <path d="M11.949 12.467C14.285 12.467 16.158 10.583 16.158 8.234C16.158 5.883 14.285 4 11.949 4C9.613 4 7.74 5.883 7.74 8.234C7.74 10.583 9.613 12.467 11.949 12.467Z"></path>
                     <path d="M11.949 14.54C8.499 14.54 5.588 15.104 5.588 17.28C5.588 19.456 8.518 20 11.949 20C15.399 20 18.31 19.436 18.31 17.261C18.31 15.084 15.38 14.54 11.949 14.54Z"></path>
                 </svg>
             </i>
-            <span class="item-name">Users</span>
+            <span class="item-name" style="{{ activeRoute(route('users.index')) ? 'color:#fff;' : '' }}">Users</span>
+        </a>
+    </li>
+
+    <!-- Applicants -->
+    <li class="nav-item">
+        <a class="nav-link {{ activeRoute(route('applicants.index')) }}"
+           href="{{ route('applicants.index') }}"
+           style="{{ activeRoute(route('applicants.index')) ? 'background-color:#28a745; color:#fff !important; border-left:3px solid #1e7e34;' : 'color:#28a745;' }}">
+            <i class="icon" style="{{ activeRoute(route('applicants.index')) ? 'color:#fff;' : 'color:#28a745;' }}">
+                <svg width="20" viewBox="0 0 24 24" fill="{{ activeRoute(route('applicants.index')) ? '#fff' : '#28a745' }}">
+                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z"></path>
+                    <path d="M14 2V8H20"></path>
+                    <path d="M16 13H8"></path>
+                    <path d="M16 17H8"></path>
+                    <path d="M10 9H9H8"></path>
+                </svg>
+            </i>
+            <span class="item-name" style="{{ activeRoute(route('applicants.index')) ? 'color:#fff;' : '' }}">Applicants</span>
         </a>
     </li>
     @endif

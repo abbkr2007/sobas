@@ -2,13 +2,13 @@
     @include('partials.dashboard._body_loader')
 </div>
 @include('partials.dashboard._body_sidebar')
-<main class="main-content">
+<main class="main-content d-flex flex-column" style="min-height: 100vh; padding-bottom: 60px;">
     <div class="position-relative">
     @include('partials.dashboard._body_header')
     @include('partials.dashboard.sub-header')
     </div>
     
-    <div class="conatiner-fluid content-inner mt-n5 py-0">
+    <div class="conatiner-fluid content-inner mt-n5 py-0 flex-grow-1">
     {{ $slot }}
     </div>
     

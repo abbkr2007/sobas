@@ -1,7 +1,14 @@
 <x-app-layout :assets="['data-table']">
     <div class="container">
         <h1 class="mb-4 text-success">Users List</h1>
-        <a href="{{ route('bulk-users.create') }}" class="btn btn-primary">Generate Bulk Users</a>
+        <a href="{{ route('bulk-users.create') }}" class="btn btn-success mb-3">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white" class="me-2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="m16 11 2 2 4-4"></path>
+            </svg>
+            Generate Bulk Users
+        </a>
         <table id="users-table" class="table table-bordered table-striped custom-table">
             <thead class="table-success">
                 <tr>

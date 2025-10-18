@@ -37,7 +37,7 @@
                 >
             </div>
 
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-success">
                 Create Users
             </button>
         </form>

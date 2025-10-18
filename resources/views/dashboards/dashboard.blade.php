@@ -25,7 +25,7 @@
                   <div class="alert alert-success text-center">
                       ✅ Application submitted successfully
                       <br>
-                      <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-primary mt-2">
+                      <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-success mt-2">
                           Print Your Bio-Data Form
                       </a>
                   </div>
@@ -553,7 +553,7 @@
 
                         <!-- Navigation Buttons -->
                         <div class="d-flex justify-content-between mt-4">
-                            <button type="button" id="prevBtn" class="btn btn-outline-secondary d-none">Previous</button>
+                            <button type="button" id="prevBtn" class="btn btn-outline-success d-none">Previous</button>
                             <button type="button" id="nextBtn" class="btn btn-success">Next</button>
                         </div>
                     </form>
