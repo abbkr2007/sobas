@@ -1,558 +1,913 @@
 <x-app-layout :assets="$assets ?? []">
-    <section class="dashboard-content py-5 bg-light">
-        <div class="container">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5">
+    <!-- Professional Dashboard Wrapper -->
+    <section class="professional-dashboard-wrapper">
+        <!-- Main Content Section -->
+        <section class="main-content-section">
+            <div class="container-fluid px-3 px-md-4">
+                <div class="professional-form-container">
                  @if(session('success'))
-                  <!-- <div class="alert alert-success text-center">
-                      {{ session('success') }}
-                  </div> -->
+                    <!-- Success State with Enhanced Design -->
+                    <div class="success-state-container">
+                        <div class="success-card">
+                            <div class="success-icon">
+                                <i class="fas fa-check-circle fa-4x text-success"></i>
+                            </div>
+                            <h3 class="success-title">Application Submitted Successfully!</h3>
+                            <p class="success-message">Your application has been received and is being processed.</p>
+                            <div class="success-actions">
+                                <a href="{{ route('applications.show', session('application_id')) }}" target="_blank" 
+                                   class="btn btn-success btn-lg">
+                                    <i class="fas fa-print me-2"></i>Download Bio-Data Form
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-                  <script>
-                      // open acknowledgment page in new tab
-                      window.open("{{ route('applications.show', session('application_id')) }}", "_blank");
+                    <script>
+                        // Auto-redirect with notification
+                        setTimeout(() => {
+                            window.open("{{ route('applications.show', session('application_id')) }}", "_blank");
+                        }, 2000);
+                        
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 6000);
+                    </script>
 
-                      // refresh the form page after 1 second
-                      setTimeout(() => {
-                          window.location.reload();
-                      }, 6000);
-                  </script>
-                @elseif(auth()->check() && auth()->user()->user_type === 'admin')
-                  <div class="alert alert-success text-center">
-                      Welcome, Admin!
-                  </div>
-              @elseif($hasSubmitted)
-                  <div class="alert alert-success text-center">
-                      ✅ Application submitted successfully
-                      <br>
-                      <a href="{{ route('applications.show', $application->id) }}" target="_blank" class="btn btn-success mt-2">
-                          Print Your Bio-Data Form
-                      </a>
-                  </div>
+                @elseif($hasSubmitted)
+                    <!-- Already Submitted State -->
+                    <div class="submitted-state-container text-center">
+                        <div class="submitted-card mx-auto">
+                            <div class="submitted-icon">
+                                <i class="fas fa-clipboard-check fa-4x text-success"></i>
+                            </div>
+                            <h3 class="submitted-title">Application Already Submitted</h3>
+                            <p class="submitted-message">You have already submitted your application. You can download your Biodata Slip below.</p>
+                            <div class="submitted-actions">
+                                <a href="{{ route('applications.show', $application->id) }}" target="_blank" 
+                                   class="btn btn-success btn-lg">
+                                    <i class="fas fa-file-alt me-2"></i>
+                                    </i>Download Biodata Slip
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 
-              @else
-                    <!-- Heading -->
-                    <div class="text-center mb-5">
-                        <h2 class="fw-bold text-success mb-2">Application Form</h2>
-                        <p class="text-muted">Please provide accurate information to complete your application</p>
+                @elseif(auth()->user()->user_type == 'admin')
+                    <!-- Admin Welcome State -->
+                    <div class="admin-welcome-container text-center">
+                        <div class="admin-welcome-card mx-auto">
+                            <div class="admin-welcome-icon">
+                                <i class="fas fa-user-shield fa-4x text-primary"></i>
+                            </div>
+                            <h3 class="admin-welcome-title">Welcome back, Admin!</h3>
+                            <p class="admin-welcome-message">You have administrative access to the SOBAS system. Use the navigation menu to manage applications and system settings.</p>
+                            <div class="admin-stats-summary">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <h4>{{ \App\Models\Application::count() }}</h4>
+                                            <p>Total Applications</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <h4>{{ \App\Models\Application::whereDate('created_at', today())->count() }}</h4>
+                                            <p>Today's Applications</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <h4>{{ \App\Models\User::count() }}</h4>
+                                            <p>Total Users</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Progress Bar -->
-                    <div class="progress mb-4" style="height: 8px;">
-                        <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 25%;"></div>
-                    </div>
+              @else
+                    <!-- Professional Application Form -->
+                    <div class="application-form-wrapper">
+                        <!-- Form Header -->
+                        <div class="form-header">
+                            <div class="form-header-content">
+                                <div class="form-icon">
+                                    <i class="fas fa-edit fa-2x text-success"></i>
+                                </div>
+                                <div class="form-title-section">
+                                    <h2 class="form-title">Student Application Form</h2>
+                                    <p class="form-subtitle">Please complete all sections accurately. Your information will be reviewed for admission.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Enhanced Progress Indicator -->
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span class="progress-label">Application Progress</span>
+                                    <span class="progress-percentage" id="progressPercentage">25%</span>
+                                </div>
+                                <div class="progress-bar-wrapper">
+                                    <div class="progress-bar-bg">
+                                        <div id="progressBar" class="progress-bar-fill" style="width: 25%;"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-steps">
+                                    <div class="step-indicator active">
+                                        <div class="step-icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <span>Personal</span>
+                                    </div>
+                                    <div class="step-indicator">
+                                        <div class="step-icon">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </div>
+                                        <span>Academic</span>
+                                    </div>
+                                    <div class="step-indicator">
+                                        <div class="step-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <span>Review</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     <!-- Form -->
     
                     <form method="POST" action="{{ route('application.submit') }}" enctype="multipart/form-data" id="applicationForm">
                         @csrf
 
-                        <!-- Step 1: Bio Data -->
-                        <div class="step-content" id="step-1">
-                        <h5 class="fw-bold text-success mb-3" style="font-size:1.2rem;">Bio Data</h5>
+                        <!-- Step 1: Personal Information -->
+                        <div class="step-content active" id="step-1">
+                            <div class="step-card">
+                                <div class="step-body">
+                                    <!-- Enhanced Photo Upload Section -->
+                                    <div class="photo-upload-section">
+                                        <div class="photo-upload-container">
+                                            <div class="photo-preview-wrapper">
+                                                <div class="photo-preview-circle">
+                                                    <img id="photoPreview" src="{{ asset('images/person.png') }}" 
+                                                         alt="Photo Preview" class="photo-preview-img">
+                                                    <div class="photo-overlay">
+                                                        <i class="fas fa-camera fa-2x"></i>
+                                                        <span>Upload Photo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="photo-upload-controls">
+                                                <label for="photoInput" class="photo-upload-btn">
+                                                    <i class="fas fa-upload me-2"></i>Choose Photo
+                                                </label>
+                                                <input type="file" id="photoInput" name="photo" accept="image/*"
+                                                       class="photo-input-hidden" onchange="previewPhoto(event)" required>
+                                                <div class="photo-requirements">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        JPG, PNG max 2MB. Passport size recommended.
+                                                    </small>
+                                                </div>
+                                                @error('photo')<div class="error-message">{{ $message }}</div>@enderror
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <!-- Photo Centered -->
-                        <div class="text-center mb-4">
-                            <label class="form-label fw-semibold small mb-1 d-block">Passport Photo</label>
-                            <div class="border border-success rounded-3 mb-2 mx-auto"
-                                style="width:140px; height:140px; overflow:hidden;">
-                                <img id="photoPreview" src="{{ asset('images/person.png') }}" 
-                                    alt="Photo Preview" class="img-fluid w-100 h-100" style="object-fit:cover;">
+                                    <!-- Professional Form Fields -->
+                                    <div class="form-sections">
+                                        <!-- Basic Information Section -->
+                                        <div class="form-section">
+                                            <div class="section-header">
+                                                <h4><i class="fas fa-id-card me-2"></i>Basic Information</h4>
+                                            </div>
+                                            <div class="row g-3">
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Matriculation Number</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-hashtag input-icon"></i>
+                                                            <input type="text" name="application_id" 
+                                                                   class="form-control" 
+                                                                   value="{{ auth()->user()->mat_id }}" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Surname <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-user input-icon"></i>
+                                                            <input type="text" name="surname" class="form-control" 
+                                                                   value="{{ auth()->user()->last_name }}" required>
+                                                        </div>
+                                                        @error('surname')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">First Name <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-user input-icon"></i>
+                                                            <input type="text" name="firstname" class="form-control" 
+                                                                   value="{{ auth()->user()->first_name }}" required>
+                                                        </div>
+                                                        @error('firstname')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row g-3 mt-2">
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Middle Name</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-user input-icon"></i>
+                                                            <input type="text" name="middlename" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Date of Birth <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-calendar input-icon"></i>
+                                                            <input type="date" name="dob" class="form-control" required>
+                                                        </div>
+                                                        @error('dob')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Gender <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-venus-mars input-icon"></i>
+                                                            <select name="gender" class="form-control" required>
+                                                                <option value="">-- Select Gender --</option>
+                                                                <option value="Male">Male</option>
+                                                                <option value="Female">Female</option>
+                                                                <option value="Other">Other</option>
+                                                            </select>
+                                                        </div>
+                                                        @error('gender')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Contact Information Section -->
+                                        <div class="form-section">
+                                            <div class="section-header">
+                                                <h4><i class="fas fa-phone me-2"></i>Contact Information</h4>
+                                            </div>
+                                            <div class="row g-3">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-phone input-icon"></i>
+                                                            <input type="text" name="phone" class="form-control" required>
+                                                        </div>
+                                                        @error('phone')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Email Address <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-envelope input-icon"></i>
+                                                            <input type="email" name="email" class="form-control" 
+                                                                   value="{{ auth()->user()->email }}" required>
+                                                        </div>
+                                                        @error('email')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Place of Birth</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-map-marker-alt input-icon"></i>
+                                                            <input type="text" name="place_of_birth" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Location Information Section -->
+                                        <div class="form-section">
+                                            <div class="section-header">
+                                                <h4><i class="fas fa-map me-2"></i>Location Information</h4>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">State <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-flag input-icon"></i>
+                                                            <select name="state" id="state" class="form-control" required onchange="populateLGA()">
+                                                                <option value="">-- Select State --</option>
+                                                                <option value="Abia">Abia</option>
+                                                                <option value="Adamawa">Adamawa</option>
+                                                                <option value="Akwa Ibom">Akwa Ibom</option>
+                                                                <option value="Anambra">Anambra</option>
+                                                                <option value="Bauchi">Bauchi</option>
+                                                                <option value="Bayelsa">Bayelsa</option>
+                                                                <option value="Benue">Benue</option>
+                                                                <option value="Borno">Borno</option>
+                                                                <option value="Cross River">Cross River</option>
+                                                                <option value="Delta">Delta</option>
+                                                                <option value="Ebonyi">Ebonyi</option>
+                                                                <option value="Edo">Edo</option>
+                                                                <option value="Ekiti">Ekiti</option>
+                                                                <option value="Enugu">Enugu</option>
+                                                                <option value="FCT">FCT</option>
+                                                                <option value="Gombe">Gombe</option>
+                                                                <option value="Imo">Imo</option>
+                                                                <option value="Jigawa">Jigawa</option>
+                                                                <option value="Kaduna">Kaduna</option>
+                                                                <option value="Kano">Kano</option>
+                                                                <option value="Katsina">Katsina</option>
+                                                                <option value="Kebbi">Kebbi</option>
+                                                                <option value="Kogi">Kogi</option>
+                                                                <option value="Kwara">Kwara</option>
+                                                                <option value="Lagos">Lagos</option>
+                                                                <option value="Nasarawa">Nasarawa</option>
+                                                                <option value="Niger">Niger</option>
+                                                                <option value="Ogun">Ogun</option>
+                                                                <option value="Ondo">Ondo</option>
+                                                                <option value="Osun">Osun</option>
+                                                                <option value="Oyo">Oyo</option>
+                                                                <option value="Plateau">Plateau</option>
+                                                                <option value="Rivers">Rivers</option>
+                                                                <option value="Sokoto">Sokoto</option>
+                                                                <option value="Taraba">Taraba</option>
+                                                                <option value="Yobe">Yobe</option>
+                                                                <option value="Zamfara">Zamfara</option>
+                                                            </select>
+                                                        </div>
+                                                        @error('state')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">LGA <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-map-pin input-icon"></i>
+                                                            <select name="lga" id="lga" class="form-control" required>
+                                                                <option value="">-- Select State First --</option>
+                                                            </select>
+                                                        </div>
+                                                        @error('lga')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Town</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-city input-icon"></i>
+                                                            <input type="text" name="town" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Country <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-globe input-icon"></i>
+                                                            <input type="text" name="country" class="form-control" value="Nigeria" required>
+                                                        </div>
+                                                        @error('country')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Home Address</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-home input-icon"></i>
+                                                            <input type="text" name="home_address" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Guardian Information Section -->
+                                        <div class="form-section">
+                                            <div class="section-header">
+                                                <h4><i class="fas fa-users me-2"></i>Guardian Information</h4>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Guardian Name</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-user-shield input-icon"></i>
+                                                            <input type="text" name="guardian" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Guardian Phone</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-phone input-icon"></i>
+                                                            <input type="text" name="guardian_phone" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Guardian Address</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-map-marker-alt input-icon"></i>
+                                                            <input type="text" name="guardian_address" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Application Type Section -->
+                                        <div class="form-section">
+                                            <div class="section-header">
+                                                <h4><i class="fas fa-graduation-cap me-2"></i>Application Information</h4>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Application Type <span class="required">*</span></label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-scroll input-icon"></i>
+                                                            <select name="application_type" class="form-control" required>
+                                                                <option value="">-- Select Application Type --</option>
+                                                                <option value="Matric Arts">Matric Arts</option>
+                                                                <option value="Matric Arabic & Islamic Studies">Matric Arabic & Islamic Studies</option>
+                                                                <option value="Matric Management Sciences">Matric Management Sciences</option>
+                                                                <option value="Matric Science">Matric Science</option>
+                                                                <option value="Matric Social Sciences">Matric Social Sciences</option>
+                                                                <option value="Matric Law">Matric Law</option>
+                                                                <option value="Remedial Arts">Remedial Arts</option>
+                                                                <option value="Remedial Arabic & Islamic Studies">Remedial Arabic & Islamic Studies</option>
+                                                                <option value="Remedial Management Sciences">Remedial Management Sciences</option>
+                                                                <option value="Remedial Science">Remedial Science</option>
+                                                                <option value="Remedial Social Sciences">Remedial Social Sciences</option>
+                                                                <option value="Remedial Law">Remedial Law</option>
+                                                                <option value="JAMB Training Science">JAMB Training Science</option>
+                                                                <option value="JAMB Training Accounting">JAMB Training Accounting</option>
+                                                                <option value="JAMB Training Economics">JAMB Training Economics</option>
+                                                                <option value="JAMB Training Political Science">JAMB Training Political Science</option>
+                                                                <option value="JAMB Training Sociology">JAMB Training Sociology</option>
+                                                                <option value="JAMB Training Business Admin">JAMB Training Business Admin</option>
+                                                                <option value="JAMB Training Public Admin">JAMB Training Public Admin</option>
+                                                            </select>
+                                                        </div>
+                                                        @error('application_type')<div class="error-message">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <input type="file" name="photo" accept="image/*"
-                                class="form-control form-control-sm border-success w-auto mx-auto"
-                                onchange="previewPhoto(event)" required>
-                            @error('photo')<div class="text-danger small">{{ $message }}</div>@enderror
                         </div>
-
-                        <div class="row g-2">
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Matric Number</label>
-                                <input type="text" name="application_id" 
-                                    class="form-control form-control-sm border-success" 
-                                    value="{{ auth()->user()->mat_id }}" readonly>
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Surname</label>
-                                <input type="text" name="surname" class="form-control form-control-sm border-success" value="{{ auth()->user()->last_name }}"required>
-                                @error('surname')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Firstname</label>
-                                <input type="text" name="firstname" class="form-control form-control-sm border-success" value="{{ auth()->user()->first_name }}" required>
-                                @error('firstname')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Middlename</label>
-                                 <input type="email" name="middlename" class="form-control form-control-sm border-success" required>
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Phone Number</label>
-                                <input type="text" name="phone" class="form-control form-control-sm border-success" required>
-                                @error('phone')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Email Address</label>
-                                <input type="email" name="email" class="form-control form-control-sm border-success" value="{{ auth()->user()->email }}" required>
-                                
-                                @error('email')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Date of Birth</label>
-                                <input type="date" name="dob" class="form-control form-control-sm border-success" placeholder="dd/mm/yyyy" required>
-                                @error('dob')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Place of Birth</label>
-                                <input type="text" name="place_of_birth" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Gender</label>
-                                <select name="gender" class="form-select form-select-sm border-success" required>
-                                    <option value="">-- Select --</option>
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                    <option>Other</option>
-                                </select>
-                                @error('gender')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">State</label>
-                                <select name="state" id="state" class="form-select form-select-sm border-success" required onchange="populateLGA()">
-                                    <option value="">-- Select --</option>
-                                    <option>Abia</option>
-                                    <option>Adamawa</option>
-                                    <option>Akwa Ibom</option>
-                                    <option>Anambra</option>
-                                    <option>Bauchi</option>
-                                    <option>Bayelsa</option>
-                                    <option>Benue</option>
-                                    <option>Borno</option>
-                                    <option>Cross River</option>
-                                    <option>Delta</option>
-                                    <option>Ebonyi</option>
-                                    <option>Edo</option>
-                                    <option>Ekiti</option>
-                                    <option>Enugu</option>
-                                    <option>FCT</option>
-                                    <option>Gombe</option>
-                                    <option>Imo</option>
-                                    <option>Jigawa</option>
-                                    <option>Kaduna</option>
-                                    <option>Kano</option>
-                                    <option>Katsina</option>
-                                    <option>Kebbi</option>
-                                    <option>Kogi</option>
-                                    <option>Kwara</option>
-                                    <option>Lagos</option>
-                                    <option>Nasarawa</option>
-                                    <option>Niger</option>
-                                    <option>Ogun</option>
-                                    <option>Ondo</option>
-                                    <option>Osun</option>
-                                    <option>Oyo</option>
-                                    <option>Plateau</option>
-                                    <option>Rivers</option>
-                                    <option>Sokoto</option>
-                                    <option>Taraba</option>
-                                    <option>Yobe</option>
-                                    <option>Zamfara</option>
-                                </select>
-                                @error('state')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">LGA</label>
-                                <select name="lga" id="lga" class="form-select form-select-sm border-success" required>
-                                    <option value="">-- Select State First --</option>
-                                </select>
-                                @error('lga')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Town</label>
-                                <input type="text" name="town" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Country</label>
-                                <input type="text" name="country" class="form-control form-control-sm border-success" required>
-                                @error('country')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Specify (Foreign Students)</label>
-                                <input type="text" name="foreign_country" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Home Address</label>
-                                <input type="text" name="home_address" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Guardian</label>
-                                <input type="text" name="guardian" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Guardian Address</label>
-                                <input type="text" name="guardian_address" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Guardian Phone</label>
-                                <input type="text" name="guardian_phone" class="form-control form-control-sm border-success">
-                            </div>
-
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label fw-semibold small mb-1">Application Type</label>
-                                <select name="application_type" class="form-select form-select-sm border-success" required>
-                                    <option value="">-- Application Type: --</option> 
-                                    <option>Matric Arts</option>
-                                    <option>Matric Arabic & Islamic Studies</option>
-                                    <option>Matric Management Sciences</option>
-                                    <option>Matric Science</option>
-                                    <option>Matric Social Sciences</option>
-                                    <option>Matric Law</option>
-                                    <option>Remedial Arts</option>
-                                    <option>Remedial Arabic & Islamic Studies</option>
-                                    <option>Remedial Management Sciences</option>
-                                    <option>Remedial Science</option>
-                                    <option>Remedial Social Sciences</option>
-                                    <option>Remedial Law</option>
-                                    <option>JAMB Training Science</option>
-                                    <option>JAMB Training Accounting</option>
-                                    <option>JAMB Training Economics</option>
-                                    <option>JAMB Training Political Science</option>
-                                    <option>JAMB Training Sociology</option>
-                                    <option>JAMB Training Business Admin</option>
-                                    <option>JAMB Training Public Admin</option>
-                                </select>
-                                @error('application_type')<div class="text-danger small">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                    </div>
-
-
                     
 
-                      <!-- Step 3: Academic Records & Documents -->
-                    <div class="step-content" id="step-2">
-                    <h5 class="fw-bold text-success mb-3">Academic Records</h5>
+                        <!-- Step 2: Academic Records & Documents -->
+                        <div class="step-content" id="step-2">
+                            <div class="step-card">
+                                <div class="step-body">
+                                    <!-- Schools Attended Section -->
+                                    <div class="form-section">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-school me-2"></i>Schools Attended</h4>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">School Name <span class="required">*</span></label>
+                                                    <div class="input-wrapper">
+                                                        <i class="fas fa-building input-icon"></i>
+                                                        <input type="text" name="school_name[]" 
+                                                               class="form-control" 
+                                                               placeholder="Enter school name" required>
+                                                    </div>
+                                                    @error('school_name.*')<div class="error-message">{{ $message }}</div>@enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label class="form-label">From Year <span class="required">*</span></label>
+                                                    <div class="input-wrapper">
+                                                        <i class="fas fa-calendar input-icon"></i>
+                                                        <select name="school_from[]" class="form-control year-select" required>
+                                                            <option value="">-- Select Year --</option>
+                                                            @for($year = date('Y'); $year >= 1960; $year--)
+                                                                <option value="{{ $year }}">{{ $year }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                    @error('school_from.*')<div class="error-message">{{ $message }}</div>@enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label class="form-label">To Year <span class="required">*</span></label>
+                                                    <div class="input-wrapper">
+                                                        <i class="fas fa-calendar input-icon"></i>
+                                                        <select name="school_to[]" class="form-control year-select" required>
+                                                            <option value="">-- Select Year --</option>
+                                                            @for($year = date('Y'); $year >= 1960; $year--)
+                                                                <option value="{{ $year }}">{{ $year }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                    @error('school_to.*')<div class="error-message">{{ $message }}</div>@enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    <!-- Schools Attended -->
-                                  <div class="row g-2 mb-2">
-                  <div class="col-md-6">
-                      <input type="text" 
-                            name="school_name[]" 
-                            placeholder="School Name"
-                            class="form-control form-control-sm border-success"
-                            required>
-                      @error('school_name.*')
-                          <div class="text-danger small">{{ $message }}</div>
-                      @enderror
-                  </div>
-                  <div class="col-md-3">
-                      <input type="text" 
-                            name="school_from[]" 
-                            placeholder="From (YYYY)"
-                            class="form-control form-control-sm border-success"
-                            required>
-                      @error('school_from.*')
-                          <div class="text-danger small">{{ $message }}</div>
-                      @enderror
-                  </div>
-                  <div class="col-md-3">
-                      <input type="text" 
-                            name="school_to[]" 
-                            placeholder="To (YYYY)"
-                            class="form-control form-control-sm border-success"
-                            required>
-                      @error('school_to.*')
-                          <div class="text-danger small">{{ $message }}</div>
-                      @enderror
-                  </div>
-              </div>
+                                    <!-- O'Level Results Section -->
+                                    <div class="form-section">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-certificate me-2"></i>O'Level Results</h4>
+                                        </div>
+                                        
+                                        <div class="olevel-container">
+                                            <div class="row g-2">
+                                                <!-- First Sitting -->
+                                                <div class="col-12 col-xl-6">
+                                                    <div class="exam-sitting-card">
+                                                        <div class="exam-sitting-header">
+                                                            <h5><i class="fas fa-file-alt me-2"></i>First Sitting</h5>
+                                                        </div>
+                                                        
+                                                        <div class="exam-details">
+                                                            <div class="row g-2">
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Exam Type <span class="required">*</span></label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-clipboard input-icon"></i>
+                                                                            <select name="first_exam_type" class="form-control" required>
+                                                                                <option value="">-- Select Exam Type --</option>
+                                                                                <option value="WAEC">WAEC</option>
+                                                                                <option value="NECO">NECO</option>
+                                                                                <option value="GCE">GCE</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        @error('first_exam_type')<div class="error-message">{{ $message }}</div>@enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Exam Year <span class="required">*</span></label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-calendar input-icon"></i>
+                                                                            <select name="first_exam_year" class="form-control year-select" required>
+                                                                                <option value="">-- Select Year --</option>
+                                                                                @for($year = date('Y'); $year >= 1980; $year--)
+                                                                                    <option value="{{ $year }}">{{ $year }}</option>
+                                                                                @endfor
+                                                                            </select>
+                                                                        </div>
+                                                                        @error('first_exam_year')<div class="error-message">{{ $message }}</div>@enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Exam Number <span class="required">*</span></label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-hashtag input-icon"></i>
+                                                                            <input type="text" name="first_exam_number" 
+                                                                                   class="form-control" 
+                                                                                   placeholder="e.g. 12345678" required>
+                                                                        </div>
+                                                                        @error('first_exam_number')<div class="error-message">{{ $message }}</div>@enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Center Number <span class="required">*</span></label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-map-marker-alt input-icon"></i>
+                                                                            <input type="text" name="first_center_number" 
+                                                                                   class="form-control" 
+                                                                                   placeholder="e.g. 12345" required>
+                                                                        </div>
+                                                                        @error('first_center_number')<div class="error-message">{{ $message }}</div>@enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Subjects Table -->
+                                                        <div class="subjects-table-container">
+                                                            <div class="table-responsive">
+                                                                <table class="table subjects-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="70%">Subject</th>
+                                                                            <th width="30%">Grade</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @for ($i = 1; $i <= 9; $i++)
+                                                                        <tr>
+                                                                            <td>
+                                                                                <select name="first_subject[]" class="form-control" required>
+                                                                                    <option value="">-- Select Subject --</option>
+                                                                                    <option value="English Language">English Language</option>
+                                                                                    <option value="Mathematics">Mathematics</option>
+                                                                                    <option value="Biology">Biology</option>
+                                                                                    <option value="Physics">Physics</option>
+                                                                                    <option value="Chemistry">Chemistry</option>
+                                                                                    <option value="Economics">Economics</option>
+                                                                                    <option value="Geography">Geography</option>
+                                                                                    <option value="Government">Government</option>
+                                                                                    <option value="Literature in English">Literature in English</option>
+                                                                                    <option value="Commerce">Commerce</option>
+                                                                                    <option value="Accounting">Accounting</option>
+                                                                                    <option value="Agricultural Science">Agricultural Science</option>
+                                                                                    <option value="Civic Education">Civic Education</option>
+                                                                                    <option value="Further Mathematics">Further Mathematics</option>
+                                                                                    <option value="Christian Religious Studies">Christian Religious Studies</option>
+                                                                                    <option value="Islamic Religious Studies">Islamic Religious Studies</option>
+                                                                                    <option value="Hausa">Hausa</option>
+                                                                                    <option value="Marketing">Marketing</option>
+                                                                                    <option value="Data Processing">Data Processing</option>
+                                                                                    <option value="History">History</option>
+                                                                                    <option value="French">French</option>
+                                                                                    <option value="Computer Studies">Computer Studies</option>
+                                                                                    <option value="Physical Education">Physical Education</option>
+                                                                                    <option value="Technical Drawing">Technical Drawing</option>
+                                                                                    <option value="Fine Arts">Fine Arts</option>
+                                                                                    <option value="Music">Music</option>
+                                                                                    <option value="Home Economics">Home Economics</option>
+                                                                                    <option value="Business Studies">Business Studies</option>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <select name="first_grade[]" class="form-control" required>
+                                                                                    <option value="">-- Grade --</option>
+                                                                                    <option value="A1">A1</option>
+                                                                                    <option value="B2">B2</option>
+                                                                                    <option value="B3">B3</option>
+                                                                                    <option value="C4">C4</option>
+                                                                                    <option value="C5">C5</option>
+                                                                                    <option value="C6">C6</option>
+                                                                                    <option value="D7">D7</option>
+                                                                                    <option value="E8">E8</option>
+                                                                                    <option value="F9">F9</option>
+                                                                                </select>
+                                                                            </td>
+                                                                        </tr>
+                                                                        @endfor
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            @error('first_subject.*')<div class="error-message">{{ $message }}</div>@enderror
+                                                            @error('first_grade.*')<div class="error-message">{{ $message }}</div>@enderror
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Second Sitting -->
+                                                <div class="col-12 col-xl-6">
+                                                    <div class="exam-sitting-card">
+                                                        <div class="exam-sitting-header">
+                                                            <h5><i class="fas fa-file-alt me-2"></i>Second Sitting</h5>
+                                                            <small class="text-muted">(Optional)</small>
+                                                        </div>
+                                                        
+                                                        <div class="exam-details">
+                                                            <div class="row g-2">
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Exam Type</label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-clipboard input-icon"></i>
+                                                                            <select name="second_exam_type" class="form-control">
+                                                                                <option value="">-- Select Exam Type --</option>
+                                                                                <option value="WAEC">WAEC</option>
+                                                                                <option value="NECO">NECO</option>
+                                                                                <option value="GCE">GCE</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Exam Year</label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-calendar input-icon"></i>
+                                                                            <select name="second_exam_year" class="form-control year-select">
+                                                                                <option value="">-- Select Year --</option>
+                                                                                @for($year = date('Y'); $year >= 1980; $year--)
+                                                                                    <option value="{{ $year }}">{{ $year }}</option>
+                                                                                @endfor
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Exam Number</label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-hashtag input-icon"></i>
+                                                                            <input type="text" name="second_exam_number" 
+                                                                                   class="form-control" 
+                                                                                   placeholder="e.g. 12345678">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Center Number</label>
+                                                                        <div class="input-wrapper">
+                                                                            <i class="fas fa-map-marker-alt input-icon"></i>
+                                                                            <input type="text" name="second_center_number" 
+                                                                                   class="form-control" 
+                                                                                   placeholder="e.g. 12345">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Subjects Table -->
+                                                        <div class="subjects-table-container">
+                                                            <div class="table-responsive">
+                                                                <table class="table subjects-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="70%">Subject</th>
+                                                                            <th width="30%">Grade</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @for ($i = 1; $i <= 9; $i++)
+                                                                        <tr>
+                                                                            <td>
+                                                                                <select name="second_subject[]" class="form-control">
+                                                                                    <option value="">-- Select Subject --</option>
+                                                                                    <option value="English Language">English Language</option>
+                                                                                    <option value="Mathematics">Mathematics</option>
+                                                                                    <option value="Biology">Biology</option>
+                                                                                    <option value="Physics">Physics</option>
+                                                                                    <option value="Chemistry">Chemistry</option>
+                                                                                    <option value="Economics">Economics</option>
+                                                                                    <option value="Geography">Geography</option>
+                                                                                    <option value="Government">Government</option>
+                                                                                    <option value="Literature in English">Literature in English</option>
+                                                                                    <option value="Commerce">Commerce</option>
+                                                                                    <option value="Accounting">Accounting</option>
+                                                                                    <option value="Agricultural Science">Agricultural Science</option>
+                                                                                    <option value="Civic Education">Civic Education</option>
+                                                                                    <option value="Further Mathematics">Further Mathematics</option>
+                                                                                    <option value="Christian Religious Studies">Christian Religious Studies</option>
+                                                                                    <option value="Islamic Religious Studies">Islamic Religious Studies</option>
+                                                                                    <option value="Hausa">Hausa</option>
+                                                                                    <option value="Marketing">Marketing</option>
+                                                                                    <option value="Data Processing">Data Processing</option>
+                                                                                    <option value="History">History</option>
+                                                                                    <option value="French">French</option>
+                                                                                    <option value="Computer Studies">Computer Studies</option>
+                                                                                    <option value="Physical Education">Physical Education</option>
+                                                                                    <option value="Technical Drawing">Technical Drawing</option>
+                                                                                    <option value="Fine Arts">Fine Arts</option>
+                                                                                    <option value="Music">Music</option>
+                                                                                    <option value="Home Economics">Home Economics</option>
+                                                                                    <option value="Business Studies">Business Studies</option>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <select name="second_grade[]" class="form-control">
+                                                                                    <option value="">-- Grade --</option>
+                                                                                    <option value="A1">A1</option>
+                                                                                    <option value="B2">B2</option>
+                                                                                    <option value="C4">C4</option>
+                                                                                    <option value="C5">C5</option>
+                                                                                    <option value="C6">C6</option>
+                                                                                    <option value="D7">D7</option>
+                                                                                    <option value="E8">E8</option>
+                                                                                    <option value="F9">F9</option>
+                                                                                </select>
+                                                                            </td>
+                                                                        </tr>
+                                                                        @endfor
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- JAMB Details Section -->
+                                    <div class="form-section">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-bookmark me-2"></i>JAMB Details</h4>
+                                        </div>
+                                        <div class="jamb-details-card">
+                                            <div class="row g-2">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">JAMB Registration Number</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-hashtag input-icon"></i>
+                                                            <input type="text" name="jamb_no" class="form-control" 
+                                                                   placeholder="Enter JAMB registration number">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">JAMB Score</label>
+                                                        <div class="input-wrapper">
+                                                            <i class="fas fa-chart-bar input-icon"></i>
+                                                            <input type="number" name="jamb_score" class="form-control" 
+                                                                   placeholder="Enter your JAMB score" min="0" max="400">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
-  <!-- O'Level Results -->
-<div class="card border-success mb-3">
-  <div class="card-header bg-success text-white">O'Level Results</div>
-  <div class="card-body">
+                        <!-- Step 3: Review & Submit -->
+                        <div class="step-content" id="step-3">
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="step-title">
+                                        <h3>Review & Submit</h3>
+                                        <p>Please review your information before final submission</p>
+                                    </div>
+                                </div>
 
-    <div class="row">
-     <!-- First Sitting -->
-<div class="col-md-6">
-  <h6 class="fw-bold text-success mb-3 text-center">First Sitting</h6>
+                                <div class="step-body">
+                                    <div class="review-section">
+                                        <div class="review-notice">
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                <strong>Please Review:</strong> Kindly review all your details carefully before final submission. 
+                                                Once submitted, you may not be able to edit your application.
+                                            </div>
+                                        </div>
 
-  <!-- Exam Details -->
-  <div class="row g-2 mb-3">
-    <div class="col-md-6">
-      <label class="form-label fw-semibold small mb-1">Exam Type</label>
-      <select name="first_exam_type" class="form-select form-select-sm border-success" required>
-        <option value="">-- Select Exam Type --</option>
-        <option>WAEC</option>
-        <option>NECO</option>
-        <option>GCE</option>
-      </select>
-      @error('first_exam_type')
-        <div class="text-danger small">{{ $message }}</div>
-      @enderror
-    </div>
+                                        <div class="form-section">
+                                            <div class="section-header">
+                                                <h4><i class="fas fa-clipboard-check me-2"></i>Declaration</h4>
+                                            </div>
+                                            <div class="declaration-content">
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="declaration" class="form-check-input" 
+                                                           id="declaration" required>
+                                                    <label class="form-check-label" for="declaration">
+                                                        I hereby declare that all information provided in this application is true and accurate to the best of my knowledge. 
+                                                        I understand that any false information may lead to the rejection of my application.
+                                                    </label>
+                                                </div>
+                                                @error('declaration')<div class="error-message">{{ $message }}</div>@enderror
+                                            </div>
+                                        </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold small mb-1">Exam Year</label>
-      <input type="number" 
-             name="first_exam_year" 
-             class="form-control form-control-sm border-success" 
-             placeholder="e.g. 2022" 
-             required>
-      @error('first_exam_year')
-        <div class="text-danger small">{{ $message }}</div>
-      @enderror
-    </div>
-
-    <div class="col-md-6">
-      <label class="form-label fw-semibold small mb-1">Exam Number</label>
-      <input type="text" 
-             name="first_exam_number" 
-             class="form-control form-control-sm border-success" 
-             placeholder="e.g. 12345678" 
-             required>
-      @error('first_exam_number')
-        <div class="text-danger small">{{ $message }}</div>
-      @enderror
-    </div>
-
-    <div class="col-md-6">
-      <label class="form-label fw-semibold small mb-1">Center Number</label>
-      <input type="text" 
-             name="first_center_number" 
-             class="form-control form-control-sm border-success" 
-             placeholder="e.g. 12345" 
-             required>
-      @error('first_center_number')
-        <div class="text-danger small">{{ $message }}</div>
-      @enderror
-    </div>
-  </div>
-
-  <!-- Subjects Table -->
-  <div class="table-responsive mb-4">
-    <table class="table table-bordered table-sm align-middle">
-      <thead class="table-success">
-        <tr>
-          <th>Subject</th>
-          <th>Grade</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for ($i = 1; $i <= 9; $i++)
-        <tr>
-          <td>
-            <select name="first_subject[]" class="form-select form-select-sm border-success" required>
-              <option value="">-- Select Subject --</option>
-             <option>English Language</option>
-              <option>Mathematics</option>
-              <option>Biology</option>
-              <option>Physics</option>
-              <option>Chemistry</option>
-              <option>Economics</option>
-              <option>Geography</option>
-              <option>Government</option>
-              <option>Literature in English</option>
-              <option>Commerce</option>
-              <option>Accounting</option>
-              <option>Agricultural Science</option>
-              <option>Civic Education</option>
-              <option>Further Mathematics</option>
-              <option>Christian Religious Studies</option>
-              <option>Islamic Religious Studies</option>
-              <option>Hausa</option>
-              <option>Marketing</option>
-              <option>Data Processing</option>
-              <option>History</option>
-              <option>French</option>
-
-              <!-- New subjects added -->
-              <option>Computer Studies</option>
-              <option>Physical Education</option>
-              <option>Technical Drawing</option>
-              <option>Fine Arts</option>
-              <option>Music</option>
-              <option>Home Economics</option>
-              <option>Business Studies</option>
-            </select>
-          </td>
-          <td>
-            <select name="first_grade[]" class="form-select form-select-sm border-success" required>
-              <option value="">-- Select Grade --</option>
-              <option>A1</option>
-              <option>B2</option>
-              <option>B3</option>
-              <option>C4</option>
-              <option>C5</option>
-              <option>C6</option>
-              <option>D7</option>
-              <option>E8</option>
-              <option>F9</option>
-            </select>
-          </td>
-        </tr>
-        @endfor
-      </tbody>
-    </table>
-    @error('first_subject.*')
-      <div class="text-danger small">{{ $message }}</div>
-    @enderror
-    @error('first_grade.*')
-      <div class="text-danger small">{{ $message }}</div>
-    @enderror
-  </div>
-</div>
-
-      <!-- Second Sitting -->
-      <div class="col-md-6">
-        <h6 class="fw-bold text-success mb-3 text-center">Second Sitting</h6>
-
-        <!-- Exam Details -->
-        <div class="row g-2 mb-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Exam Type</label>
-            <select name="second_exam_type" class="form-select form-select-sm border-success">
-              <option value="">-- Select Exam Type --</option>
-              <option>WAEC</option>
-              <option>NECO</option>
-              <option>GCE</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Exam Year</label>
-            <input type="number" name="second_exam_year" class="form-control form-control-sm border-success" placeholder="e.g. 2022">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Exam Number</label>
-            <input type="text" name="second_exam_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345678">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small mb-1">Center Number</label>
-            <input type="text" name="second_center_number" class="form-control form-control-sm border-success" placeholder="e.g. 12345">
-          </div>
-        </div>
-
-        <!-- Subjects Table -->
-        <div class="table-responsive mb-4">
-          <table class="table table-bordered table-sm align-middle">
-            <thead class="table-success">
-              <tr>
-                <th>Subject</th>
-                <th>Grade</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for ($i = 1; $i <= 9; $i++)
-              <tr>
-                <td>
-                  <select name="second_subject[]" class="form-select form-select-sm border-success">
-                    <option value="">-- Select Subject --</option>
-                  <option>English Language</option>
-                  <option>Mathematics</option>
-                  <option>Biology</option>
-                  <option>Physics</option>
-                  <option>Chemistry</option>
-                  <option>Economics</option>
-                  <option>Geography</option>
-                  <option>Government</option>
-                  <option>Literature in English</option>
-                  <option>Commerce</option>
-                  <option>Accounting</option>
-                  <option>Agricultural Science</option>
-                  <option>Civic Education</option>
-                  <option>Further Mathematics</option>
-                  <option>Christian Religious Studies</option>
-                  <option>Islamic Religious Studies</option>
-                  <option>Hausa</option>
-                  <option>Marketing</option>
-                  <option>Data Processing</option>
-                  <option>History</option>
-                  <option>French</option>
-
-                  <!-- New subjects added -->
-                  <option>Computer Studies</option>
-                  <option>Physical Education</option>
-                  <option>Technical Drawing</option>
-                  <option>Fine Arts</option>
-                  <option>Music</option>
-                  <option>Home Economics</option>
-                  <option>Business Studies</option>
-
-                  </select>
-                </td>
-                <td>
-                  <select name="second_grade[]" class="form-select form-select-sm border-success">
-                    <option value="">-- Select Grade --</option>
-                    <option>A1</option>
-                    <option>B2</option>
-                    <option>B3</option>
-                    <option>C4</option>
-                    <option>C5</option>
-                    <option>C6</option>
-                    <option>D7</option>
-                    <option>E8</option>
-                    <option>F9</option>
-                  </select>
-                </td>
-              </tr>
-              @endfor
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-  
-  <!-- JAMB Details -->
-  <div class="card border-success mb-3">
-    <div class="card-header bg-success text-white">JAMB Details</div>
-    <div class="card-body">
-      <div class="row g-2">
-        <div class="col-md-6">
-          <input type="text" name="jamb_no" placeholder="JAMB No" class="form-control form-control-sm border-success">
-        </div>
-        <div class="col-md-6">
-          <input type="text" name="jamb_score" placeholder="Score" class="form-control form-control-sm border-success">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-                        <!-- Step 4: Review
-                        <div class="step-content d-none" id="step-3">
-                            <h5 class="fw-bold text-success mb-3">Review & Submit</h5>
-                            <p class="text-muted">Kindly review your details before final submission.</p>
-                            <button type="submit" class="btn btn-success w-100 btn-lg">
-                                Submit Application
-                            </button>
-                        </div> -->
+                                        <div class="submit-section">
+                                            <button type="submit" class="btn btn-success btn-lg w-100 submit-btn">
+                                                <i class="fas fa-paper-plane me-2"></i>
+                                                Submit Application
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Navigation Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
+                        <div class="d-flex justify-content-between mt-3">
                             <button type="button" id="prevBtn" class="btn btn-outline-success d-none">Previous</button>
                             <button type="button" id="nextBtn" class="btn btn-success">Next</button>
                         </div>
@@ -564,33 +919,48 @@
         <!-- Scripts -->
         <script>
          let currentStep = 1;
-        const totalSteps = 2;
+        const totalSteps = 3;
 
         function updateProgressBar(step) {
             const progress = (step / totalSteps) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercentage').textContent = Math.round(progress) + '%';
+            
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                if (index < step) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
         }
 
         function showStep(step) {
             document.querySelectorAll('.step-content').forEach((el, idx) => {
-                el.classList.add('d-none');
-                if (idx === step - 1) el.classList.remove('d-none');
+                el.style.display = 'none';
+                if (idx === step - 1) el.style.display = 'block';
             });
             document.getElementById('prevBtn').classList.toggle('d-none', step === 1);
 
-            // ✅ Change "Finish" to "Submit"
-            document.getElementById('nextBtn').innerText = step === totalSteps ? 'Submit Your Application' : 'Next';
+            // Update button text
+            const nextBtn = document.getElementById('nextBtn');
+            if (step === totalSteps) {
+                nextBtn.style.display = 'none'; // Hide next button on last step
+            } else {
+                nextBtn.style.display = 'inline-block';
+                nextBtn.innerHTML = '<i class="fas fa-arrow-right me-2"></i>Next Step';
+            }
 
             updateProgressBar(step);
         }
 
         document.getElementById('nextBtn').addEventListener('click', () => {
-            if (currentStep < totalSteps) {
-                currentStep++;
-                showStep(currentStep);
-            } else {
-                // ✅ When it's the last step, submit the form
-                document.getElementById('applicationForm').submit();
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
             }
         });
 
@@ -601,14 +971,54 @@
             }
         });
 
+        function validateCurrentStep() {
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            const requiredFields = currentStepElement.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill in all required fields before proceeding.');
+            }
+
+            return isValid;
+        }
+
         showStep(currentStep);
 
         function previewPhoto(event) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                document.getElementById('photoPreview').src = reader.result;
-            };
-            reader.readAsDataURL(event.target.files[0]);
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('photoPreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        
+                        // Add animation for photo change
+                        preview.style.opacity = '0';
+                        setTimeout(() => {
+                            preview.style.opacity = '1';
+                        }, 100);
+                    }
+                };
+                reader.readAsDataURL(file);
+                
+                // Update upload button text
+                const uploadBtn = document.querySelector('.photo-upload-btn');
+                if (uploadBtn) {
+                    uploadBtn.innerHTML = '<i class="fas fa-check me-2"></i>Photo Selected';
+                    uploadBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                }
+            }
         }
 
 
@@ -677,6 +1087,1319 @@ const lgas = {
                 gradSelect.appendChild(opt);
             }
         </script>
+                    </div>
+                </div>
+            </div>
+        </section>
     </section>
+
+    <!-- Professional Styling -->
+    <style>
+        /* =================
+           PROFESSIONAL DASHBOARD STYLES
+           ================= */
+        
+        .professional-dashboard-wrapper {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+        }
+
+        /* Main Content Section */
+        .main-content-section {
+            padding: 2rem 0 3rem 0;
+            position: relative;
+            z-index: 3;
+            padding-bottom: 3rem;
+        }
+
+        .professional-form-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Success & Admin States */
+        .success-state-container,
+        .submitted-state-container,
+        .admin-welcome-container {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-card,
+        .submitted-card,
+        .admin-welcome-card {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .success-icon,
+        .submitted-icon,
+        .admin-welcome-icon {
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success-title,
+        .submitted-title,
+        .admin-welcome-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-message,
+        .submitted-message,
+        .admin-welcome-message {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .submitted-actions .btn {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .submitted-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Admin Welcome Styles */
+        .admin-welcome-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-welcome-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="20" cy="80" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .admin-welcome-card {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 4rem 3rem;
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .admin-welcome-icon {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .admin-welcome-icon i {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 50%;
+            box-shadow: 0 15px 35px rgba(0, 123, 255, 0.3);
+            animation: adminPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes adminPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 15px 35px rgba(0, 123, 255, 0.3);
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 20px 45px rgba(0, 123, 255, 0.4);
+            }
+        }
+
+        .admin-welcome-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .admin-welcome-message {
+            font-size: 1.3rem;
+            color: #495057;
+            margin-bottom: 3rem;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        .admin-stats-summary {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .admin-stats-summary .row {
+            margin: 0;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #6f42c1 50%, #e83e8c 100%);
+            transition: height 0.3s ease;
+        }
+
+        .stat-box:hover::before {
+            height: 8px;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-box:nth-child(1) .stat-box::before {
+            background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+        }
+
+        .stat-box:nth-child(2) .stat-box::before {
+            background: linear-gradient(90deg, #28a745 0%, #1e7e34 100%);
+        }
+
+        .stat-box:nth-child(3) .stat-box::before {
+            background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%);
+        }
+
+        .stat-box h4 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .stat-box p {
+            color: #6c757d;
+            margin: 0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Admin Welcome Responsive Design */
+        @media (max-width: 768px) {
+            .admin-welcome-container {
+                padding: 2rem 1rem;
+                min-height: 500px;
+            }
+            
+            .admin-welcome-card {
+                padding: 2.5rem 1.5rem;
+                border-radius: 20px;
+            }
+            
+            .admin-welcome-icon i {
+                padding: 1.5rem;
+                font-size: 2.5rem;
+            }
+            
+            .admin-welcome-title {
+                font-size: 2rem;
+            }
+            
+            .admin-welcome-message {
+                font-size: 1.1rem;
+            }
+            
+            .stat-box {
+                padding: 2rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .stat-box h4 {
+                font-size: 2.5rem;
+            }
+            
+            .admin-stats-summary {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-welcome-title {
+                font-size: 1.8rem;
+            }
+            
+            .admin-welcome-message {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .stat-box h4 {
+                font-size: 2rem;
+            }
+            
+            .stat-box p {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Professional Form Styling */
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .step-card {
+            padding: 1.5rem;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .step-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .step-title h3 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-title p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .section-header {
+            margin-bottom: 1rem;
+        }
+
+        .section-header h4 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #28a745;
+            z-index: 2;
+        }
+
+        /* Compact Form Styling */
+        .form-control {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            padding: 0.6rem 0.75rem;
+        }
+
+        .input-wrapper .form-control {
+            padding-left: 40px;
+        }
+
+        .btn {
+            padding: 0.65rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Year Select Dropdowns */
+        .year-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1em 1em;
+            padding-right: 2.5rem;
+        }
+
+        .year-select:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2328a745' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        }
+
+        /* All Select Elements */
+        select.form-control {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1em 1em;
+            padding-right: 2.5rem;
+        }
+
+        select.form-control:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2328a745' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        }
+
+        .form-control {
+            padding-left: 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Photo Upload Styling */
+        .photo-upload-section {
+            margin-bottom: 2rem;
+        }
+
+        .photo-upload-container {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border: 2px dashed #28a745;
+        }
+
+        .photo-preview-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .photo-preview-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+
+        .photo-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(40, 167, 69, 0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .photo-preview-circle:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-upload-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .photo-upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+        .photo-input-hidden {
+            display: none;
+        }
+
+        .photo-requirements {
+            margin-top: 1rem;
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        .progress-bar-wrapper {
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-bg {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .step-indicator.active {
+            opacity: 1;
+        }
+
+        .step-indicator.active .step-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 3px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .step-indicator.active .step-icon i {
+            color: white;
+        }
+
+        .step-indicator span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        /* Academic Records Styling */
+        .olevel-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .exam-sitting-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1px solid #e9ecef;
+        }
+
+        .exam-sitting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .exam-sitting-header h5 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subjects-table-container {
+            margin-top: 1.5rem;
+        }
+
+        .subjects-table {
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .subjects-table thead {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .subjects-table th {
+            font-weight: 600;
+            border: none;
+            padding: 0.75rem;
+        }
+
+        .subjects-table td {
+            padding: 0.5rem;
+            vertical-align: middle;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .subjects-table tbody tr:hover td {
+            background: #e9ecef;
+        }
+
+        .subjects-table .form-control {
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            padding-left: 0.75rem;
+            width: 100%;
+            min-height: 40px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .subjects-table .form-control:focus {
+            background: white;
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+        }
+
+        /* JAMB Details */
+        .jamb-details-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Documents Section */
+        .documents-grid {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .document-upload-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .document-upload-card:hover {
+            border-color: #28a745;
+            background: #f1f8f4;
+        }
+
+        .document-header {
+            margin-bottom: 1rem;
+        }
+
+        .document-header i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-header h6 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .upload-area input[type="file"] {
+            padding: 0.5rem;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            width: 100%;
+        }
+
+        /* Review Section */
+        .review-section {
+            text-align: center;
+        }
+
+        .review-notice {
+            margin-bottom: 2rem;
+        }
+
+        .declaration-content {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .form-check-label {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #495057;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Navigation Buttons */
+        .btn-outline-success {
+            border: 2px solid #28a745;
+            color: #28a745;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-success:hover {
+            background: #28a745;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .step-card {
+                padding: 1rem;
+            }
+            
+            .step-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+                margin-right: 1rem;
+            }
+            
+            .step-title h3 {
+                font-size: 1.5rem;
+            }
+            
+            .form-section {
+                padding: 1rem;
+            }
+            
+            .photo-preview-circle {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .progress-steps {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .step-indicator {
+                flex: 0 1 calc(25% - 0.375rem);
+            }
+            
+            .step-indicator span {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Form Header */
+        .form-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 3rem 2rem 2rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-header-content {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Enhanced Progress Indicator */
+        .progress-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar-wrapper {
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-bg {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .step-indicator {
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .step-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.4rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-icon i {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .step-indicator span {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .step-indicator.active {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .step-indicator.active span {
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .step-indicator i {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .step-indicator span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Step Cards */
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .step-card {
+            padding: 3rem 2rem;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .step-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .step-title h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-title p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+        /* Enhanced Photo Upload */
+        .photo-upload-section {
+            margin-bottom: 3rem;
+        }
+
+        .photo-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload-container:hover {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .photo-preview-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .photo-preview-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 4px solid white;
+        }
+
+        .photo-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(40, 167, 69, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-preview-circle:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-overlay span {
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .photo-upload-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .photo-upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .photo-input-hidden {
+            display: none;
+        }
+
+        .photo-requirements {
+            text-align: center;
+        }
+
+        /* Form Sections */
+        .form-sections {
+            margin-top: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-header h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0;
+        }
+
+        .section-header i {
+            color: #28a745;
+        }
+
+        /* Enhanced Form Groups */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 2;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .error-message::before {
+            content: "⚠️";
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive Design for Statistics */
+        @media (max-width: 768px) {
+            .form-header {
+                padding: 2rem 1rem;
+            }
+            
+            .form-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .step-card {
+                padding: 2rem 1rem;
+            }
+            
+            .progress-steps {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .step-indicator {
+                padding: 0.75rem 0.25rem;
+            }
+            
+            .step-indicator span {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
     @endif
 </x-app-layout>

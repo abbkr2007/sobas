@@ -23,6 +23,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'user_type',
         'mat_id',          // Add matric number
         'plain_password',  // Optional: to display on slip/email
+        'slip_token',      // Token for accessing payment slip
+        'slip_token_expires', // Token expiration
     ];
 
     protected $hidden = [
@@ -33,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'slip_token_expires' => 'datetime',
     ];
 
     protected $appends = ['full_name'];

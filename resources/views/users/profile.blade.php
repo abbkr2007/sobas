@@ -15,7 +15,7 @@
                      </div>
                      <div class="d-flex flex-wrap align-items-center mb-3 mb-sm-0">
                         <h4 class="me-2 h4">{{ $data->full_name ?? 'Austin Robertson'  }}</h4>
-                        <span class="text-capitalize"> - {{ str_replace('_',' ',auth()->user()->user_type) ?? 'Marketing Administrator' }}</span>
+                        <span class="text-capitalize"> - {{ str_replace('_',' ',auth()->user()->user_type ?? '') ?: 'Marketing Administrator' }}</span>
                      </div>
                   </div>
                   <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab" id="profile-pills-tab" role="tablist">

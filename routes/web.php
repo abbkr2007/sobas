@@ -76,6 +76,19 @@ Route::get('/clear', function () {
     Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
     Route::get('/slip', [SlipController::class, 'index'])->name('slip');
 
+    // Public Application Data Route (No Authentication Required)
+    Route::get('/applications-data', [ApplicationController::class, 'allApplicationsData'])->name('applications.data');
+
+    // Applicants Module (Temporarily Public for Testing)
+    Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::get('/applicant/{id}/details', [ApplicantController::class, 'details'])->name('applicants.details');
+    Route::post('/applicant/{id}/update-field', [ApplicantController::class, 'updateField'])->name('applicants.update-field');
+    Route::get('/applicant/{id}/admission-letter', [ApplicantController::class, 'admissionLetter'])->name('applicants.admission-letter');
+    Route::get('/applicant/{id}/download-biodata', [ApplicantController::class, 'downloadBiodata'])->name('applicants.download-biodata');
+    Route::get('/applicants/simple', function() {
+        return view('applicants.simple');
+    })->name('applicants.simple');
+    Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
 
     Route::group(['middleware' => 'auth'], function () {
 
@@ -99,10 +112,6 @@ Route::post('/bulk-users/create', [BulkUserController::class, 'create'])->name('
      
     Route::resource('users', UserController::class);
     Route::post('/users/inline-update', [UserController::class, 'inlineUpdate'])->name('users.inline-update');
-
-    // Applicants Module
-    Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
-    Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
 
     
 

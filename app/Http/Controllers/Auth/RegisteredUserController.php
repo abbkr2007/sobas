@@ -105,11 +105,17 @@ class RegisteredUserController extends Controller
                 Mail::to($user->email)->send(new UserRegisteredMail($user));
                 
 
-                // Store user ID for slip page
+                // Store user ID for slip page and ensure session is saved
                 $request->session()->put('last_user_id', $user->id);
+                $request->session()->put('payment_success', true);
                 $request->session()->forget('user_data');
-
-                return redirect()->route('slip')->with('success', 'Payment successful!');
+                $request->session()->save(); // Force session save
+                
+                // Use a more reliable approach - create a temporary token for slip access
+                $slipToken = Str::random(32);
+                $user->update(['slip_token' => $slipToken, 'slip_token_expires' => now()->addHours(1)]);
+                
+                return redirect()->route('slip', ['token' => $slipToken])->with('success', 'Payment successful!');
             }
 
             return redirect('/')->with('error', 'Payment failed. Please try again.');
