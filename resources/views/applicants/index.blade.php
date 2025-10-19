@@ -62,9 +62,6 @@
                     <i class="fas fa-user-circle me-2"></i>Applicant Details
                 </h5>
                 <div>
-                    <button id="downloadAdmissionLetter" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 10px; cursor: pointer;">
-                        <i class="fas fa-file-pdf"></i> Download Admission Letter
-                    </button>
                     <button id="closeCustomModal" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
                         <i class="fas fa-times"></i> Close
                     </button>
@@ -126,6 +123,81 @@
             position: sticky;
             top: 0;
             z-index: 10;
+        }
+        
+        /* Actions column optimization */
+        .custom-table th:last-child,
+        .custom-table td:last-child {
+            width: 55px !important;
+            min-width: 55px !important;
+            max-width: 55px !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        
+        /* Make action buttons reasonably compact */
+        .custom-table .btn-sm {
+            padding: 0.2rem 0.35rem !important;
+            font-size: 0.75rem !important;
+            line-height: 1.2 !important;
+        }
+        
+        /* Reasonable table cell padding */
+        .custom-table th,
+        .custom-table td {
+            padding: 6px 8px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        /* Prevent table from expanding beyond container */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .custom-table {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+        
+        /* Prevent text wrapping in all cells */
+        .custom-table th,
+        .custom-table td {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Column width distribution - Balanced spacing */
+        .custom-table th:nth-child(1) { width: 35px !important; white-space: nowrap !important; } /* ID */
+        .custom-table th:nth-child(2) { width: 75px !important; white-space: nowrap !important; } /* Application ID */
+        .custom-table th:nth-child(3) { width: 250px !important; white-space: nowrap !important; } /* Full Name */
+        .custom-table th:nth-child(4) { width: 210px !important; white-space: nowrap !important; } /* Application Type */
+        .custom-table th:nth-child(5) { width: 65px !important; white-space: nowrap !important; } /* Status */
+        .custom-table th:nth-child(6) { width: 55px !important; white-space: nowrap !important; } /* Actions */
+        
+        .custom-table td:nth-child(1) { width: 35px !important; white-space: nowrap !important; }
+        .custom-table td:nth-child(2) { width: 75px !important; white-space: nowrap !important; }
+        .custom-table td:nth-child(3) { width: 250px !important; white-space: nowrap !important; }
+        .custom-table td:nth-child(4) { width: 210px !important; white-space: nowrap !important; }
+        .custom-table td:nth-child(5) { width: 65px !important; white-space: nowrap !important; }
+        .custom-table td:nth-child(6) { width: 55px !important; white-space: nowrap !important; }
+        
+        /* Text formatting - Capitalize first letter except Application ID */
+        .custom-table td:nth-child(3), /* Full Name */
+        .custom-table td:nth-child(4), /* Application Type */
+        .custom-table td:nth-child(5) { /* Status */
+            text-transform: capitalize !important;
+        }
+        
+        /* Keep Application ID as uppercase */
+        .custom-table td:nth-child(2) {
+            text-transform: uppercase !important;
+        }
+        
+        /* Make status badges reasonably sized */
+        .custom-table .badge {
+            font-size: 0.7rem !important;
+            padding: 0.25rem 0.5rem !important;
         }
         
         .custom-table tbody tr:hover {
@@ -302,6 +374,9 @@
                     ajax: {
                         url: '{{ route('applicants.index') }}',
                         type: 'GET',
+                        data: function(d) {
+                            d.cache_bust = new Date().getTime(); // Add cache busting parameter
+                        },
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
                         },
@@ -484,7 +559,32 @@
                 let newValue = $(this).val();
                 let displayValue = $(this).find('option:selected').text();
                 
-                console.log('Updating status:', {applicantId, newValue, displayValue});
+                console.log('Main delegated event: Updating status:', {applicantId, newValue, displayValue});
+                
+                // Check if any modal is visible
+                const customModalVisible = $('#customApplicantModal').is(':visible');
+                const bootstrapModalVisible = $('#applicantModal').is(':visible');
+                console.log('Modal visibility check:', {customModalVisible, bootstrapModalVisible});
+                
+                // Handle admission letter section logic for modal
+                if (customModalVisible || bootstrapModalVisible) {
+                    console.log('Modal is visible, handling admission letter section');
+                    
+                    // Always remove existing admission letter section first
+                    $('#admissionLetterSection').remove();
+                    $('.admission-letter-section').remove();
+                    console.log('Removed existing admission letter section');
+                    
+                    // Only add admission letter section if new status is exactly "Admitted"
+                    if (newValue === 'Admitted') {
+                        console.log('New status is Admitted, calling updateAdmissionLetterSectionCustom');
+                        updateAdmissionLetterSectionCustom(newValue, applicantId);
+                    } else {
+                        console.log('New status is not Admitted, not adding admission letter section');
+                    }
+                } else {
+                    console.log('No modal is visible, skipping admission letter section logic');
+                }
                 
                 // Show loading state
                 $(this).prop('disabled', true);
@@ -553,6 +653,28 @@
             function displayApplicantDetails(applicant) {
                 console.log('Displaying applicant details:', applicant);
                 
+                // Helper function to get status badge with appropriate color
+                function getStatusBadge(status) {
+                    if (!status) return '<span class="badge bg-secondary">N/A</span>';
+                    
+                    let badgeClass = 'bg-secondary';
+                    switch(status.toLowerCase()) {
+                        case 'admitted':
+                            badgeClass = 'bg-success';
+                            break;
+                        case 'pending':
+                            badgeClass = 'bg-warning';
+                            break;
+                        case 'rejected':
+                            badgeClass = 'bg-danger';
+                            break;
+                        case 'approved':
+                            badgeClass = 'bg-info';
+                            break;
+                    }
+                    return `<span class="badge ${badgeClass}">${status}</span>`;
+                }
+                
                 try {
                     let modalContent = `
                         <div class="row">
@@ -569,7 +691,12 @@
                                 <h6 class="text-success mb-3">Application Details</h6>
                                 <table class="table table-sm">
                                     <tr><td><strong>Application Type:</strong></td><td>${applicant.application_type || 'N/A'}</td></tr>
-                                    <tr><td><strong>Status:</strong></td><td><span class="badge bg-secondary">${applicant.status || 'N/A'}</span></td></tr>
+                                    <tr><td><strong>Status:</strong></td><td>
+                                        <select class="form-select form-select-sm" id="statusSelect" data-applicant-id="${applicant.id}">
+                                            <option value="Pending" ${applicant.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                            <option value="Admitted" ${applicant.status === 'Admitted' ? 'selected' : ''}>Admitted</option>
+                                        </select>
+                                    </td></tr>
                                     <tr><td><strong>Submitted:</strong></td><td>${applicant.created_at || 'N/A'}</td></tr>
                                 </table>
                             </div>
@@ -612,13 +739,83 @@
                         modalContent += '<div class="mt-3"><p class="text-muted">No O\'Level results available.</p></div>';
                     }
                     
+                    // Do NOT add admission letter section initially - it will be added dynamically
+                    
                     $('#applicantModal .modal-body').html(modalContent);
                     console.log('Modal content updated successfully');
+                    
+                    // Event listener is handled by main delegated event at document level
+                    // No need for additional event listeners here as they conflict with the main handler
+                    
+                    // Check initial status and add admission letter section if status is "Admitted"
+                    // Remove any existing admission letter sections first
+                    $('#admissionLetterSection').remove();
+                    $('.admission-letter-section').remove();
+                    
+                    // Add admission letter section if status is exactly "Admitted"
+                    if (applicant.status && applicant.status.trim() === 'Admitted') {
+                        updateAdmissionLetterSection('Admitted', applicant.id);
+                    }
                     
                 } catch (error) {
                     console.error('Error in displayApplicantDetails:', error);
                     $('#applicantModal .modal-body').html('<div class="alert alert-danger">Error displaying applicant details.</div>');
                 }
+            }
+            
+            // Function to update admission letter section based on status
+            function updateAdmissionLetterSection(status, applicantId) {
+                // Remove existing admission letter section
+                $('.admission-letter-section').remove();
+                
+                // Add admission letter section if status is "Admitted"
+                if (status === 'Admitted') {
+                    const admissionSection = `
+                        <div class="row mt-4 admission-letter-section">
+                            <div class="col-12">
+                                <div class="alert alert-success">
+                                    <h6 class="alert-heading"><i class="fas fa-graduation-cap"></i> Congratulations!</h6>
+                                    <p class="mb-3">Your application has been approved. You can now download your admission letter.</p>
+                                    <a href="/applicant/${applicantId}/download-admission-letter" 
+                                       class="btn btn-success" 
+                                       target="_blank">
+                                        <i class="fas fa-download"></i> Download Admission Letter
+                                    </a>
+                                </div>
+                            </div>
+                        </div>`;
+                    $('#applicantModal .modal-body').append(admissionSection);
+                }
+            }
+            
+            // Function to update applicant status in database
+            function updateApplicantStatus(applicantId, status) {
+                console.log('updateApplicantStatus called with applicantId:', applicantId, 'status:', status);
+                
+                $.ajax({
+                    url: '/applicants/' + applicantId + '/update-status',
+                    method: 'POST',
+                    data: {
+                        status: status,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        console.log('AJAX success response:', response);
+                        if (response.success) {
+                            console.log('Status updated successfully in database');
+                            // Refresh the DataTable to reflect changes
+                            if ($.fn.DataTable.isDataTable('#applicants-table')) {
+                                $('#applicants-table').DataTable().ajax.reload(null, false);
+                                console.log('DataTable reloaded after status update');
+                            }
+                        } else {
+                            console.error('Status update failed:', response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating status:', error);
+                    }
+                });
             }
             
             // Custom modal display function (no Bootstrap dependencies)
@@ -684,17 +881,14 @@
                         </tr>`;
                 }
                 
-                // Status dropdown - always show
+                // Status dropdown - only Pending and Admitted
                 content += `
                     <tr>
                         <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Status:</strong></td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee;">
                             <select id="statusSelect" data-applicant-id="${applicant.id}" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
-                                <option value="">-- Select Status --</option>
-                                <option value="Pending" ${applicant.status && applicant.status.toLowerCase() === 'pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Submitted" ${applicant.status && applicant.status.toLowerCase() === 'submitted' ? 'selected' : ''}>Submitted</option>
-                                <option value="Admitted" ${applicant.status && applicant.status.toLowerCase() === 'admitted' ? 'selected' : ''}>Admitted</option>
-                                <option value="Not Admitted" ${applicant.status && (applicant.status.toLowerCase() === 'not_admitted' || applicant.status.toLowerCase() === 'not admitted') ? 'selected' : ''}>Not Admitted</option>
+                                <option value="Pending" ${applicant.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Admitted" ${applicant.status === 'Admitted' ? 'selected' : ''}>Admitted</option>
                             </select>
                         </td>
                     </tr>`;
@@ -750,7 +944,104 @@
                     content += '<div style="margin-top: 20px; color: #6c757d; font-style: italic; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">No O\'Level results available.</div>';
                 }
                 
+                // Do NOT add admission letter section initially - it will be added dynamically when status changes
+                
                 $('#customModalContent').html(content);
+                
+                // Event listener is handled by main delegated event at document level
+                // No need for additional event listeners here as they conflict with the main handler
+                
+                // Check initial status and add admission letter section if status is "Admitted"
+                // Remove any existing admission letter sections first
+                $('#admissionLetterSection').remove();
+                $('.admission-letter-section').remove();
+                
+                console.log('Checking applicant status:', applicant.status);
+                console.log('Status trim check:', applicant.status ? applicant.status.trim() : 'null/undefined');
+                console.log('Is admitted?', applicant.status && applicant.status.trim() === 'Admitted');
+                
+                // Add admission letter section if status is exactly "Admitted"
+                if (applicant.status && applicant.status.trim() === 'Admitted') {
+                    console.log('Adding admission letter section for admitted student');
+                    updateAdmissionLetterSectionCustom('Admitted', applicant.id);
+                } else {
+                    console.log('NOT adding admission letter section');
+                }
+                
+                $('#applicationTypeSelect').off('change').on('change', function() {
+                    const newApplicationType = $(this).val();
+                    const applicantId = $(this).data('applicant-id');
+                    
+                    // Update application type in database
+                    updateApplicantField(applicantId, 'application_type', newApplicationType);
+                });
+            }
+            
+            // Function to update admission letter section for custom modal
+            function updateAdmissionLetterSectionCustom(status, applicantId) {
+                console.log('updateAdmissionLetterSectionCustom called with status:', status, 'applicantId:', applicantId);
+                
+                // Remove existing admission letter section
+                $('#admissionLetterSection').remove();
+                console.log('Removed existing admission letter sections');
+                
+                // Add admission letter section if status is "Admitted"
+                if (status === 'Admitted') {
+                    console.log('Status is Admitted, creating admission section');
+                    const admissionSection = `
+                        <div id="admissionLetterSection" style="margin-top: 30px;">
+                            <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 20px;">
+                                <h6 style="color: #155724; margin-bottom: 15px; display: flex; align-items: center;">
+                                    <i class="fas fa-graduation-cap" style="margin-right: 10px;"></i> Congratulations!
+                                </h6>
+                                <p style="color: #155724; margin-bottom: 15px;">Your application has been approved. You can now download your admission letter.</p>
+                                <a href="/applicant/${applicantId}/download-admission-letter" 
+                                   style="display: inline-block; background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;"
+                                   target="_blank">
+                                    <i class="fas fa-download" style="margin-right: 8px;"></i>Download Admission Letter
+                                </a>
+                            </div>
+                        </div>`;
+                    console.log('Appending admission section to #customModalContent');
+                    $('#customModalContent').append(admissionSection);
+                    console.log('Admission section appended successfully');
+                    
+                    // Verify the section was added
+                    const sectionExists = $('#admissionLetterSection').length > 0;
+                    console.log('Admission section exists in DOM:', sectionExists);
+                    if (sectionExists) {
+                        console.log('Admission section HTML preview:', $('#admissionLetterSection')[0].outerHTML.substring(0, 150) + '...');
+                    }
+                } else {
+                    console.log('Status is not Admitted, not adding admission section');
+                }
+            }
+            
+            // Function to update applicant field in database
+            function updateApplicantField(applicantId, field, value) {
+                $.ajax({
+                    url: '/applicant/' + applicantId + '/update-field',
+                    method: 'POST',
+                    data: {
+                        field: field,
+                        value: value,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('Field updated successfully');
+                            // Refresh the DataTable to reflect changes
+                            if ($.fn.DataTable.isDataTable('#applicants-table')) {
+                                $('#applicants-table').DataTable().ajax.reload(null, false);
+                            }
+                        } else {
+                            console.error('Field update failed:', response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating field:', error);
+                    }
+                });
             }
             
             function getStatusColor(status) {

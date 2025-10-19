@@ -22,26 +22,37 @@ class ApplicantController extends Controller
                 return DataTables::of($applicants)
                 ->addColumn('full_name', function ($row) {
                     $names = [];
-                    if ($row->firstname) $names[] = $row->firstname;
-                    if ($row->middlename) $names[] = $row->middlename;
-                    if ($row->surname) $names[] = $row->surname;
+                    if ($row->firstname) $names[] = ucfirst(strtolower($row->firstname));
+                    if ($row->middlename) $names[] = ucfirst(strtolower($row->middlename));
+                    if ($row->surname) $names[] = ucfirst(strtolower($row->surname));
                     return count($names) > 0 ? implode(' ', $names) : 'N/A';
                 })
                 ->addColumn('status', function ($row) {
                     $status = $row->status ?? 'Pending';
+                    $formattedStatus = ucfirst(strtolower($status));
                     $badgeClass = match($status) {
-                        'Submitted' => 'bg-info',
                         'Admitted' => 'bg-success', 
-                        'Not Admitted' => 'bg-danger',
+                        'Pending' => 'bg-warning',
                         default => 'bg-warning'
                     };
-                    return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
+                    return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
                 ->addColumn('actions', function ($row) {
-                    return '<button class="btn btn-sm btn-outline-primary view-applicant" data-id="'.$row->id.'">View</button> <a href="/applicant/'.$row->id.'/download-biodata" class="btn btn-sm btn-outline-success">Download</a>';
+                    $actions = '<button class="btn btn-sm btn-outline-primary view-applicant" data-id="'.$row->id.'" title="View Details"><i class="fas fa-eye" style="font-size: 12px;"></i></button>';
+                    
+                    // Only show download button if status is exactly "Admitted" (case-sensitive)
+                    if ($row->status !== null && trim($row->status) === 'Admitted') {
+                        $actions .= ' <a href="' . route('applicant.download-admission-letter', $row->id) . '" 
+                           class="btn btn-success btn-sm ms-1" 
+                           title="Download Admission Letter">
+                           <i class="fas fa-download" style="font-size: 12px;"></i>
+                       </a>';
+                    }
+                    
+                    return $actions;
                 })
                 ->editColumn('application_type', function ($row) {
-                    return $row->application_type ? strtoupper(str_replace('_', ' ', $row->application_type)) : '';
+                    return $row->application_type ? ucwords(str_replace('_', ' ', strtolower($row->application_type))) : '';
                 })
                 ->rawColumns(['status', 'actions'])
                 ->make(true);
@@ -431,5 +442,53 @@ class ApplicantController extends Controller
 </html>';
 
         return response($html)->header('Content-Type', 'text/html');
+    }
+
+    /**
+     * Download admission letter for admitted students only
+     */
+    public function downloadAdmissionLetter($id)
+    {
+        try {
+            $application = Application::findOrFail($id);
+            
+            // Only allow download if status is "Admitted"
+            if ($application->status !== 'Admitted') {
+                return redirect()->back()->with('error', 'Admission letter is only available for admitted students.');
+            }
+            
+            // Return the admission letter view for download/print
+            return $this->admissionLetter($id);
+            
+        } catch (\Exception $e) {
+            Log::error('Admission letter download error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to generate admission letter.');
+        }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'status' => 'required|string|in:Pending,Admitted'
+            ]);
+
+            $application = Application::findOrFail($id);
+            $application->status = $request->status;
+            $application->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully',
+                'status' => $application->status
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Status update error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update status'
+            ], 500);
+        }
     }
 }

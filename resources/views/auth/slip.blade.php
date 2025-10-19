@@ -7,7 +7,11 @@
             <a href="{{ route('dashboard') }}" class="d-inline-block mb-2">
                 <img src="{{ asset('images/logo.png') }}" alt="Site Logo" width="120">
             </a>
-            <h2 style="color: #28a745; margin: 0; font-size: 24px; font-weight: bold;">Payment Slip</h2>
+            <h2 style="color: #28a745; margin: 5px 0 0 0; font-size: 18px; font-weight: bold; line-height: 1.3;">
+                Portal of School of Basic<br>
+                and Advanced Studies
+            </h2>
+            <h3 style="color: #28a745; margin: 8px 0 0 0; font-size: 20px; font-weight: bold;">Payment Slip</h3>
             <p style="margin: 3px 0 0; font-size: 12px; color: #555;">Official receipt for your payment</p>
             <hr style="margin-top: 10px; border-top: 1.5px solid #28a745;">
         </div>
@@ -117,6 +121,11 @@
         }
         
         h2 {
+            font-size: 16px !important;
+            line-height: 1.2 !important;
+        }
+        
+        h3 {
             font-size: 18px !important;
         }
         
@@ -151,6 +160,11 @@
         }
         
         h2 {
+            font-size: 14px !important;
+            line-height: 1.1 !important;
+        }
+        
+        h3 {
             font-size: 16px !important;
         }
         

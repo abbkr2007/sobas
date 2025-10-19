@@ -83,12 +83,14 @@ Route::get('/clear', function () {
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::get('/applicant/{id}/details', [ApplicantController::class, 'details'])->name('applicants.details');
     Route::post('/applicant/{id}/update-field', [ApplicantController::class, 'updateField'])->name('applicants.update-field');
+    Route::post('/applicants/{id}/update-status', [ApplicantController::class, 'updateStatus'])->name('applicants.update-status');
     Route::get('/applicant/{id}/admission-letter', [ApplicantController::class, 'admissionLetter'])->name('applicants.admission-letter');
     Route::get('/applicant/{id}/download-biodata', [ApplicantController::class, 'downloadBiodata'])->name('applicants.download-biodata');
     Route::get('/applicants/simple', function() {
         return view('applicants.simple');
     })->name('applicants.simple');
     Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
+    Route::get('/applicant/{id}/download-admission-letter', [ApplicantController::class, 'downloadAdmissionLetter'])->name('applicant.download-admission-letter');
 
     Route::group(['middleware' => 'auth'], function () {
 

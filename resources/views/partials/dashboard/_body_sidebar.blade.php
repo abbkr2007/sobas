@@ -7,7 +7,10 @@
                      alt="Site Logo" 
                      class="logo-image">
                 <div class="logo-text d-none d-xl-block">
-                    <h5 class="app-name mb-0">{{ env('APP_NAME', 'SOBAS') }}</h5>
+                    <h5 class="app-name mb-0" style="font-size: 0.9rem; line-height: 1.2; font-weight: 600;">
+                        Portal of School of Basic<br>
+                        and Advanced Studies
+                    </h5>
                     <small class="app-tagline">Application System</small>
                 </div>
             </div>
@@ -61,8 +64,15 @@
         <div class="d-flex align-items-center">
             <img src="{{ asset('images/logo.png') }}" 
                  alt="Site Logo" 
-                 class="img-fluid" 
-                 style="max-width: 120px; height: auto; filter: brightness(1.1);">
+                 class="img-fluid me-3" 
+                 style="max-width: 80px; height: auto; filter: brightness(1.1);">
+            <div class="text-white">
+                <h6 class="mb-0" style="font-size: 0.85rem; line-height: 1.1; font-weight: 600;">
+                    Portal of School of Basic<br>
+                    and Advanced Studies
+                </h6>
+                <small style="font-size: 0.7rem; opacity: 0.8;">Application System</small>
+            </div>
         </div>
         <button type="button" 
                 class="btn btn-outline-light btn-sm" 
