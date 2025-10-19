@@ -8,36 +8,16 @@ use App\Models\User;
 
 class SlipController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        // Try multiple methods to find the user
-        $user = null;
-        $token = $request->get('token');
-        
-        if ($token) {
-            // Method 1: Token-based access (most reliable)
-            $user = User::where('slip_token', $token)
-                       ->where('slip_token_expires', '>', now())
-                       ->first();
-        }
-        
-        if (!$user) {
-            // Method 2: Session-based access (fallback)
-            $userId = session('last_user_id');
-            if ($userId) {
-                $user = User::find($userId);
-            }
+        $userId = session('last_user_id');
+
+        if (!$userId) {
+            return redirect('/')->with('error', 'No user found for slip.');
         }
 
-        if (!$user) {
-            return redirect('/')->with('error', 'Payment slip not found or expired. Please register again.');
-        }
-
-        $payment = Payment::where('user_id', $user->id)->latest()->first();
-
-        if (!$payment) {
-            return redirect('/')->with('error', 'Payment information not found. Please contact support.');
-        }
+        $user = User::find($userId);
+        $payment = Payment::where('user_id', $userId)->latest()->first();
 
         return view('auth.slip', compact('user', 'payment'));
     }

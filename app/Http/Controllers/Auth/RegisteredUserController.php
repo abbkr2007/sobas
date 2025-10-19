@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\UserRegisteredMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Payment;
-use Paystack;
+use Unicodeveloper\Paystack\Facades\Paystack;
 
 class RegisteredUserController extends Controller
 {
@@ -105,23 +106,17 @@ class RegisteredUserController extends Controller
                 Mail::to($user->email)->send(new UserRegisteredMail($user));
                 
 
-                // Store user ID for slip page and ensure session is saved
+                // Store user ID for slip page
                 $request->session()->put('last_user_id', $user->id);
-                $request->session()->put('payment_success', true);
                 $request->session()->forget('user_data');
-                $request->session()->save(); // Force session save
-                
-                // Use a more reliable approach - create a temporary token for slip access
-                $slipToken = Str::random(32);
-                $user->update(['slip_token' => $slipToken, 'slip_token_expires' => now()->addHours(1)]);
-                
-                return redirect()->route('slip', ['token' => $slipToken])->with('success', 'Payment successful!');
+
+                return redirect()->route('slip')->with('success', 'Payment successful!');
             }
 
             return redirect('/')->with('error', 'Payment failed. Please try again.');
 
         } catch (\Exception $e) {
-            \Log::error('Paystack callback error: '.$e->getMessage());
+            Log::error('Paystack callback error: '.$e->getMessage());
             return redirect('/')->with('error', 'An error occurred during registration.');
         }
     }
