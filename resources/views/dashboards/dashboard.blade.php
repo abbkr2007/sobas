@@ -1050,7 +1050,7 @@
                 };
                 reader.readAsDataURL(file);
                 
-                // Update upload button text
+                // Update upload button texttt
                 const uploadBtn = document.querySelector('.photo-upload-btn');
                 if (uploadBtn) {
                     uploadBtn.innerHTML = '<i class="fas fa-check me-2"></i>Photo Selected';
