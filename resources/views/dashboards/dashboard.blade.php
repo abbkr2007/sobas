@@ -631,6 +631,8 @@
                                                                             <td>
                                                                                 <select name="first_subject[]" class="form-control" required>
                                                                                     <option value="">-- Select Subject --</option>
+                                                                                    <option value="Arabic">Arabic</option>
+                                                                                    <option value="Animal Husbandry">Animal Husbandry</option>
                                                                                     <option value="English Language">English Language</option>
                                                                                     <option value="Mathematics">Mathematics</option>
                                                                                     <option value="Biology">Biology</option>
@@ -648,17 +650,33 @@
                                                                                     <option value="Christian Religious Studies">Christian Religious Studies</option>
                                                                                     <option value="Islamic Religious Studies">Islamic Religious Studies</option>
                                                                                     <option value="Hausa">Hausa</option>
+                                                                                    <option value="Yoruba">Yoruba</option>
+                                                                                    <option value="Igbo">Igbo</option>
                                                                                     <option value="Marketing">Marketing</option>
                                                                                     <option value="Data Processing">Data Processing</option>
+                                                                                    <option value="Computer Studies">Computer Studies</option>
                                                                                     <option value="History">History</option>
                                                                                     <option value="French">French</option>
-                                                                                    <option value="Computer Studies">Computer Studies</option>
                                                                                     <option value="Physical Education">Physical Education</option>
                                                                                     <option value="Technical Drawing">Technical Drawing</option>
                                                                                     <option value="Fine Arts">Fine Arts</option>
                                                                                     <option value="Music">Music</option>
                                                                                     <option value="Home Economics">Home Economics</option>
                                                                                     <option value="Business Studies">Business Studies</option>
+                                                                                    <option value="Food and Nutrition">Food and Nutrition</option>
+                                                                                    <option value="Fishery">Fishery</option>
+                                                                                    <option value="Catering and Craft Practice">Catering and Craft Practice</option>
+                                                                                    <option value="Auto Mechanics">Auto Mechanics</option>
+                                                                                    <option value="Welding and Fabrication">Welding and Fabrication</option>
+                                                                                    <option value="Electrical Installation">Electrical Installation</option>
+                                                                                    <option value="Building Construction">Building Construction</option>
+                                                                                    <option value="Block Laying and Concreting">Block Laying and Concreting</option>
+                                                                                    <option value="Photography">Photography</option>
+                                                                                    <option value="Tourism">Tourism</option>
+                                                                                    <option value="Garment Making">Garment Making</option>
+                                                                                    <option value="Leather Goods Manufacturing">Leather Goods Manufacturing</option>
+                                                                                    <option value="Office Practice">Office Practice</option>
+
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -706,6 +724,8 @@
                                                                                 <option value="WAEC">WAEC</option>
                                                                                 <option value="NECO">NECO</option>
                                                                                 <option value="GCE">GCE</option>
+                                                                                <option value="NABTEB">NABTEB</option>
+                                                                                <option value="NBAIS">NBAIS</option>
                                                                             </select>
                                                                         </div>
                                                                     </div>
@@ -765,6 +785,8 @@
                                                                             <td>
                                                                                 <select name="second_subject[]" class="form-control">
                                                                                     <option value="">-- Select Subject --</option>
+                                                                                   <option value="Arabic">Arabic</option>
+                                                                                    <option value="Animal Husbandry">Animal Husbandry</option>
                                                                                     <option value="English Language">English Language</option>
                                                                                     <option value="Mathematics">Mathematics</option>
                                                                                     <option value="Biology">Biology</option>
@@ -782,17 +804,33 @@
                                                                                     <option value="Christian Religious Studies">Christian Religious Studies</option>
                                                                                     <option value="Islamic Religious Studies">Islamic Religious Studies</option>
                                                                                     <option value="Hausa">Hausa</option>
+                                                                                    <option value="Yoruba">Yoruba</option>
+                                                                                    <option value="Igbo">Igbo</option>
                                                                                     <option value="Marketing">Marketing</option>
                                                                                     <option value="Data Processing">Data Processing</option>
+                                                                                    <option value="Computer Studies">Computer Studies</option>
                                                                                     <option value="History">History</option>
                                                                                     <option value="French">French</option>
-                                                                                    <option value="Computer Studies">Computer Studies</option>
                                                                                     <option value="Physical Education">Physical Education</option>
                                                                                     <option value="Technical Drawing">Technical Drawing</option>
                                                                                     <option value="Fine Arts">Fine Arts</option>
                                                                                     <option value="Music">Music</option>
                                                                                     <option value="Home Economics">Home Economics</option>
                                                                                     <option value="Business Studies">Business Studies</option>
+                                                                                    <option value="Food and Nutrition">Food and Nutrition</option>
+                                                                                    <option value="Fishery">Fishery</option>
+                                                                                    <option value="Catering and Craft Practice">Catering and Craft Practice</option>
+                                                                                    <option value="Auto Mechanics">Auto Mechanics</option>
+                                                                                    <option value="Welding and Fabrication">Welding and Fabrication</option>
+                                                                                    <option value="Electrical Installation">Electrical Installation</option>
+                                                                                    <option value="Building Construction">Building Construction</option>
+                                                                                    <option value="Block Laying and Concreting">Block Laying and Concreting</option>
+                                                                                    <option value="Photography">Photography</option>
+                                                                                    <option value="Tourism">Tourism</option>
+                                                                                    <option value="Garment Making">Garment Making</option>
+                                                                                    <option value="Leather Goods Manufacturing">Leather Goods Manufacturing</option>
+                                                                                    <option value="Office Practice">Office Practice</option>
+
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -1024,43 +1062,234 @@
 
             // === Nigerian States and LGAs ===
 const lgas = {
-    "Abia": ["Aba North","Aba South","Umuahia North","Umuahia South","Bende","Isiala Ngwa North","Isiala Ngwa South","Arochukwu","Ohafia","Ikwuano","Osisioma","Ukwa East","Ukwa West","Ugwunagbo","Obi Ngwa","Ngwa"],
-    "Adamawa": ["Yola North","Yola South","Gombi","Hong","Ganye","Mubi North","Mubi South","Song","Numan","Demsa","Lamurde","Guyuk","Michika","Madagali","Mayo Belwa","Fufore","Shelleng","Jada","Toungo"],
-    "Akwa Ibom": ["Uyo","Eket","Ikot Ekpene","Abak","Itu","Oron","Onna","Ibeno","Esit Eket","Nsit Ubium","Nsit Ibom","Ikono","Mkpat Enin","Ibiono Ibom","Obot Akara","Ini","Essien Udim","Etim Ekpo","Etinan","Okobo","Mbo","Urue-Offong/Oruko","Udung Uko"],
-    "Anambra": ["Awka North","Awka South","Onitsha North","Onitsha South","Nnewi North","Nnewi South","Idemili North","Idemili South","Aguata","Njikoka","Dunukofia","Anaocha","Orumba North","Orumba South","Ogbaru","Ayamelum","Anambra West","Anambra East","Oyi","Ihiala","Ekwusigo"],
-    "Bauchi": ["Bauchi","Tafawa Balewa","Dass","Bogoro","Ningi","Misau","Jama'are","Itas/Gadau","Katagum","Shira","Giade","Zaki","Gamawa","Damban","Warji","Ganjuwa","Darazo","Kirfi","Alkaleri","Toro"],
-    "Bayelsa": ["Yenagoa","Brass","Ekeremor","Kolokuma/Opokuma","Nembe","Ogbia","Sagbama","Southern Ijaw"],
-    "Benue": ["Makurdi","Gboko","Otukpo","Guma","Gwer East","Gwer West","Logo","Katsina-Ala","Ukum","Vandeikya","Konshisha","Oju","Obi","Apa","Agatu","Ado","Okpokwu","Ohimini","Tarka","Buruku"],
-    "Borno": ["Maiduguri","Jere","Bama","Gwoza","Konduga","Dikwa","Ngala","Kala/Balge","Bayo","Kwaya Kusar","Damboa","Shani","Askira/Uba","Chibok","Hawul","Biu","Monguno","Marte","Nganzai","Kukawa","Magumeri","Guzamala","Mobbar","Abadam"],
-    "Cross River": ["Calabar Municipal","Calabar South","Odukpani","Akamkpa","Biase","Akamkpa","Yakurr","Abi","Obubra","Ikom","Etung","Boki","Obudu","Bekwarra","Ogoja","Yala"],
-    "Delta": ["Warri South","Warri North","Warri South West","Udu","Ughelli North","Ughelli South","Ethiope East","Ethiope West","Sapele","Okpe","Isoko North","Isoko South","Ndokwa East","Ndokwa West","Oshimili North","Oshimili South","Aniocha North","Aniocha South","Bomadi","Burutu","Patani","Uvwie"],
-    "Ebonyi": ["Abakaliki","Ebonyi","Ezza North","Ezza South","Ohaukwu","Ishielu","Ikwo","Afikpo North","Afikpo South","Ivo","Ohaozara","Onicha"],
-    "Edo": ["Benin City","Egor","Ikpoba-Okha","Oredo","Orhionmwon","Uhunmwonde","Akoko-Edo","Etsako East","Etsako West","Etsako Central","Esan Central","Esan North-East","Esan South-East","Esan West","Ovia North-East","Ovia South-West"],
-    "Ekiti": ["Ado-Ekiti","Ikere","Irepodun/Ifelodun","Ijero","Gbonyin","Ekiti West","Ekiti East","Ikole","Ido/Osi","Oye","Moba","Emure","Ise/Orun","Efon","Ilejemeje"],
-    "Enugu": ["Enugu East","Enugu North","Enugu South","Nsukka","Udi","Ezeagu","Igbo-Etiti","Igbo-Eze North","Igbo-Eze South","Isi-Uzo","Nkanu East","Nkanu West","Uzo Uwani","Awgu","Aninri","Oji River"],
-    "FCT": ["Abuja Municipal","Bwari","Kuje","Gwagwalada","Abaji","Kwali"],
-    "Gombe": ["Gombe","Akko","Balanga","Billiri","Dukku","Funakaye","Kaltungo","Kwami","Nafada","Shongom","Yamaltu/Deba"],
-    "Imo": ["Owerri Municipal","Owerri North","Owerri West","Orlu","Okigwe","Mbaitoli","Ikeduru","Ahiazu Mbaise","Ezinihitte","Aboh Mbaise","Ngor Okpala","Ohaji/Egbema","Oguta","Oru East","Oru West","Isiala Mbano","Ehime Mbano","Ihitte/Uboma","Obowo","Onuimo"],
-    "Jigawa": ["Dutse","Hadejia","Kazaure","Gwaram","Birnin Kudu","Buji","Garki","Gagarawa","Gwiwa","Jahun","Kafin Hausa","Kiri Kasama","Birniwa","Maigatari","Malam Madori","Ringim","Roni","Sule Tankarkar","Taura","Yankwashi","Miga","Auyo"],
-    "Kaduna": ["Kaduna North","Kaduna South","Zaria","Sabon Gari","Jema'a","Kachia","Kagarko","Sanga","Kaura","Jaba","Lere","Kubau","Kudan","Ikara","Makarfi","Birnin Gwari","Chikun","Giwa","Igabi","Kajuru","Soba"],
-    "Kano": ["Kano Municipal","Nasarawa","Fagge","Dala","Gwale","Tarauni","Ungogo","Kumbotso","Tofa","Bebeji","Bagwai","Rimin Gado","Karaye","Shanono","Madobi","Bichi","Gwarzo","Kabo","Rogo","Takai","Wudil","Warawa","Garko","Albasu","Doguwa","Sumaila","Tsanyawa","Minjibir","Makoda","Dambatta","Kunchi","Kiru","Kibiya","Bunkure","Gabasawa"],
-    "Katsina": ["Katsina","Daura","Funtua","Malumfashi","Dutsin Ma","Mani","Mashi","Musawa","Kankia","Kafur","Kusada","Sandamu","Zango","Bindawa","Baure","Batagarawa","Kurfi","Rimi","Charanchi","Ingawa","Jibia","Batsari","Safana","Dan Musa","Kankara","Bakori","Danja","Sabuwa"],
-    "Kebbi": ["Birnin Kebbi","Argungu","Yauri","Zuru","Bagudo","Jega","Augie","Arewa Dandi","Aliero","Kalgo","Bunza","Maiyama","Ngaski","Shanga","Dandi","Fakai","Gwandu","Koko/Besse","Suru","Sakaba","Wasagu/Danko","Yauri","Zuru"],
-    "Kogi": ["Lokoja","Okene","Kabba/Bunu","Yagba West","Yagba East","Ijumu","Mopa-Muro","Adavi","Ajaokuta","Okehi","Ogori/Magongo","Bassa","Idah","Ofu","Igalamela-Odolu","Ibaji","Dekina","Ankpa","Omala"],
-    "Kwara": ["Ilorin West","Ilorin East","Ilorin South","Offa","Omu-Aran","Patigi","Kaiama","Baruten","Edu","Ifelodun","Irepodun","Ekiti","Isin","Oke Ero","Asa","Moro"],
-    "Lagos": ["Agege","Alimosho","Amuwo-Odofin","Apapa","Badagry","Epe","Eti-Osa","Ibeju-Lekki","Ifako-Ijaiye","Ikeja","Ikorodu","Kosofe","Lagos Island","Lagos Mainland","Mushin","Ojo","Oshodi-Isolo","Shomolu","Surulere"],
-    "Nasarawa": ["Lafia","Akwanga","Keffi","Nasarawa","Nasarawa Egon","Obi","Kokona","Doma","Toto","Wamba","Karu"],
-    "Niger": ["Minna","Bida","Kontagora","Suleja","Mokwa","New Bussa","Rijau","Agaie","Katcha","Lapai","Paikoro","Rafi","Shiroro","Mariga","Mashegu","Wushishi","Tafa","Borgu","Edati","Bosso","Chanchaga"],
-    "Ogun": ["Abeokuta North","Abeokuta South","Ijebu Ode","Ijebu North","Ijebu East","Odogbolu","Sagamu","Remo North","Yewa North","Yewa South","Imeko Afon","Ipokia","Ogun Waterside","Obafemi Owode","Ewekoro","Ifo","Ado-Odo/Ota"],
-    "Ondo": ["Akure South","Akure North","Owo","Ondo West","Ondo East","Ose","Okitipupa","Irele","Ilaje","Ese Odo","Idanre","Ifedore"],
-    "Osun": ["Oshogbo","Ilesa East","Ilesa West","Ifelodun","Ifedayo","Ola-Oluwa","Iwo","Ede North","Ede South","Egbedore","Ejigbo","Ayedaade","Ayedire","Atakunmosa West","Atakunmosa East","Obokun","Oriade","Irewole","Isokan","Iragbiji","Boluwaduro","Ila","Odo Otin","Olorunda","Osogbo"],
-    "Oyo": ["Ibadan North","Ibadan North East","Ibadan North West","Ibadan South East","Ibadan South West","Ogbomosho North","Ogbomosho South","Oyo East","Oyo West","Atiba","Afijio","Iseyin","Kajola","Iwajowa","Ibarapa North","Ibarapa Central","Ibarapa East","Lagelu","Egbeda","Ona Ara","Oluyole","Akinyele","Surulere","Orelope","Saki East","Saki West","Atisbo","Itesiwaju"],
-    "Plateau": ["Jos North","Jos South","Jos East","Barkin Ladi","Riyom","Mangu","Bokkos","Pankshin","Kanam","Kanke","Langtang North","Langtang South","Mikang","Shendam","Qua'an Pan","Wase"],
-    "Rivers": ["Port Harcourt","Obio-Akpor","Okrika","Ogu–Bolo","Eleme","Tai","Gokana","Khana","Oyigbo","Opobo/Nkoro","Andoni","Bonny","Degema","Asari-Toru","Akuku-Toru","Abua–Odual","Ahoada East","Ahoada West","Emohua","Ikwerre","Etche","Omuma"],
-    "Sokoto": ["Sokoto North","Sokoto South","Wamakko","Tambuwal","Bodinga","Dange Shuni","Tureta","Gwadabawa","Illela","Kware","Gudu","Tangaza","Sabon Birni","Gada","Wurno","Isa","Kebbe","Silame","Shagari","Yabo","Binji","Goronyo"],
-    "Taraba": ["Jalingo","Ardo Kola","Zing","Yorro","Karim Lamido","Lau","Ibi","Wukari","Bali","Gassol","Kurmi","Sardauna","Takum","Ussa","Donga"],
-    "Yobe": ["Damaturu","Potiskum","Nguru","Gashua","Geidam","Gujba","Gulani","Yunusari","Yusufari","Bursari","Machina","Fune","Nangere","Karasuwa","Jakusko"],
-    "Zamfara": ["Gusau","Kaura Namoda","Anka","Bukkuyum","Bungudu","Birnin Magaji","Maru","Maradun","Tsafe","Shinkafi","Zurmi","Talata Mafara","Gummi"]
+  "Abia": [
+    "Aba North","Aba South","Arochukwu","Bende","Ikwuano","Isiala Ngwa North",
+    "Isiala Ngwa South","Isuikwuato","Obi Ngwa","Ohafia","Osisioma Ngwa",
+    "Ugwunagbo","Ukwa East","Ukwa West","Umuahia North","Umuahia South","Umunneochi"
+  ],
+
+  "Adamawa": [
+    "Demsa","Fufore","Ganye","Girei","Gombi","Guyuk","Hong","Jada","Lamurde",
+    "Madagali","Maiha","Mayo Belwa","Michika","Mubi North","Mubi South",
+    "Numan","Shelleng","Song","Toungo","Yola North","Yola South"
+  ],
+
+  "Akwa Ibom": [
+    "Abak","Eastern Obolo","Eket","Esit Eket","Essien Udim","Etim Ekpo","Etinan",
+    "Ibeno","Ibesikpo Asutan","Ibiono Ibom","Ika","Ikono","Ikot Abasi","Ikot Ekpene",
+    "Ini","Itu","Mbo","Mkpat Enin","Nsit Atai","Nsit Ibom","Nsit Ubium",
+    "Obot Akara","Okobo","Onna","Oron","Oruk Anam","Udung Uko","Ukanafun",
+    "Uruan","Urue-Offong/Oruko","Uyo"
+  ],
+
+  "Anambra": [
+    "Aguata","Anambra East","Anambra West","Anaocha","Awka North","Awka South",
+    "Ayamelum","Dunukofia","Ekwusigo","Idemili North","Idemili South","Ihiala",
+    "Njikoka","Nnewi North","Nnewi South","Ogbaru","Onitsha North","Onitsha South",
+    "Orumba North","Orumba South","Oyi"
+  ],
+
+  "Bauchi": [
+    "Alkaleri","Bauchi","Bogoro","Damban","Darazo","Dass","Gamawa","Ganjuwa",
+    "Giade","Itas/Gadau","Jama'are","Katagum","Kirfi","Misau","Ningi",
+    "Shira","Tafawa Balewa","Toro","Warji","Zaki"
+  ],
+
+  "Bayelsa": [
+    "Brass","Ekeremor","Kolokuma/Opokuma","Nembe","Ogbia","Sagbama","Southern Ijaw","Yenagoa"
+  ],
+
+  "Benue": [
+    "Ado","Agatu","Apa","Buruku","Gboko","Guma","Gwer East","Gwer West","Katsina-Ala",
+    "Konshisha","Kwande","Logo","Makurdi","Obi","Ogbadibo","Ohimini","Oju",
+    "Okpokwu","Oturkpo","Tarka","Ukum","Ushongo","Vandeikya"
+  ],
+
+  "Borno": [
+    "Abadam","Askira/Uba","Bama","Bayo","Biu","Chibok","Damboa","Dikwa","Gubio",
+    "Guzamala","Gwoza","Hawul","Jere","Kaga","Kala/Balge","Konduga","Kukawa",
+    "Kwaya Kusar","Mafa","Magumeri","Maiduguri","Marte","Mobbar","Monguno",
+    "Ngala","Nganzai","Shani"
+  ],
+
+  "Cross River": [
+    "Abi","Akamkpa","Akpabuyo","Bakassi","Bekwarra","Biase","Boki","Calabar Municipal",
+    "Calabar South","Etung","Ikom","Obanliku","Obubra","Obudu","Odukpani",
+    "Ogoja","Yakurr","Yala"
+  ],
+
+  "Delta": [
+    "Aniocha North","Aniocha South","Bomadi","Burutu","Ethiope East","Ethiope West",
+    "Ika North East","Ika South","Isoko North","Isoko South","Ndokwa East","Ndokwa West",
+    "Okpe","Oshimili North","Oshimili South","Patani","Sapele","Udu","Ughelli North",
+    "Ughelli South","Ukwuani","Uvwie","Warri North","Warri South","Warri South West"
+  ],
+
+  "Ebonyi": [
+    "Abakaliki","Afikpo North","Afikpo South","Ebonyi","Ezza North","Ezza South",
+    "Ikwo","Ishielu","Ivo","Izzi","Ohaozara","Ohaukwu","Onicha"
+  ],
+
+  "Edo": [
+    "Akoko-Edo","Egor","Esan Central","Esan North-East","Esan South-East",
+    "Esan West","Etsako Central","Etsako East","Etsako West","Igueben",
+    "Ikpoba-Okha","Oredo","Orhionmwon","Ovia North-East","Ovia South-West",
+    "Uhunmwonde"
+  ],
+
+  "Ekiti": [
+    "Ado Ekiti","Efon","Ekiti East","Ekiti South-West","Ekiti West","Emure",
+    "Gbonyin","Ido Osi","Ijero","Ikere","Ikole","Ilejemeje","Irepodun/Ifelodun",
+    "Ise/Orun","Moba","Oye"
+  ],
+
+  "Enugu": [
+    "Aninri","Awgu","Enugu East","Enugu North","Enugu South","Ezeagu","Igbo-Etiti",
+    "Igbo-Eze North","Igbo-Eze South","Isi-Uzo","Nkanu East","Nkanu West",
+    "Nsukka","Oji River","Udenu","Udi","Uzo-Uwani"
+  ],
+
+  "FCT": [
+    "Abaji","Bwari","Gwagwalada","Kuje","Kwali","Municipal Area Council"
+  ],
+
+  "Gombe": [
+    "Akko","Balanga","Billiri","Dukku","Funakaye","Gombe","Kaltungo",
+    "Kwami","Nafada","Shongom","Yamaltu/Deba"
+  ],
+
+  "Imo": [
+    "Aboh Mbaise","Ahiazu Mbaise","Ehime Mbano","Ezinihitte","Ideato North",
+    "Ideato South","Ihitte/Uboma","Ikeduru","Isiala Mbano","Isu","Mbaitoli",
+    "Ngor Okpala","Njaba","Nkwerre","Nwangele","Obowo","Oguta","Ohaji/Egbema",
+    "Okigwe","Orlu","Orsu","Oru East","Oru West","Owerri Municipal","Owerri North","Owerri West","Onuimo"
+  ],
+
+  "Jigawa": [
+    "Auyo","Babura","Biriniwa","Birnin Kudu","Buji","Dutse","Gagarawa","Garki",
+    "Gumel","Guri","Gwaram","Gwiwa","Hadejia","Jahun","Kafin Hausa","Kazaure",
+    "Kiri Kasama","Kiyawa","Maigatari","Malam Madori","Miga","Ringim","Roni",
+    "Sule Tankarkar","Taura","Yankwashi"
+  ],
+
+  "Kaduna": [
+    "Birnin Gwari","Chikun","Giwa","Igabi","Ikara","Jaba","Jema'a","Kachia",
+    "Kaduna North","Kaduna South","Kagarko","Kajuru","Kaura","Kauru","Kubau",
+    "Kudan","Lere","Makarfi","Sabon Gari","Sanga","Soba","Zangon Kataf","Zaria"
+  ],
+
+  "Kano": [
+    "Ajingi","Albasu","Bagwai","Bebeji","Bichi","Bunkure","Dala","Dambatta","Dawakin Kudu",
+    "Dawakin Tofa","Doguwa","Fagge","Gabasawa","Garko","Garun Mallam","Gaya","Gezawa",
+    "Gwale","Gwarzo","Kabo","Kano Municipal","Karaye","Kibiya","Kiru","Kumbotso",
+    "Kunchi","Kura","Madobi","Makoda","Minjibir","Nasarawa","Rano","Rimin Gado",
+    "Rogo","Shanono","Sumaila","Takai","Tarauni","Tofa","Tsanyawa","Tudun Wada",
+    "Ungogo","Warawa","Wudil"
+  ],
+
+  "Katsina": [
+    "Bakori","Batagarawa","Batsari","Baure","Bindawa","Charanchi","Dandume","Danja",
+    "Dan Musa","Daura","Dutsi","Dutsin-Ma","Faskari","Funtua","Ingawa","Jibia",
+    "Kafur","Kaita","Kankara","Kankia","Katsina","Kurfi","Kusada","Mai'Adua",
+    "Malumfashi","Mani","Mashi","Matazu","Musawa","Rimi","Sabuwa","Safana",
+    "Sandamu","Zango"
+  ],
+
+  "Kebbi": [
+    "Aleiro","Arewa Dandi","Argungu","Augie","Bagudo","Birnin Kebbi","Bunza",
+    "Dandi","Fakai","Gwandu","Jega","Kalgo","Koko/Besse","Maiyama","Ngaski",
+    "Sakaba","Shanga","Suru","Wasagu/Danko","Yauri","Zuru"
+  ],
+
+  "Kogi": [
+    "Adavi","Ajaokuta","Ankpa","Bassa","Dekina","Ibaji","Idah","Igalamela-Odolu",
+    "Ijumu","Kabba/Bunu","Kogi","Koton Karfe","Mopa-Muro","Ofu","Ogori/Magongo",
+    "Okehi","Okene","Olamaboro","Omala","Yagba East","Yagba West"
+  ],
+
+  "Kwara": [
+    "Asa","Baruten","Edu","Ekiti","Ifelodun","Ilorin East","Ilorin South",
+    "Ilorin West","Irepodun","Isin","Kaiama","Moro","Offa","Oke Ero","Oyun","Patigi"
+  ],
+
+  "Lagos": [
+    "Agege","Ajeromi-Ifelodun","Alimosho","Amuwo-Odofin","Apapa","Badagry","Epe",
+    "Eti-Osa","Ibeju-Lekki","Ifako-Ijaiye","Ikeja","Ikorodu","Kosofe","Lagos Island",
+    "Lagos Mainland","Mushin","Ojo","Oshodi-Isolo","Shomolu","Surulere"
+  ],
+
+  "Nasarawa": [
+    "Akwanga","Awe","Doma","Karu","Keana","Keffi","Kokona","Lafia","Nasarawa",
+    "Nasarawa Egon","Obi","Toto","Wamba"
+  ],
+
+  "Niger": [
+    "Agaie","Agwara","Bida","Borgu","Bosso","Chanchaga","Edati","Gbako","Gurara",
+    "Katcha","Kontagora","Lapai","Lavun","Magama","Mariga","Mashegu","Mokwa",
+    "Muya","Paikoro","Rafi","Rijau","Shiroro","Suleja","Tafa","Wushishi"
+  ],
+
+  "Ogun": [
+    "Abeokuta North","Abeokuta South","Ado-Odo/Ota","Egbado North","Egbado South",
+    "Ewekoro","Ifo","Ijebu East","Ijebu North","Ijebu North East","Ijebu Ode",
+    "Ikenne","Imeko Afon","Ipokia","Obafemi Owode","Odeda","Odogbolu","Ogun Waterside","Remo North","Sagamu"
+  ],
+
+  "Ondo": [
+    "Akoko North-East","Akoko North-West","Akoko South-East","Akoko South-West",
+    "Akure North","Akure South","Ese Odo","Idanre","Ifedore","Ilaje","Ile Oluji/Okeigbo",
+    "Irele","Odigbo","Okitipupa","Ondo East","Ondo West","Ose","Owo"
+  ],
+
+  "Osun": [
+    "Aiyedaade","Aiyedire","Atakunmosa East","Atakunmosa West","Boluwaduro","Boripe",
+    "Ede North","Ede South","Egbedore","Ejigbo","Ife Central","Ife East","Ife North",
+    "Ife South","Ifelodun","Ila","Ilesha East","Ilesha West","Irepodun","Irewole",
+    "Isokan","Iwo","Obokun","Odo Otin","Ola Oluwa","Olorunda","Oriade","Orolu","Osogbo"
+  ],
+
+  "Oyo": [
+    "Afijio","Akinyele","Atiba","Atisbo","Egbeda","Ibadan North","Ibadan North-East",
+    "Ibadan North-West","Ibadan South-East","Ibadan South-West","Ibarapa Central",
+    "Ibarapa East","Ibarapa North","Ido","Irepo","Iseyin","Itesiwaju","Iwajowa",
+    "Kajola","Lagelu","Ogbomosho North","Ogbomosho South","Ogo Oluwa","Olorunsogo",
+    "Oluyole","Ona Ara","Orelope","Ori Ire","Oyo East","Oyo West","Saki East","Saki West",
+    "Surulere"
+  ],
+
+  "Plateau": [
+    "Barkin Ladi","Bassa","Bokkos","Jos East","Jos North","Jos South","Kanam",
+    "Kanke","Langtang North","Langtang South","Mangu","Mikang","Pankshin",
+    "Qua'an Pan","Riyom","Shendam","Wase"
+  ],
+
+  "Rivers": [
+    "Abua–Odual","Ahoada East","Ahoada West","Akuku-Toru","Andoni","Asari-Toru",
+    "Bonny","Degema","Eleme","Emohua","Etche","Gokana","Ikwerre","Khana",
+    "Obio-Akpor","Ogba–Egbema–Ndoni","Ogu–Bolo","Okrika","Omuma","Opobo/Nkoro",
+    "Oyigbo","Port Harcourt","Tai"
+  ],
+
+  "Sokoto": [
+    "Binji","Bodinga","Dange Shuni","Gada","Goronyo","Gudu","Gwadabawa","Illela",
+    "Isa","Kebbe","Kware","Rabah","Sabon Birni","Shagari","Silame","Sokoto North",
+    "Sokoto South","Tambuwal","Tangaza","Tureta","Wamakko","Wurno","Yabo"
+  ],
+
+  "Taraba": [
+    "Ardo Kola","Bali","Donga","Gashaka","Gassol","Ibi","Jalingo","Karim Lamido",
+    "Kumi","Lau","Sardauna","Takum","Ussa","Wukari","Yorro","Zing"
+  ],
+
+  "Yobe": [
+    "Bade","Bursari","Damaturu","Fika","Fune","Geidam","Gujba","Gulani","Jakusko",
+    "Karasuwa","Machina","Nangere","Nguru","Potiskum","Tarmuwa","Yunusari","Yusufari"
+  ],
+
+  "Zamfara": [
+    "Anka","Bakura","Birnin Magaji","Bukkuyum","Bungudu","Gummi","Gusau","Kaura Namoda",
+    "Maradun","Maru","Shinkafi","Talata Mafara","Tsafe","Zurmi"
+  ]
 };
 
             function populateLGA() {
