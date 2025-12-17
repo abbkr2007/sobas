@@ -217,8 +217,8 @@ class ApplicantController extends Controller
                     'full_name' => $fullName ?: 'N/A',
                     'email' => $applicant->email,
                     'phone' => $applicant->phone,
-                    'application_type' => $applicant->application_type ? strtoupper(str_replace('_', ' ', $applicant->application_type)) : 'N/A',
-                    'status' => 'Pending', // You can add a status field to the database if needed
+                    'application_type' => $applicant->application_type ?? 'N/A',
+                    'status' => $applicant->status ?? 'Pending',
                     'created_at' => $applicant->created_at ? $applicant->created_at->format('M d, Y - H:i') : 'N/A',
                     'o_level_results' => $oLevelResults
                 ]
@@ -313,8 +313,8 @@ class ApplicantController extends Controller
                 'new_value' => $value
             ]);
 
-            // If status changed to Admitted, send admission email
-            if ($field === 'status' && $value === 'Admitted' && $oldStatus !== 'Admitted') {
+            // Always send admitted email when status is set to Admitted
+            if ($field === 'status' && $value === 'Admitted') {
                 try {
                     \Mail::to($applicant->email)->send(new \App\Mail\ApplicantAdmittedMail($applicant));
                 } catch (\Exception $e) {
