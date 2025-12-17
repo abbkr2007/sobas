@@ -91,6 +91,13 @@ class ApplicationController extends Controller
 
         $application = Application::create($data);
 
+        // Send confirmation email to applicant
+        try {
+            \Mail::to($application->email)->send(new \App\Mail\ApplicationConfirmationMail($application));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send application confirmation email: ' . $e->getMessage());
+        }
+
         // flash the id to session so we can open it in JS
         return redirect()->back()->with([
             'success' => 'application submited successfully',

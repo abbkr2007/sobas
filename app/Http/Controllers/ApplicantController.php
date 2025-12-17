@@ -302,16 +302,26 @@ class ApplicantController extends Controller
             }
             
             // Update the field
+            $oldStatus = $applicant->status;
             $applicant->$field = $value;
             $applicant->save();
-            
+
             Log::info('Field updated successfully:', [
                 'id' => $id,
                 'field' => $field,
                 'old_value' => $applicant->getOriginal($field),
                 'new_value' => $value
             ]);
-            
+
+            // If status changed to Admitted, send admission email
+            if ($field === 'status' && $value === 'Admitted' && $oldStatus !== 'Admitted') {
+                try {
+                    \Mail::to($applicant->email)->send(new \App\Mail\ApplicantAdmittedMail($applicant));
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send admitted email: ' . $e->getMessage());
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => ucfirst(str_replace('_', ' ', $field)) . ' updated successfully',
