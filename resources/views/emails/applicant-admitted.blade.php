@@ -76,8 +76,7 @@
             <p><strong>Date of Admission:</strong> {{ now()->format('F d, Y') }}</p>
         </div>
         <div class="footer">
-            Please log in to your portal to download your admission letter and complete your registration.<br>
-            Welcome to the School of Basic and Advanced Studies!
+            Registration begins on 5th January 2026 at the School premises. Thank you.
         </div>
     </div>
 </body>
