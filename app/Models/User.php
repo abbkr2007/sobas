@@ -53,9 +53,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return $this->hasMany(Payment::class);
     }
 
-    // Helper function to generate MAT ID (example: MAT2400001)
+    // Helper function to generate MAT ID (example: MAT2500001)
     public static function generateMatId() {
-        $year = date('y'); // last 2 digits of current year
+        $year = '25';
         $lastUser = self::latest('id')->first();
         $serial = $lastUser ? str_pad($lastUser->id + 1, 5, '0', STR_PAD_LEFT) : '00001';
         return 'MAT' . $year . $serial;

@@ -14,10 +14,11 @@ class ApplicantController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $applicants = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at']);
+                $applicants = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
+                                ->where('status', 'Pending');
                 
                 // Debug: Check if we have data
-                Log::info('Applicants count: ' . $applicants->count());
+                Log::info('Pending Applicants count: ' . $applicants->count());
                 
                 return DataTables::of($applicants)
                 ->addColumn('full_name', function ($row) {
@@ -38,16 +39,9 @@ class ApplicantController extends Controller
                     return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
                 ->addColumn('actions', function ($row) {
-                    $actions = '<button class="btn btn-sm btn-outline-primary view-applicant" data-id="'.$row->id.'" title="View Details"><i class="fas fa-eye" style="font-size: 12px;"></i></button>';
+                    $actions = '<a href="' . route('applicants.show', $row->id) . '" class="btn btn-sm btn-outline-primary" title="View Details"><i class="fas fa-eye" style="font-size: 12px;"></i></a>';
                     
-                    // Only show download button if status is exactly "Admitted" (case-sensitive)
-                    if ($row->status !== null && trim($row->status) === 'Admitted') {
-                        $actions .= ' <a href="' . route('applicant.download-admission-letter', $row->id) . '" 
-                           class="btn btn-success btn-sm ms-1" 
-                           title="Download Admission Letter">
-                           <i class="fas fa-download" style="font-size: 12px;"></i>
-                       </a>';
-                    }
+                    $actions .= ' <button class="btn btn-sm btn-success update-status" data-id="' . $row->id . '" title="Mark as Admitted"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
                     
                     return $actions;
                 })
@@ -65,20 +59,107 @@ class ApplicantController extends Controller
         return view('applicants.index');
     }
 
+    public function admissionList(Request $request)
+    {
+        if ($request->ajax()) {
+            try {
+                $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
+                                ->where('status', 'Admitted');
+                
+                Log::info('Admitted Applicants count: ' . $admissions->count());
+                
+                return DataTables::of($admissions)
+                ->addColumn('full_name', function ($row) {
+                    $names = [];
+                    if ($row->firstname) $names[] = ucfirst(strtolower($row->firstname));
+                    if ($row->middlename) $names[] = ucfirst(strtolower($row->middlename));
+                    if ($row->surname) $names[] = ucfirst(strtolower($row->surname));
+                    return count($names) > 0 ? implode(' ', $names) : 'N/A';
+                })
+                ->addColumn('status', function ($row) {
+                    $status = $row->status ?? 'Admitted';
+                    $formattedStatus = ucfirst(strtolower($status));
+                    $badgeClass = 'bg-success';
+                    return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
+                })
+                ->addColumn('actions', function ($row) {
+                    $actions = '<button class="btn btn-primary btn-sm me-1 confirm-admission" data-id="' . $row->id . '" title="Confirm Admission"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
+                    $actions .= '<a href="' . route('applicant.download-admission-letter', $row->id) . '" class="btn btn-success btn-sm" title="Download Admission Letter"><i class="fas fa-download" style="font-size: 12px;"></i></a>';
+                    
+                    return $actions;
+                })
+                ->editColumn('application_type', function ($row) {
+                    return $row->application_type ? ucwords(str_replace('_', ' ', strtolower($row->application_type))) : '';
+                })
+                ->rawColumns(['status', 'actions'])
+                ->make(true);
+            } catch (\Exception $e) {
+                Log::error('DataTable error: ' . $e->getMessage());
+                return response()->json(['error' => 'Failed to load data'], 500);
+            }
+        }
+
+        return view('admissions.index');
+    }
+
+    public function confirmationList(Request $request)
+    {
+        if ($request->ajax()) {
+            try {
+                $confirmations = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
+                                ->where('status', 'Confirmed');
+                
+                Log::info('Confirmed Applicants count: ' . $confirmations->count());
+                
+                return DataTables::of($confirmations)
+                ->addColumn('full_name', function ($row) {
+                    $names = [];
+                    if ($row->firstname) $names[] = ucfirst(strtolower($row->firstname));
+                    if ($row->middlename) $names[] = ucfirst(strtolower($row->middlename));
+                    if ($row->surname) $names[] = ucfirst(strtolower($row->surname));
+                    return count($names) > 0 ? implode(' ', $names) : 'N/A';
+                })
+                ->addColumn('status', function ($row) {
+                    $status = $row->status ?? 'Confirmed';
+                    $formattedStatus = ucfirst(strtolower($status));
+                    $badgeClass = 'bg-info';
+                    return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
+                })
+                ->addColumn('actions', function ($row) {
+                    $actions = '<span class="badge bg-success me-1" title="Confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>';
+                    $actions .= '<a href="' . route('applicant.download-confirmation-letter', $row->id) . '" class="btn btn-info btn-sm" title="Download Confirmation Letter"><i class="fas fa-file-download" style="font-size: 12px;"></i></a>';
+                    
+                    return $actions;
+                })
+                ->editColumn('application_type', function ($row) {
+                    return $row->application_type ? ucwords(str_replace('_', ' ', strtolower($row->application_type))) : '';
+                })
+                ->rawColumns(['status', 'actions'])
+                ->make(true);
+            } catch (\Exception $e) {
+                Log::error('DataTable error: ' . $e->getMessage());
+                return response()->json(['error' => 'Failed to load data'], 500);
+            }
+        }
+
+        return view('confirmations.index');
+    }
+
     public function show($id)
     {
         try {
             $applicant = Application::findOrFail($id);
             
-            return response()->json([
-                'success' => true,
-                'applicant' => $applicant
+            $fullName = collect([$applicant->firstname, $applicant->middlename, $applicant->surname])
+                       ->filter()
+                       ->implode(' ');
+            
+            return view('applicants.show', [
+                'applicant' => $applicant,
+                'fullName' => $fullName ?: 'N/A'
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Applicant not found'
-            ], 404);
+            return redirect()->route('applicants.index')->with('error', 'Applicant not found');
         }
     }
 
@@ -159,6 +240,83 @@ class ApplicantController extends Controller
         }
     }
 
+    public function exportAdmissions()
+    {
+        try {
+            // Get only admitted applications
+            $applications = Application::where('status', 'Admitted')->get();
+
+            // Define the CSV headers
+            $headers = [
+                'id', 'application_id', 'surname', 'firstname', 'middlename', 'phone', 'email', 'dob', 
+                'place_of_birth', 'gender', 'state', 'lga', 'town', 'country', 'foreign_country', 
+                'home_address', 'guardian', 'guardian_address', 'guardian_phone', 'application_type', 
+                'photo', 'schools', 'first_exam_type', 'first_exam_year', 'first_exam_number', 
+                'first_center_number', 'first_subjects', 'first_grades', 'second_exam_type', 
+                'second_exam_year', 'second_exam_number', 'second_center_number', 'second_subjects', 
+                'second_grades', 'created_at', 'updated_at'
+            ];
+
+            // Generate filename with current date
+            $filename = 'admissions_export_' . date('Y-m-d_H-i-s') . '.csv';
+
+            // Set headers for CSV download
+            $headers_http = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0'
+            ];
+
+            // Create a callback function for the response
+            $callback = function() use ($applications, $headers) {
+                $file = fopen('php://output', 'w');
+                
+                // Add headers to CSV
+                fputcsv($file, $headers);
+
+                // Check if there are admitted applications
+                if ($applications->count() > 0) {
+                    // Add data rows
+                    foreach ($applications as $application) {
+                        $row = [];
+                        foreach ($headers as $header) {
+                            $value = $application->$header ?? '';
+                            
+                            // Handle JSON fields
+                            if (in_array($header, ['schools', 'first_subjects', 'first_grades', 'second_subjects', 'second_grades'])) {
+                                if (is_array($value)) {
+                                    $value = json_encode($value);
+                                } elseif (is_string($value) && !empty($value)) {
+                                    // Keep as is if already a string
+                                    $value = $value;
+                                } else {
+                                    $value = '';
+                                }
+                            }
+                            
+                            $row[] = $value;
+                        }
+                        fputcsv($file, $row);
+                    }
+                } else {
+                    // Add a message row if no data
+                    $emptyRow = array_fill(0, count($headers), '');
+                    $emptyRow[0] = 'No admitted applicants available';
+                    fputcsv($file, $emptyRow);
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers_http);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Export failed: ' . $e->getMessage());
+        }
+    }
+
     public function details($id)
     {
         try {
@@ -214,9 +372,19 @@ class ApplicantController extends Controller
                 'data' => [
                     'id' => $applicant->id,
                     'application_id' => $applicant->application_id,
+                    'matric_no' => $applicant->matric_no ?? null,
+                    'matric_number' => $applicant->matric_number ?? null,
+                    'firstname' => $applicant->firstname,
+                    'middlename' => $applicant->middlename,
+                    'surname' => $applicant->surname,
                     'full_name' => $fullName ?: 'N/A',
                     'email' => $applicant->email,
                     'phone' => $applicant->phone,
+                    'gender' => $applicant->gender,
+                    'lga' => $applicant->lga,
+                    'state' => $applicant->state,
+                    'passport' => $applicant->passport ?? $applicant->photo ?? null,
+                    'photo' => $applicant->photo ?? $applicant->passport ?? null,
                     'application_type' => $applicant->application_type ?? 'N/A',
                     'status' => $applicant->status ?? 'Pending',
                     'created_at' => $applicant->created_at ? $applicant->created_at->format('M d, Y - H:i') : 'N/A',
@@ -803,16 +971,82 @@ HTML;
             
         } catch (\Exception $e) {
             Log::error('Admission letter download error: ' . $e->getMessage());
-            Auth::logout();
-            return redirect()->route('login')->with('error', 'Session expired or unauthorized. Please log in again.');
+            return redirect()->back()->with('error', 'Failed to generate admission letter.');
         }
+    }
+
+    public function confirmAdmission(Request $request, $id)
+    {
+        try {
+            $application = Application::findOrFail($id);
+            
+            // Only allow confirming if status is "Admitted"
+            if ($application->status !== 'Admitted') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only admitted applicants can be confirmed'
+                ], 400);
+            }
+            
+            $application->status = 'Confirmed';
+            $application->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Admission confirmed successfully',
+                'status' => $application->status
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Confirmation error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to confirm admission'
+            ], 500);
+        }
+    }
+
+    public function downloadConfirmationLetter($id)
+    {
+        // Check if user is authenticated and is admin
+        if (!auth()->check() || auth()->user()->user_type !== 'admin') {
+            abort(403, 'Unauthorized access. Admin privileges required.');
+        }
+        
+        try {
+            $application = Application::findOrFail($id);
+            
+            // Only allow download if status is "Confirmed"
+            if ($application->status !== 'Confirmed') {
+                return redirect()->back()->with('error', 'Confirmation letter is only available for confirmed students.');
+            }
+            
+            $fullName = collect([$application->firstname, $application->middlename, $application->surname])
+                       ->filter()
+                       ->implode(' ');
+            
+            // Generate confirmation letter content
+            $letterContent = $this->generateConfirmationLetterPDF($application, $fullName);
+            
+            return $letterContent;
+            
+        } catch (\Exception $e) {
+            Log::error('Confirmation letter download error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to generate confirmation letter.');
+        }
+    }
+
+    private function generateConfirmationLetterPDF($applicant, $fullName)
+    {
+        // Use the same template as admission letter
+        return $this->generateAdmissionLetterPDF($applicant, $fullName);
     }
 
     public function updateStatus(Request $request, $id)
     {
         try {
             $request->validate([
-                'status' => 'required|string|in:Pending,Admitted'
+                'status' => 'required|string|in:Pending,Admitted,Confirmed'
             ]);
 
             $application = Application::findOrFail($id);
@@ -831,6 +1065,50 @@ HTML;
                 'success' => false,
                 'message' => 'Failed to update status'
             ], 500);
+        }
+    }
+
+    public function exportConfirmations()
+    {
+        try {
+            $confirmations = Application::where('status', 'Confirmed')->get();
+            
+            $csvData = [];
+            $csvData[] = ['S/N', 'Application ID', 'Full Name', 'Email', 'Phone', 'Application Type', 'Status', 'Date Confirmed'];
+            
+            $sn = 1;
+            foreach ($confirmations as $confirmation) {
+                $fullName = trim(($confirmation->firstname ?? '') . ' ' . ($confirmation->middlename ?? '') . ' ' . ($confirmation->surname ?? ''));
+                
+                $csvData[] = [
+                    $sn++,
+                    $confirmation->application_id ?? 'N/A',
+                    $fullName ?: 'N/A',
+                    $confirmation->email ?? 'N/A',
+                    $confirmation->phone ?? 'N/A',
+                    $confirmation->application_type ? ucwords(str_replace('_', ' ', $confirmation->application_type)) : 'N/A',
+                    'Confirmed',
+                    $confirmation->updated_at ? $confirmation->updated_at->format('d/m/Y H:i') : 'N/A'
+                ];
+            }
+            
+            $filename = 'confirmations_export_' . date('Y-m-d_H-i-s') . '.csv';
+            
+            $handle = fopen('php://temp', 'r+');
+            foreach ($csvData as $row) {
+                fputcsv($handle, $row);
+            }
+            rewind($handle);
+            $csv = stream_get_contents($handle);
+            fclose($handle);
+            
+            return response($csv, 200)
+                ->header('Content-Type', 'text/csv')
+                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+                
+        } catch (\Exception $e) {
+            Log::error('Export confirmations error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to export confirmations.');
         }
     }
 }

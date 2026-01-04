@@ -7,8 +7,8 @@
     <div class="container-fluid px-2 px-md-3 py-3">
         <!-- Responsive Button Container -->
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
-            <h4 class="text-success mb-3 mb-sm-0 fs-5 fs-md-4">Applicants Management</h4>
-            <a href="{{ route('applicants.export') }}" class="btn btn-success btn-sm btn-md-normal">
+            <h4 class="text-info mb-3 mb-sm-0 fs-5 fs-md-4">Confirmation List</h4>
+            <a href="{{ route('confirmations.export') }}" class="btn btn-info btn-sm btn-md-normal">
                 <i class="fas fa-download me-1 me-md-2"></i>
                 <span class="d-none d-sm-inline">Export CSV</span>
                 <span class="d-sm-none">Export</span>
@@ -37,8 +37,8 @@
         
         <!-- Responsive Table Container -->
         <div class="table-responsive">
-            <table id="applicants-table" class="table table-bordered table-striped custom-table w-100">
-                <thead class="table-success">
+            <table id="confirmations-table" class="table table-bordered table-striped custom-table w-100">
+                <thead class="table-info">
                     <tr>
                         <th class="text-nowrap">ID</th>
                         <th class="text-nowrap">Application ID</th>
@@ -66,11 +66,11 @@
         .table-responsive {
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.1);
         }
         
         .custom-table {
-            border: 1px solid #28a745 !important;
+            border: 1px solid #17a2b8 !important;
             border-radius: 6px;
             overflow: hidden;
             font-size: 14px;
@@ -86,7 +86,7 @@
         }
         
         .custom-table thead {
-            background-color: #28a745;
+            background-color: #17a2b8;
             color: white;
             position: sticky;
             top: 0;
@@ -94,7 +94,7 @@
         }
         
         .custom-table thead th {
-            border: 1px solid #28a745 !important;
+            border: 1px solid #17a2b8 !important;
             font-weight: 600;
             font-size: 13px;
             padding: 12px !important;
@@ -103,9 +103,9 @@
         /* Actions column optimization */
         .custom-table th:last-child,
         .custom-table td:last-child {
-            width: 55px !important;
-            min-width: 55px !important;
-            max-width: 55px !important;
+            width: 130px !important;
+            min-width: 130px !important;
+            max-width: 130px !important;
             text-align: center !important;
             white-space: nowrap !important;
         }
@@ -138,17 +138,17 @@
         /* Column width distribution - Balanced spacing */
         .custom-table th:nth-child(1) { width: 40px !important; } /* ID */
         .custom-table th:nth-child(2) { width: 80px !important; } /* Application ID */
-        .custom-table th:nth-child(3) { width: 250px !important; } /* Full Name */
-        .custom-table th:nth-child(4) { width: 200px !important; } /* Application Type */
+        .custom-table th:nth-child(3) { width: 220px !important; } /* Full Name */
+        .custom-table th:nth-child(4) { width: 180px !important; } /* Application Type */
         .custom-table th:nth-child(5) { width: 80px !important; } /* Status */
-        .custom-table th:nth-child(6) { width: 55px !important; } /* Actions */
+        .custom-table th:nth-child(6) { width: 130px !important; } /* Actions */
         
         .custom-table td:nth-child(1) { width: 40px !important; }
         .custom-table td:nth-child(2) { width: 80px !important; }
-        .custom-table td:nth-child(3) { width: 250px !important; }
-        .custom-table td:nth-child(4) { width: 200px !important; }
+        .custom-table td:nth-child(3) { width: 220px !important; }
+        .custom-table td:nth-child(4) { width: 180px !important; }
         .custom-table td:nth-child(5) { width: 80px !important; }
-        .custom-table td:nth-child(6) { width: 55px !important; }
+        .custom-table td:nth-child(6) { width: 130px !important; }
         
         /* Text formatting */
         .custom-table td:nth-child(3), /* Full Name */
@@ -177,45 +177,6 @@
             background-color: #f9f9f9;
         }
         
-        .editable {
-            display: inline-block;
-            min-width: 80px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        
-        .editable:focus {
-            outline: 2px solid #28a745;
-            background: #f0fff4;
-        }
-        
-        /* Action Buttons Styling */
-        .btn-action {
-            transition: all 0.2s ease;
-            border-radius: 6px;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: #007bff !important;
-            border-color: #007bff !important;
-        }
-        
-        .btn-outline-success:hover {
-            background-color: #28a745 !important;
-            border-color: #28a745 !important;
-        }
-        
         /* Mobile Optimizations */
         @media (max-width: 767.98px) {
             .custom-table {
@@ -226,47 +187,6 @@
             .custom-table td {
                 padding: 8px 6px !important;
             }
-            
-            .dataTables_wrapper .dataTables_length,
-            .dataTables_wrapper .dataTables_filter {
-                margin-bottom: 0.75rem;
-            }
-            
-            .dataTables_wrapper .dataTables_length select,
-            .dataTables_wrapper .dataTables_filter input {
-                font-size: 14px;
-                padding: 0.375rem 0.75rem;
-            }
-            
-            .dataTables_wrapper .dataTables_paginate {
-                margin-top: 1rem;
-            }
-            
-            .dataTables_wrapper .dataTables_paginate .paginate_button {
-                padding: 0.25rem 0.5rem;
-                margin: 0 1px;
-                font-size: 12px;
-            }
-        }
-        
-        /* Tablet Optimizations */
-        @media (min-width: 768px) and (max-width: 1023.98px) {
-            .custom-table {
-                font-size: 13px;
-            }
-            
-            .custom-table th,
-            .custom-table td {
-                padding: 9px 10px !important;
-            }
-        }
-        
-        /* Desktop Optimizations */
-        @media (min-width: 1024px) {
-            .custom-table th,
-            .custom-table td {
-                padding: 10px 12px !important;
-            }
         }
     </style>
 
@@ -274,11 +194,11 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable
-            $('#applicants-table').DataTable({
+            $('#confirmations-table').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 25,
-                ajax: '{{ route('applicants.index') }}',
+                ajax: '{{ route('confirmations.index') }}',
                 columns: [
                     { data: 'id', name: 'id' },
                     { data: 'application_id', name: 'application_id' },
@@ -288,38 +208,6 @@
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
                 order: [[0, 'desc']]
-            });
-
-            // Handle update status button click
-            $(document).on('click', '.update-status', function(e) {
-                e.preventDefault();
-                var applicantId = $(this).data('id');
-                var btn = $(this);
-
-                if (confirm('Are you sure you want to mark this applicant as Admitted?')) {
-                    $.ajax({
-                        url: '/applicants/' + applicantId + '/update-status',
-                        type: 'POST',
-                        data: {
-                            status: 'Admitted',
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            // Show success message
-                            alert('Status updated to Admitted successfully!');
-                            // Reload the datatable
-                            $('#applicants-table').DataTable().ajax.reload();
-                        },
-                        error: function(xhr) {
-                            var errorMsg = 'Error updating status. Please try again.';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMsg = xhr.responseJSON.message;
-                            }
-                            alert(errorMsg);
-                            console.error(xhr);
-                        }
-                    });
-                }
             });
         });
     </script>

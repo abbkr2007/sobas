@@ -68,8 +68,8 @@ class RegisteredUserController extends Controller
 
             if ($paymentDetails['status'] && $paymentDetails['data']['status'] === 'success') {
 
-                // Generate MAT ID
-                $year = date('y'); // last 2 digits of year
+                // Generate MAT ID with fixed year segment "25"
+                $year = '25';
                 $prefix = 'MAT'.$year;
                 $lastUser = User::where('mat_id', 'like', $prefix.'%')
                                 ->orderBy('id', 'desc')

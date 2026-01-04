@@ -7,8 +7,8 @@
     <div class="container-fluid px-2 px-md-3 py-3">
         <!-- Responsive Button Container -->
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
-            <h4 class="text-success mb-3 mb-sm-0 fs-5 fs-md-4">Applicants Management</h4>
-            <a href="{{ route('applicants.export') }}" class="btn btn-success btn-sm btn-md-normal">
+            <h4 class="text-success mb-3 mb-sm-0 fs-5 fs-md-4">Admission List</h4>
+            <a href="{{ route('admissions.export') }}" class="btn btn-success btn-sm btn-md-normal">
                 <i class="fas fa-download me-1 me-md-2"></i>
                 <span class="d-none d-sm-inline">Export CSV</span>
                 <span class="d-sm-none">Export</span>
@@ -37,7 +37,7 @@
         
         <!-- Responsive Table Container -->
         <div class="table-responsive">
-            <table id="applicants-table" class="table table-bordered table-striped custom-table w-100">
+            <table id="admissions-table" class="table table-bordered table-striped custom-table w-100">
                 <thead class="table-success">
                     <tr>
                         <th class="text-nowrap">ID</th>
@@ -103,9 +103,9 @@
         /* Actions column optimization */
         .custom-table th:last-child,
         .custom-table td:last-child {
-            width: 55px !important;
-            min-width: 55px !important;
-            max-width: 55px !important;
+            width: 100px !important;
+            min-width: 100px !important;
+            max-width: 100px !important;
             text-align: center !important;
             white-space: nowrap !important;
         }
@@ -274,11 +274,11 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable
-            $('#applicants-table').DataTable({
+            $('#admissions-table').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 25,
-                ajax: '{{ route('applicants.index') }}',
+                ajax: '{{ route('admissions.index') }}',
                 columns: [
                     { data: 'id', name: 'id' },
                     { data: 'application_id', name: 'application_id' },
@@ -289,29 +289,26 @@
                 ],
                 order: [[0, 'desc']]
             });
-
-            // Handle update status button click
-            $(document).on('click', '.update-status', function(e) {
+            
+            // Handle confirm admission button click
+            $(document).on('click', '.confirm-admission', function(e) {
                 e.preventDefault();
                 var applicantId = $(this).data('id');
                 var btn = $(this);
 
-                if (confirm('Are you sure you want to mark this applicant as Admitted?')) {
+                if (confirm('Are you sure you want to confirm this admission?')) {
                     $.ajax({
-                        url: '/applicants/' + applicantId + '/update-status',
+                        url: '/admissions/' + applicantId + '/confirm',
                         type: 'POST',
                         data: {
-                            status: 'Admitted',
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
-                            // Show success message
-                            alert('Status updated to Admitted successfully!');
-                            // Reload the datatable
-                            $('#applicants-table').DataTable().ajax.reload();
+                            alert('Admission confirmed successfully!');
+                            $('#admissions-table').DataTable().ajax.reload();
                         },
                         error: function(xhr) {
-                            var errorMsg = 'Error updating status. Please try again.';
+                            var errorMsg = 'Error confirming admission. Please try again.';
                             if (xhr.responseJSON && xhr.responseJSON.message) {
                                 errorMsg = xhr.responseJSON.message;
                             }

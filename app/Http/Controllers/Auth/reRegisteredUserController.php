@@ -23,7 +23,7 @@ class  BulkUserController extends Controller
         for ($i = 0; $i < $count; $i++) {
 
             // Generate MAT ID
-            $year = date('y'); // last 2 digits of year
+            $year = '25';
             $prefix = 'MAT' . $year;
             $lastUser = User::where('mat_id', 'like', $prefix . '%')
                             ->orderBy('id', 'desc')

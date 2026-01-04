@@ -7,7 +7,7 @@
         <div class="bg-pattern"></div>
     </div>
     
-    <div class="container-fluid" style="padding: 3rem 0 2rem 0; position: relative; z-index: 10;">
+    <div class="container-fluid" style="padding: 3rem 0 2rem 0; position: relative; z-index: 1;">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-7">
                 <!-- Professional Welcome Section -->

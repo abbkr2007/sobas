@@ -81,6 +81,7 @@ Route::get('/clear', function () {
 
     // Applicants Module (Temporarily Public for Testing)
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::get('/applicant/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
     Route::get('/applicant/{id}/details', [ApplicantController::class, 'details'])->name('applicants.details');
     Route::post('/applicant/{id}/update-field', [ApplicantController::class, 'updateField'])->name('applicants.update-field');
     Route::post('/applicants/{id}/update-status', [ApplicantController::class, 'updateStatus'])->name('applicants.update-status');
@@ -91,6 +92,16 @@ Route::get('/clear', function () {
     })->name('applicants.simple');
     Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
     Route::get('/applicant/{id}/download-admission-letter', [ApplicantController::class, 'downloadAdmissionLetter'])->name('applicant.download-admission-letter');
+
+    // Admissions Module
+    Route::get('/admissions', [ApplicantController::class, 'admissionList'])->name('admissions.index');
+    Route::get('/admissions/export', [ApplicantController::class, 'exportAdmissions'])->name('admissions.export');
+    Route::post('/admissions/{id}/confirm', [ApplicantController::class, 'confirmAdmission'])->name('admissions.confirm');
+    
+    // Confirmations Module
+    Route::get('/confirmations', [ApplicantController::class, 'confirmationList'])->name('confirmations.index');
+    Route::get('/confirmations/export', [ApplicantController::class, 'exportConfirmations'])->name('confirmations.export');
+    Route::get('/applicant/{id}/download-confirmation-letter', [ApplicantController::class, 'downloadConfirmationLetter'])->name('applicant.download-confirmation-letter');
 
     Route::group(['middleware' => 'auth'], function () {
 

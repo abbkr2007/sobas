@@ -37,6 +37,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Inactivity Timeout
+    |--------------------------------------------------------------------------
+    |
+    | This option defines the number of minutes before a user is logged out
+    | due to inactivity. This works in addition to the session lifetime.
+    |
+    */
+
+    'inactivity_timeout' => env('SESSION_INACTIVITY_TIMEOUT', 5),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Encryption
     |--------------------------------------------------------------------------
     |

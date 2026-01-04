@@ -60,6 +60,40 @@
             <span class="item-name" style="{{ activeRoute(route('applicants.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Applicants</span>
         </a>
     </li>
+
+    <!-- Admission List -->
+    <li class="nav-item">
+        <a class="nav-link {{ activeRoute(route('admissions.index')) }}"
+           href="{{ route('admissions.index') }}"
+           style="{{ activeRoute(route('admissions.index')) ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important; color:#fff !important; border-left:4px solid #20c997 !important; border-radius: 0 25px 25px 0 !important; margin: 4px 8px !important; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2) !important;' : 'color:#6c757d !important; margin: 4px 8px !important; border-radius: 0 25px 25px 0 !important; transition: all 0.3s ease !important;' }}"
+           onmouseover="if(!this.classList.contains('active')) { this.style.setProperty('background', 'rgba(40, 167, 69, 0.08)', 'important'); this.style.setProperty('color', '#28a745', 'important'); this.style.setProperty('transform', 'translateX(8px)', 'important'); }"
+           onmouseout="if(!this.classList.contains('active')) { this.style.setProperty('background', 'transparent', 'important'); this.style.setProperty('color', '#6c757d', 'important'); this.style.setProperty('transform', 'translateX(0)', 'important'); }">
+            <i class="icon" style="{{ activeRoute(route('admissions.index')) ? 'color:#fff !important;' : 'color:#6c757d !important;' }}">
+                <svg width="20" viewBox="0 0 24 24" fill="{{ activeRoute(route('admissions.index')) ? '#fff' : '#6c757d' }}">
+                    <path d="M20 3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V5C22 3.9 21.1 3 20 3ZM20 19H4V5H20V19Z"></path>
+                    <path d="M6 10H18V12H6Z"></path>
+                    <path d="M6 14H18V16H6Z"></path>
+                </svg>
+            </i>
+            <span class="item-name" style="{{ activeRoute(route('admissions.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Admission List</span>
+        </a>
+    </li>
+
+    <!-- Confirmation List -->
+    <li class="nav-item">
+        <a class="nav-link {{ activeRoute(route('confirmations.index')) }}"
+           href="{{ route('confirmations.index') }}"
+           style="{{ activeRoute(route('confirmations.index')) ? 'background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important; color:#fff !important; border-left:4px solid #138496 !important; border-radius: 0 25px 25px 0 !important; margin: 4px 8px !important; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2) !important;' : 'color:#6c757d !important; margin: 4px 8px !important; border-radius: 0 25px 25px 0 !important; transition: all 0.3s ease !important;' }}"
+           onmouseover="if(!this.classList.contains('active')) { this.style.setProperty('background', 'rgba(23, 162, 184, 0.08)', 'important'); this.style.setProperty('color', '#17a2b8', 'important'); this.style.setProperty('transform', 'translateX(8px)', 'important'); }"
+           onmouseout="if(!this.classList.contains('active')) { this.style.setProperty('background', 'transparent', 'important'); this.style.setProperty('color', '#6c757d', 'important'); this.style.setProperty('transform', 'translateX(0)', 'important'); }">
+            <i class="icon" style="{{ activeRoute(route('confirmations.index')) ? 'color:#fff !important;' : 'color:#6c757d !important;' }}">
+                <svg width="20" viewBox="0 0 24 24" fill="{{ activeRoute(route('confirmations.index')) ? '#fff' : '#6c757d' }}">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"></path>
+                </svg>
+            </i>
+            <span class="item-name" style="{{ activeRoute(route('confirmations.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Confirmation List</span>
+        </a>
+    </li>
     @endif
 
     <!-- Logout -->

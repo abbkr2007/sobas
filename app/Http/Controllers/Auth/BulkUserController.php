@@ -24,7 +24,7 @@ class BulkUserController extends Controller
         ]);
 
         for ($i = 0; $i < $request->count; $i++) {
-            $year = date('y');
+            $year = '25';
             $prefix = 'MAT' . $year;
 
             $lastUser = User::where('mat_id', 'like', $prefix.'%')
