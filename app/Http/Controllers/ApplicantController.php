@@ -86,7 +86,6 @@ class ApplicantController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     $actions = '<button class="btn btn-primary btn-sm me-1 confirm-admission" data-id="' . $row->id . '" title="Confirm Admission"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
-                    $actions .= '<a href="' . route('applicant.download-admission-letter', $row->id) . '" class="btn btn-success btn-sm" title="Download Admission Letter"><i class="fas fa-download" style="font-size: 12px;"></i></a>';
                     
                     return $actions;
                 })
