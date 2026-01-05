@@ -40,7 +40,7 @@
             <table id="applicants-table" class="table table-bordered table-striped custom-table w-100">
                 <thead class="table-success">
                     <tr>
-                        <th class="text-nowrap">ID</th>
+                        <th class="text-nowrap">S/N</th>
                         <th class="text-nowrap">Application ID</th>
                         <th class="text-nowrap">Full Name</th>
                         <th class="text-nowrap d-none d-lg-table-cell">Application Type</th>
@@ -280,14 +280,14 @@
                 pageLength: 25,
                 ajax: '{{ route('applicants.index') }}',
                 columns: [
-                    { data: 'id', name: 'id' },
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'application_id', name: 'application_id' },
                     { data: 'full_name', name: 'full_name' },
                     { data: 'application_type', name: 'application_type' },
                     { data: 'status', name: 'status', orderable: false },
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
-                order: [[0, 'desc']]
+                order: [[1, 'desc']]
             });
 
             // Handle update status button click

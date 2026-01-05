@@ -21,6 +21,7 @@ class ApplicantController extends Controller
                 Log::info('Pending Applicants count: ' . $applicants->count());
                 
                 return DataTables::of($applicants)
+                ->addIndexColumn()
                 ->addColumn('full_name', function ($row) {
                     $names = [];
                     if ($row->firstname) $names[] = ucfirst(strtolower($row->firstname));
@@ -69,6 +70,7 @@ class ApplicantController extends Controller
                 Log::info('Admitted Applicants count: ' . $admissions->count());
                 
                 return DataTables::of($admissions)
+                ->addIndexColumn()
                 ->addColumn('full_name', function ($row) {
                     $names = [];
                     if ($row->firstname) $names[] = ucfirst(strtolower($row->firstname));
@@ -112,6 +114,7 @@ class ApplicantController extends Controller
                 Log::info('Confirmed Applicants count: ' . $confirmations->count());
                 
                 return DataTables::of($confirmations)
+                ->addIndexColumn()
                 ->addColumn('full_name', function ($row) {
                     $names = [];
                     if ($row->firstname) $names[] = ucfirst(strtolower($row->firstname));
