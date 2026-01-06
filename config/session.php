@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'inactivity_timeout' => env('SESSION_INACTIVITY_TIMEOUT', 5),
+    'inactivity_timeout' => env('SESSION_INACTIVITY_TIMEOUT', 60),
 
     /*
     |--------------------------------------------------------------------------
