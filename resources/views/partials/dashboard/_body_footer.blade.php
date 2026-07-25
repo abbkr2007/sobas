@@ -6,8 +6,8 @@
             <div class="d-flex justify-content-center align-items-center">
                 © <script>document.write(new Date().getFullYear())</script> {{ env('APP_NAME') }} 
                 <span class="text-muted mx-2"> | Product of </span> 
-                <a href="https://mbgsystem.com" target="_blank" class="fw-bold text-success text-decoration-none">
-                     MBG-System
+                <a href="http://mbgsystems.com/" target="_blank" class="fw-bold text-success text-decoration-none">
+                     MBG Systems
                 </a>
             </div>
         </div>

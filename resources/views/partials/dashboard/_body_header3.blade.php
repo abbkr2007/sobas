@@ -6,16 +6,8 @@
     </svg>
     </button>
     <a href="{{route('dashboard')}}" class="navbar-brand col-md-2 col-lg-3">
-      <svg width="30" class="text-primary" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2" transform="rotate(-45 -0.757324 19.2427)" fill="currentColor"/>
-        <rect x="7.72803" y="27.728" width="28" height="4" rx="2" transform="rotate(-45 7.72803 27.728)" fill="currentColor"/>
-        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2" transform="rotate(45 10.5366 16.3945)" fill="currentColor"/>
-        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2" transform="rotate(45 10.5562 -0.556152)" fill="currentColor"/>
-      </svg>
-      <h4 class="logo-title" style="font-size: 0.9rem; line-height: 1.2; font-weight: 600;">
-        Portal of School of Basic<br>
-        and Advanced Studies
-      </h4>
+      <img src="{{ asset('images/logo.png') }}" alt="SOBAS Portal Logo" style="width: 38px; height: 38px; object-fit: contain;" class="me-2">
+      <h4 class="logo-title" style="font-size: 1rem; line-height: 1.2; font-weight: 700;">SOBAS Portal</h4>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon">

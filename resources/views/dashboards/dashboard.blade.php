@@ -97,8 +97,8 @@
                                     <i class="fas fa-edit fa-2x text-success"></i>
                                 </div>
                                 <div class="form-title-section">
-                                    <h2 class="form-title">Student Application Form</h2>
-                                    <p class="form-subtitle">Please complete all sections accurately. Your information will be reviewed for admission.</p>
+                                    <h2 class="form-title">Application Form</h2>
+                                    <p class="form-subtitle">Complete the required details for application review.</p>
                                 </div>
                             </div>
                             
@@ -549,8 +549,68 @@
                                         
                                         <div class="olevel-container">
                                             <div class="row g-2">
+                                                @php
+                                                    $olevelSubjectGroups = [
+                                                        'General Requirements' => [
+                                                            'English Language',
+                                                            'Mathematics',
+                                                            'Civic Education',
+                                                        ],
+                                                        'Science Subjects' => [
+                                                            'Physics',
+                                                            'Chemistry',
+                                                            'Biology',
+                                                            'Further Mathematics',
+                                                            'Geography',
+                                                            'Agricultural Science',
+                                                            'Technical Drawing',
+                                                            'Yoruba',
+                                                            'Igbo',
+                                                            'Hausa',
+                                                        ],
+                                                        'Arts Subjects' => [
+                                                            'Literature in English',
+                                                            'Government',
+                                                            'History',
+                                                            'Christian Religious Studies',
+                                                            'Islamic Religious Studies',
+                                                            'Yoruba',
+                                                            'Igbo',
+                                                            'Hausa',
+                                                            'Economics',
+                                                        ],
+                                                        'Commercial Subjects' => [
+                                                            'Economics',
+                                                            'Accounting',
+                                                            'Commerce',
+                                                            'Office Practice',
+                                                            'Further Mathematics',
+                                                            'Book Keeping',
+                                                            'Agricultural Science',
+                                                            'Biology',
+                                                            'Yoruba',
+                                                            'Igbo',
+                                                            'Hausa',
+                                                        ],
+                                                        'Trade Subjects' => [
+                                                            'Animal Husbandry',
+                                                            'Carpentry and Joinery',
+                                                            'Catering Craft Practice',
+                                                            'Data Processing',
+                                                            'Garment Making',
+                                                            'Photography',
+                                                            'Welding and Fabrication',
+                                                            'GSM Phone Repairs',
+                                                            'Marketing',
+                                                            'Plumbing',
+                                                            'Tourism',
+                                                            'Upholstery',
+                                                        ],
+                                                    ];
+                                                @endphp
+
                                                 <!-- First Sitting -->
-                                                <div class="col-12 col-xl-6">
+                                                <div class="col-12">
                                                     <div class="exam-sitting-card">
                                                         <div class="exam-sitting-header">
                                                             <h5><i class="fas fa-file-alt me-2"></i>First Sitting</h5>
@@ -565,9 +625,10 @@
                                                                             <i class="fas fa-clipboard input-icon"></i>
                                                                             <select name="first_exam_type" class="form-control" required>
                                                                                 <option value="">-- Select Exam Type --</option>
-                                                                                <option value="WAEC">WAEC</option>
-                                                                                <option value="NECO">NECO</option>
-                                                                                <option value="GCE">GCE</option>
+                                                                              <option value="WAEC">WAEC</option>
+                                                                              <option value="NECO">NECO</option>
+                                                                              <option value="NABTEB">NABTEB</option>
+                                                                              <option value="NBAIS">NBAIS</option>
                                                                             </select>
                                                                         </div>
                                                                         @error('first_exam_type')<div class="error-message">{{ $message }}</div>@enderror
@@ -631,52 +692,13 @@
                                                                             <td>
                                                                                 <select name="first_subject[]" class="form-control" required>
                                                                                     <option value="">-- Select Subject --</option>
-                                                                                    <option value="Arabic">Arabic</option>
-                                                                                    <option value="Animal Husbandry">Animal Husbandry</option>
-                                                                                    <option value="English Language">English Language</option>
-                                                                                    <option value="Mathematics">Mathematics</option>
-                                                                                    <option value="Biology">Biology</option>
-                                                                                    <option value="Physics">Physics</option>
-                                                                                    <option value="Chemistry">Chemistry</option>
-                                                                                    <option value="Economics">Economics</option>
-                                                                                    <option value="Geography">Geography</option>
-                                                                                    <option value="Government">Government</option>
-                                                                                    <option value="Literature in English">Literature in English</option>
-                                                                                    <option value="Commerce">Commerce</option>
-                                                                                    <option value="Accounting">Accounting</option>
-                                                                                    <option value="Agricultural Science">Agricultural Science</option>
-                                                                                    <option value="Civic Education">Civic Education</option>
-                                                                                    <option value="Further Mathematics">Further Mathematics</option>
-                                                                                    <option value="Christian Religious Studies">Christian Religious Studies</option>
-                                                                                    <option value="Islamic Religious Studies">Islamic Religious Studies</option>
-                                                                                    <option value="Hausa">Hausa</option>
-                                                                                    <option value="Yoruba">Yoruba</option>
-                                                                                    <option value="Igbo">Igbo</option>
-                                                                                    <option value="Marketing">Marketing</option>
-                                                                                    <option value="Data Processing">Data Processing</option>
-                                                                                    <option value="Computer Studies">Computer Studies</option>
-                                                                                    <option value="History">History</option>
-                                                                                    <option value="French">French</option>
-                                                                                    <option value="Physical Education">Physical Education</option>
-                                                                                    <option value="Technical Drawing">Technical Drawing</option>
-                                                                                    <option value="Fine Arts">Fine Arts</option>
-                                                                                    <option value="Music">Music</option>
-                                                                                    <option value="Home Economics">Home Economics</option>
-                                                                                    <option value="Business Studies">Business Studies</option>
-                                                                                    <option value="Food and Nutrition">Food and Nutrition</option>
-                                                                                    <option value="Fishery">Fishery</option>
-                                                                                    <option value="Catering and Craft Practice">Catering and Craft Practice</option>
-                                                                                    <option value="Auto Mechanics">Auto Mechanics</option>
-                                                                                    <option value="Welding and Fabrication">Welding and Fabrication</option>
-                                                                                    <option value="Electrical Installation">Electrical Installation</option>
-                                                                                    <option value="Building Construction">Building Construction</option>
-                                                                                    <option value="Block Laying and Concreting">Block Laying and Concreting</option>
-                                                                                    <option value="Photography">Photography</option>
-                                                                                    <option value="Tourism">Tourism</option>
-                                                                                    <option value="Garment Making">Garment Making</option>
-                                                                                    <option value="Leather Goods Manufacturing">Leather Goods Manufacturing</option>
-                                                                                    <option value="Office Practice">Office Practice</option>
-
+                                                                                    @foreach($olevelSubjectGroups as $groupName => $subjects)
+                                                                                        <optgroup label="{{ $groupName }}">
+                                                                                            @foreach($subjects as $subject)
+                                                                                                <option value="{{ $subject }}">{{ $subject }}</option>
+                                                                                            @endforeach
+                                                                                        </optgroup>
+                                                                                    @endforeach
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -704,12 +726,34 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-12" id="addSecondSittingPanel">
+                                                    <div class="second-sitting-prompt">
+                                                        <div class="second-sitting-prompt-text">
+                                                            <div class="second-sitting-icon">
+                                                                <i class="fas fa-plus"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h5 class="mb-1">Have a second sitting?</h5>
+                                                                <p class="mb-0">Add another exam result if the applicant used two sittings.</p>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn btn-success" id="addSecondSittingBtn">
+                                                            <i class="fas fa-plus me-2"></i>Add Second Sitting
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                                 <!-- Second Sitting -->
-                                                <div class="col-12 col-xl-6">
+                                                <div class="col-12 d-none" id="secondSittingSection">
                                                     <div class="exam-sitting-card">
                                                         <div class="exam-sitting-header">
-                                                            <h5><i class="fas fa-file-alt me-2"></i>Second Sitting</h5>
-                                                            <small class="text-muted">(Optional)</small>
+                                                            <div>
+                                                                <h5><i class="fas fa-file-alt me-2"></i>Second Sitting</h5>
+                                                                <small class="text-muted">Optional exam result details</small>
+                                                            </div>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" id="removeSecondSittingBtn">
+                                                                <i class="fas fa-times me-1"></i>Remove
+                                                            </button>
                                                         </div>
                                                         
                                                         <div class="exam-details">
@@ -721,12 +765,11 @@
                                                                             <i class="fas fa-clipboard input-icon"></i>
                                                                             <select name="second_exam_type" class="form-control">
                                                                                 <option value="">-- Select Exam Type --</option>
-                                                                                <option value="WAEC">WAEC</option>
-                                                                                <option value="NECO">NECO</option>
-                                                                                <option value="GCE">GCE</option>
-                                                                                <option value="NABTEB">NABTEB</option>
-                                                                                <option value="NBAIS">NBAIS</option>
-                                                                            </select>
+                                                                              <option value="WAEC">WAEC</option>
+                                                                              <option value="NECO">NECO</option>
+                                                                              <option value="NABTEB">NABTEB</option>
+                                                                              <option value="NBAIS">NBAIS</option>
+                                                                          </select>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -785,52 +828,13 @@
                                                                             <td>
                                                                                 <select name="second_subject[]" class="form-control">
                                                                                     <option value="">-- Select Subject --</option>
-                                                                                   <option value="Arabic">Arabic</option>
-                                                                                    <option value="Animal Husbandry">Animal Husbandry</option>
-                                                                                    <option value="English Language">English Language</option>
-                                                                                    <option value="Mathematics">Mathematics</option>
-                                                                                    <option value="Biology">Biology</option>
-                                                                                    <option value="Physics">Physics</option>
-                                                                                    <option value="Chemistry">Chemistry</option>
-                                                                                    <option value="Economics">Economics</option>
-                                                                                    <option value="Geography">Geography</option>
-                                                                                    <option value="Government">Government</option>
-                                                                                    <option value="Literature in English">Literature in English</option>
-                                                                                    <option value="Commerce">Commerce</option>
-                                                                                    <option value="Accounting">Accounting</option>
-                                                                                    <option value="Agricultural Science">Agricultural Science</option>
-                                                                                    <option value="Civic Education">Civic Education</option>
-                                                                                    <option value="Further Mathematics">Further Mathematics</option>
-                                                                                    <option value="Christian Religious Studies">Christian Religious Studies</option>
-                                                                                    <option value="Islamic Religious Studies">Islamic Religious Studies</option>
-                                                                                    <option value="Hausa">Hausa</option>
-                                                                                    <option value="Yoruba">Yoruba</option>
-                                                                                    <option value="Igbo">Igbo</option>
-                                                                                    <option value="Marketing">Marketing</option>
-                                                                                    <option value="Data Processing">Data Processing</option>
-                                                                                    <option value="Computer Studies">Computer Studies</option>
-                                                                                    <option value="History">History</option>
-                                                                                    <option value="French">French</option>
-                                                                                    <option value="Physical Education">Physical Education</option>
-                                                                                    <option value="Technical Drawing">Technical Drawing</option>
-                                                                                    <option value="Fine Arts">Fine Arts</option>
-                                                                                    <option value="Music">Music</option>
-                                                                                    <option value="Home Economics">Home Economics</option>
-                                                                                    <option value="Business Studies">Business Studies</option>
-                                                                                    <option value="Food and Nutrition">Food and Nutrition</option>
-                                                                                    <option value="Fishery">Fishery</option>
-                                                                                    <option value="Catering and Craft Practice">Catering and Craft Practice</option>
-                                                                                    <option value="Auto Mechanics">Auto Mechanics</option>
-                                                                                    <option value="Welding and Fabrication">Welding and Fabrication</option>
-                                                                                    <option value="Electrical Installation">Electrical Installation</option>
-                                                                                    <option value="Building Construction">Building Construction</option>
-                                                                                    <option value="Block Laying and Concreting">Block Laying and Concreting</option>
-                                                                                    <option value="Photography">Photography</option>
-                                                                                    <option value="Tourism">Tourism</option>
-                                                                                    <option value="Garment Making">Garment Making</option>
-                                                                                    <option value="Leather Goods Manufacturing">Leather Goods Manufacturing</option>
-                                                                                    <option value="Office Practice">Office Practice</option>
-
+                                                                                    @foreach($olevelSubjectGroups as $groupName => $subjects)
+                                                                                        <optgroup label="{{ $groupName }}">
+                                                                                            @foreach($subjects as $subject)
+                                                                                                <option value="{{ $subject }}">{{ $subject }}</option>
+                                                                                            @endforeach
+                                                                                        </optgroup>
+                                                                                    @endforeach
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -1314,6 +1318,30 @@ const lgas = {
                 opt.value = year;
                 opt.textContent = year;
                 gradSelect.appendChild(opt);
+            }
+
+            const addSecondSittingBtn = document.getElementById('addSecondSittingBtn');
+            const removeSecondSittingBtn = document.getElementById('removeSecondSittingBtn');
+            const addSecondSittingPanel = document.getElementById('addSecondSittingPanel');
+            const secondSittingSection = document.getElementById('secondSittingSection');
+
+            if (addSecondSittingBtn && addSecondSittingPanel && secondSittingSection) {
+                addSecondSittingBtn.addEventListener('click', function () {
+                    secondSittingSection.classList.remove('d-none');
+                    addSecondSittingPanel.classList.add('d-none');
+                    secondSittingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+
+            if (removeSecondSittingBtn && addSecondSittingPanel && secondSittingSection) {
+                removeSecondSittingBtn.addEventListener('click', function () {
+                    secondSittingSection.querySelectorAll('input, select').forEach(function (field) {
+                        field.value = '';
+                    });
+                    secondSittingSection.classList.add('d-none');
+                    addSecondSittingPanel.classList.remove('d-none');
+                    addSecondSittingPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
             }
         </script>
                     </div>
@@ -1981,6 +2009,46 @@ const lgas = {
             border: 1px solid #e9ecef;
         }
 
+        .second-sitting-prompt {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background: #ffffff;
+            border: 1px dashed #28a745;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.08);
+        }
+
+        .second-sitting-prompt-text {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .second-sitting-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eaf7ef;
+            color: #28a745;
+            flex: 0 0 auto;
+        }
+
+        .second-sitting-prompt h5 {
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .second-sitting-prompt p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
         .exam-sitting-header {
             display: flex;
             justify-content: space-between;
@@ -1994,6 +2062,17 @@ const lgas = {
             color: #2c3e50;
             font-weight: 700;
             margin: 0;
+        }
+
+        @media (max-width: 767.98px) {
+            .second-sitting-prompt {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .second-sitting-prompt .btn {
+                width: 100%;
+            }
         }
 
         .subjects-table-container {
@@ -2215,40 +2294,45 @@ const lgas = {
 
         /* Form Header */
         .form-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 3rem 2rem 2rem 2rem;
-            border-bottom: 1px solid #e9ecef;
+            background: #ffffff;
+            padding: 2rem;
+            border-bottom: 1px solid #e8edf3;
         }
 
         .form-header-content {
             display: flex;
             align-items: center;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-icon {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            background: #eaf7ef;
+            color: #198754;
+            width: 58px;
+            height: 58px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 1.5rem;
-            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+            flex: 0 0 auto;
+        }
+
+        .form-icon i {
+            color: #198754 !important;
+            font-size: 1.5rem;
         }
 
         .form-title {
-            font-size: 2rem;
+            font-size: 1.55rem;
             font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
         }
 
         .form-subtitle {
             color: #6c757d;
-            font-size: 1rem;
+            font-size: 0.95rem;
             margin-bottom: 0;
         }
 

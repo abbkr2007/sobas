@@ -4,14 +4,11 @@
         <a href="{{ route('dashboard') }}" class="navbar-brand">
             <div class="logo-container">
                 <img src="{{ asset('images/logo.png') }}" 
-                     alt="Site Logo" 
+                     alt="SOBAS Portal Logo" 
                      class="logo-image">
                 <div class="logo-text d-none d-xl-block">
-                    <h5 class="app-name mb-0" style="font-size: 0.9rem; line-height: 1.2; font-weight: 600;">
-                        Portal of School of Basic<br>
-                        and Advanced Studies
-                    </h5>
-                    <small class="app-tagline">Application System</small>
+                    <h5 class="app-name mb-0">SOBAS Portal</h5>
+                    <small class="app-tagline">Application Management</small>
                 </div>
             </div>
         </a>
@@ -63,15 +60,12 @@
          style="border-color: #28a745 !important; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
         <div class="d-flex align-items-center">
             <img src="{{ asset('images/logo.png') }}" 
-                 alt="Site Logo" 
+                 alt="SOBAS Portal Logo" 
                  class="img-fluid me-3" 
                  style="max-width: 80px; height: auto; filter: brightness(1.1);">
             <div class="text-white">
-                <h6 class="mb-0" style="font-size: 0.85rem; line-height: 1.1; font-weight: 600;">
-                    Portal of School of Basic<br>
-                    and Advanced Studies
-                </h6>
-                <small style="font-size: 0.7rem; opacity: 0.8;">Application System</small>
+                <h6 class="mb-0" style="font-size: 0.95rem; line-height: 1.1; font-weight: 700;">SOBAS Portal</h6>
+                <small style="font-size: 0.7rem; opacity: 0.85;">Application Management</small>
             </div>
         </div>
         <button type="button" 
@@ -227,13 +221,14 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .logo-image {
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
     object-fit: contain;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px;
+    background: #ffffff;
+    padding: 6px;
     backdrop-filter: blur(10px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 .logo-text {
@@ -243,13 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
 .app-name {
     color: white;
     font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: -0.02em;
+    font-size: 1.15rem;
+    letter-spacing: 0;
     margin-bottom: 0;
 }
 
 .app-tagline {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.82);
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;

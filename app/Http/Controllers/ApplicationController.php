@@ -56,8 +56,9 @@ class ApplicationController extends Controller
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
             $extension = strtolower($photo->getClientOriginalExtension());
+            $matNo = preg_replace('/[^A-Za-z0-9_-]/', '', $data['application_id']);
 
-            $uniqueName = uniqid('photo_') . '.' . (in_array($extension, ['jpeg','jpg']) ? 'png' : $extension);
+            $uniqueName = $matNo . '.' . (in_array($extension, ['jpeg','jpg']) ? 'png' : $extension);
             $destinationPath = public_path('images/photos');
 
             if (in_array($extension, ['jpeg','jpg'])) {
