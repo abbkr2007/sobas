@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Mail\UserRegisteredMail;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -18,12 +19,27 @@ class RegisteredUserController extends Controller
     // Show registration form
     public function create()
     {
+        // Check if registration is open
+        $registrationOpen = Setting::getSetting('registration_open', true);
+        
+        if (!$registrationOpen) {
+            $closedMessage = Setting::getSetting('registration_closed_message', 'Registration portal is currently closed.');
+            return view('auth.registration-closed', ['message' => $closedMessage]);
+        }
+
         return view('auth.register');
     }
 
     // Store user data temporarily before payment
     public function store(Request $request)
     {
+        // Check if registration is open
+        $registrationOpen = Setting::getSetting('registration_open', true);
+        
+        if (!$registrationOpen) {
+            return back()->with('error', Setting::getSetting('registration_closed_message', 'Registration is currently closed.'));
+        }
+
         $request->validate([
             'first_name'   => 'required|string|max:255',
             'last_name'    => 'required|string|max:255',

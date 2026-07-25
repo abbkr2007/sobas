@@ -1,11 +1,11 @@
 <?php
 
-// Controllers
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Security\RolePermission;
 use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\PermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\RegistrationSettingsController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -152,6 +152,12 @@ Route::post('/bulk-users/create', [BulkUserController::class, 'create'])->name('
 
     Route::put('/role-permission-update', [RoleController::class, 'update'])->name('role-permission.update');
 
+    // Admin Registration Settings Routes
+    Route::prefix('admin')->middleware('auth')->group(function () {
+        Route::get('/registration-settings', [RegistrationSettingsController::class, 'index'])->name('admin.registration.index');
+        Route::post('/registration-settings/toggle', [RegistrationSettingsController::class, 'toggle'])->name('admin.registration.toggle');
+        Route::post('/registration-settings/update', [RegistrationSettingsController::class, 'update'])->name('admin.registration.update');
+    });
 
 
 

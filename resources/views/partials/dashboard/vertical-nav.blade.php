@@ -94,6 +94,23 @@
             <span class="item-name" style="{{ activeRoute(route('confirmations.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Confirmation List</span>
         </a>
     </li>
+
+    <!-- Registration Settings -->
+    <li class="nav-item">
+        <a class="nav-link {{ activeRoute(route('admin.registration.index')) }}"
+           href="{{ route('admin.registration.index') }}"
+           style="{{ activeRoute(route('admin.registration.index')) ? 'background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important; color:#fff !important; border-left:4px solid #ff9800 !important; border-radius: 0 25px 25px 0 !important; margin: 4px 8px !important; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2) !important;' : 'color:#6c757d !important; margin: 4px 8px !important; border-radius: 0 25px 25px 0 !important; transition: all 0.3s ease !important;' }}"
+           onmouseover="if(!this.classList.contains('active')) { this.style.setProperty('background', 'rgba(255, 152, 0, 0.08)', 'important'); this.style.setProperty('color', '#ff9800', 'important'); this.style.setProperty('transform', 'translateX(8px)', 'important'); }"
+           onmouseout="if(!this.classList.contains('active')) { this.style.setProperty('background', 'transparent', 'important'); this.style.setProperty('color', '#6c757d', 'important'); this.style.setProperty('transform', 'translateX(0)', 'important'); }">
+            <i class="icon" style="{{ activeRoute(route('admin.registration.index')) ? 'color:#fff !important;' : 'color:#6c757d !important;' }}">
+                <svg width="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" stroke="{{ activeRoute(route('admin.registration.index')) ? '#fff' : '#6c757d' }}" fill="none"/>
+                    <path d="M12 2V22" stroke="{{ activeRoute(route('admin.registration.index')) ? '#fff' : '#6c757d' }}" stroke-width="2"/>
+                </svg>
+            </i>
+            <span class="item-name" style="{{ activeRoute(route('admin.registration.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Registration Control</span>
+        </a>
+    </li>
     @endif
 
     <!-- Logout -->
