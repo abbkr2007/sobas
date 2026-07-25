@@ -95,7 +95,7 @@
         </a>
     </li>
 
-    <!-- Registration Settings -->
+    <!-- Application Settings -->
     <li class="nav-item">
         <a class="nav-link {{ activeRoute(route('admin.registration.index')) }}"
            href="{{ route('admin.registration.index') }}"
@@ -108,7 +108,7 @@
                     <path d="M12 2V22" stroke="{{ activeRoute(route('admin.registration.index')) ? '#fff' : '#6c757d' }}" stroke-width="2"/>
                 </svg>
             </i>
-            <span class="item-name" style="{{ activeRoute(route('admin.registration.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Registration Control</span>
+            <span class="item-name" style="{{ activeRoute(route('admin.registration.index')) ? 'color:#fff !important; font-weight: 600 !important;' : 'color:#6c757d !important;' }}">Application Control</span>
         </a>
     </li>
     @endif

@@ -23,7 +23,7 @@ class RegisteredUserController extends Controller
         $registrationOpen = Setting::getSetting('registration_open', true);
         
         if (!$registrationOpen) {
-            $closedMessage = Setting::getSetting('registration_closed_message', 'Registration portal is currently closed.');
+            $closedMessage = Setting::getSetting('registration_closed_message', 'Application portal is currently closed.');
             return view('auth.registration-closed', ['message' => $closedMessage]);
         }
 
@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
         $registrationOpen = Setting::getSetting('registration_open', true);
         
         if (!$registrationOpen) {
-            return back()->with('error', Setting::getSetting('registration_closed_message', 'Registration is currently closed.'));
+            return back()->with('error', Setting::getSetting('registration_closed_message', 'Application is currently closed.'));
         }
 
         $request->validate([

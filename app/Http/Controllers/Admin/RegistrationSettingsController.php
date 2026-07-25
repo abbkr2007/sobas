@@ -14,7 +14,7 @@ class RegistrationSettingsController extends Controller
     public function index()
     {
         $registrationOpen = Setting::getSetting('registration_open', true);
-        $closedMessage = Setting::getSetting('registration_closed_message', 'Registration portal is currently closed.');
+        $closedMessage = Setting::getSetting('registration_closed_message', 'Application portal is currently closed. Please try again later.');
 
         return view('admin.registration-settings', [
             'registrationOpen' => $registrationOpen,
@@ -30,11 +30,11 @@ class RegistrationSettingsController extends Controller
         $currentStatus = Setting::getSetting('registration_open', true);
         $newStatus = !$currentStatus;
 
-        Setting::setSetting('registration_open', $newStatus ? '1' : '0', 'boolean', 'Whether registration portal is open for new applicants');
+        Setting::setSetting('registration_open', $newStatus ? '1' : '0', 'boolean', 'Whether application portal is open for new applicants');
 
         $status = $newStatus ? 'OPEN' : 'CLOSED';
 
-        return back()->with('success', "Registration portal is now {$status}.");
+        return back()->with('success', "Application portal is now {$status}.");
     }
 
     /**
@@ -50,6 +50,6 @@ class RegistrationSettingsController extends Controller
         Setting::setSetting('registration_open', $request->registration_open ? '1' : '0', 'boolean');
         Setting::setSetting('registration_closed_message', $request->registration_closed_message, 'string');
 
-        return back()->with('success', 'Registration settings updated successfully.');
+        return back()->with('success', 'Application settings updated successfully.');
     }
 }
