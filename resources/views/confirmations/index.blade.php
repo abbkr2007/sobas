@@ -6,13 +6,33 @@
     
     <div class="container-fluid px-2 px-md-3 py-3">
         <!-- Responsive Button Container -->
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
-            <h4 class="text-info mb-3 mb-sm-0 fs-5 fs-md-4">Confirmation List</h4>
-            <a href="{{ route('confirmations.export') }}" class="btn btn-info btn-sm btn-md-normal">
-                <i class="fas fa-download me-1 me-md-2"></i>
-                <span class="d-none d-sm-inline">Export CSV</span>
-                <span class="d-sm-none">Export</span>
-            </a>
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3 mb-4">
+            <div>
+                <h4 class="text-info mb-1 fs-5 fs-md-4">Confirmation List</h4>
+                <p class="text-muted small mb-0">
+                    @if($availableYears->count())
+                        Showing {{ $selectedYear }} confirmations.
+                    @else
+                        No confirmation records yet.
+                    @endif
+                </p>
+            </div>
+            <div class="d-flex flex-column flex-sm-row gap-2">
+                <form method="GET" action="{{ route('confirmations.index') }}">
+                    <select name="year" id="yearFilter" class="form-select form-select-sm" {{ $availableYears->isEmpty() ? 'disabled' : '' }}>
+                        @forelse($availableYears as $year)
+                            <option value="{{ $year }}" {{ (int) $selectedYear === (int) $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @empty
+                            <option value="">No data</option>
+                        @endforelse
+                    </select>
+                </form>
+                <a href="{{ route('confirmations.export', ['year' => $selectedYear]) }}" id="exportCsv" class="btn btn-info btn-sm btn-md-normal">
+                    <i class="fas fa-download me-1 me-md-2"></i>
+                    <span class="d-none d-sm-inline">Export CSV</span>
+                    <span class="d-sm-none">Export</span>
+                </a>
+            </div>
         </div>
         
         <!-- Debug CSRF Token -->
@@ -194,11 +214,16 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable
-            $('#confirmations-table').DataTable({
+            const table = $('#confirmations-table').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 25,
-                ajax: '{{ route('confirmations.index') }}',
+                ajax: {
+                    url: '{{ route('confirmations.index') }}',
+                    data: function(data) {
+                        data.year = $('#yearFilter').val();
+                    }
+                },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'application_id', name: 'application_id' },
@@ -208,6 +233,12 @@
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
                 order: [[0, 'desc']]
+            });
+
+            $('#yearFilter').on('change', function() {
+                const selectedYear = $(this).val();
+                $('#exportCsv').attr('href', '{{ route('confirmations.export') }}?year=' + encodeURIComponent(selectedYear));
+                table.ajax.reload();
             });
         });
     </script>

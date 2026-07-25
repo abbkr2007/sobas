@@ -10,37 +10,75 @@ use Illuminate\Support\Facades\Log;
 
 class ApplicantController extends Controller
 {
-    private function selectedYear(Request $request): int
+    private function selectedYear(Request $request, $availableYears): int
     {
-        $year = (int) $request->query('year', now()->year);
+        $requestedYear = (int) $request->input('year');
+        $currentYear = now()->year;
 
-        return $year > 0 ? $year : now()->year;
+        if ($requestedYear > 0 && $availableYears->contains($requestedYear)) {
+            return $requestedYear;
+        }
+
+        if ($availableYears->contains($currentYear)) {
+            return $currentYear;
+        }
+
+        return (int) ($availableYears->first() ?: $currentYear);
     }
 
-    private function availableYears()
+    private function availableYears(?string $status = null)
     {
-        $years = Application::query()
+        $dateYearsQuery = Application::query()
             ->selectRaw('YEAR(created_at) as year')
-            ->whereNotNull('created_at')
-            ->distinct()
-            ->orderByDesc('year')
+            ->whereNotNull('created_at');
+
+        if ($status) {
+            $dateYearsQuery->where('status', $status);
+        }
+
+        $dateYears = $dateYearsQuery
+            ->groupByRaw('YEAR(created_at)')
+            ->orderByRaw('YEAR(created_at) desc')
             ->pluck('year')
             ->filter()
             ->map(fn ($year) => (int) $year);
 
-        return $years->contains(now()->year)
-            ? $years
-            : $years->prepend(now()->year);
+        $applicationIdYearsQuery = Application::query()
+            ->selectRaw("CONCAT('20', SUBSTRING(application_id, 4, 2)) as year")
+            ->where('application_id', 'REGEXP', '^MAT[0-9]{2}');
+
+        if ($status) {
+            $applicationIdYearsQuery->where('status', $status);
+        }
+
+        $applicationIdYears = $applicationIdYearsQuery
+            ->groupByRaw("CONCAT('20', SUBSTRING(application_id, 4, 2))")
+            ->pluck('year')
+            ->filter()
+            ->map(fn ($year) => (int) $year);
+
+        return $dateYears
+            ->merge($applicationIdYears)
+            ->unique()
+            ->sortDesc()
+            ->values();
     }
 
     private function applyYearFilter($query, int $year)
     {
-        return $query->whereYear('created_at', $year);
+        $shortYear = substr((string) $year, -2);
+
+        return $query->where(function ($query) use ($year, $shortYear) {
+            $query->whereYear('created_at', $year)
+                ->orWhereYear('updated_at', $year)
+                ->orWhere('application_id', 'like', 'MAT' . $shortYear . '%');
+        });
     }
 
     public function index(Request $request)
     {
-        $selectedYear = $this->selectedYear($request);
+        $availableYears = $this->availableYears('Pending');
+        $selectedYear = $this->selectedYear($request, $availableYears);
 
         if ($request->ajax()) {
             try {
@@ -91,13 +129,14 @@ class ApplicantController extends Controller
 
         return view('applicants.index', [
             'selectedYear' => $selectedYear,
-            'availableYears' => $this->availableYears(),
+            'availableYears' => $availableYears,
         ]);
     }
 
     public function admissionList(Request $request)
     {
-        $selectedYear = $this->selectedYear($request);
+        $availableYears = $this->availableYears('Admitted');
+        $selectedYear = $this->selectedYear($request, $availableYears);
 
         if ($request->ajax()) {
             try {
@@ -141,13 +180,14 @@ class ApplicantController extends Controller
 
         return view('admissions.index', [
             'selectedYear' => $selectedYear,
-            'availableYears' => $this->availableYears(),
+            'availableYears' => $availableYears,
         ]);
     }
 
     public function confirmationList(Request $request)
     {
-        $selectedYear = $this->selectedYear($request);
+        $availableYears = $this->availableYears('Confirmed');
+        $selectedYear = $this->selectedYear($request, $availableYears);
 
         if ($request->ajax()) {
             try {
@@ -192,7 +232,7 @@ class ApplicantController extends Controller
 
         return view('confirmations.index', [
             'selectedYear' => $selectedYear,
-            'availableYears' => $this->availableYears(),
+            'availableYears' => $availableYears,
         ]);
     }
 
@@ -217,9 +257,11 @@ class ApplicantController extends Controller
     public function export(Request $request)
     {
         try {
-            $selectedYear = $this->selectedYear($request);
+            $selectedYear = $this->selectedYear($request, $this->availableYears());
             // Get all applications with all fields
-            $applications = Application::whereYear('created_at', $selectedYear)->get();
+            $applications = Application::query();
+            $this->applyYearFilter($applications, $selectedYear);
+            $applications = $applications->get();
 
             // Define the CSV headers
             $headers = [
@@ -295,10 +337,12 @@ class ApplicantController extends Controller
     public function exportAdmissions(Request $request)
     {
         try {
-            $selectedYear = $this->selectedYear($request);
+            $selectedYear = $this->selectedYear($request, $this->availableYears('Admitted'));
             // Get only admitted applications
             $applications = Application::where('status', 'Admitted')
-                ->whereYear('created_at', $selectedYear)
+                ->where(function ($query) use ($selectedYear) {
+                    $this->applyYearFilter($query, $selectedYear);
+                })
                 ->get();
 
             // Define the CSV headers
@@ -1126,9 +1170,11 @@ HTML;
     public function exportConfirmations(Request $request)
     {
         try {
-            $selectedYear = $this->selectedYear($request);
+            $selectedYear = $this->selectedYear($request, $this->availableYears('Confirmed'));
             $confirmations = Application::where('status', 'Confirmed')
-                ->whereYear('created_at', $selectedYear)
+                ->where(function ($query) use ($selectedYear) {
+                    $this->applyYearFilter($query, $selectedYear);
+                })
                 ->get();
             
             $csvData = [];
