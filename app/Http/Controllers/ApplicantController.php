@@ -10,12 +10,44 @@ use Illuminate\Support\Facades\Log;
 
 class ApplicantController extends Controller
 {
+    private function selectedYear(Request $request): int
+    {
+        $year = (int) $request->query('year', now()->year);
+
+        return $year > 0 ? $year : now()->year;
+    }
+
+    private function availableYears()
+    {
+        $years = Application::query()
+            ->selectRaw('YEAR(created_at) as year')
+            ->whereNotNull('created_at')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->filter()
+            ->map(fn ($year) => (int) $year);
+
+        return $years->contains(now()->year)
+            ? $years
+            : $years->prepend(now()->year);
+    }
+
+    private function applyYearFilter($query, int $year)
+    {
+        return $query->whereYear('created_at', $year);
+    }
+
     public function index(Request $request)
     {
+        $selectedYear = $this->selectedYear($request);
+
         if ($request->ajax()) {
             try {
                 $applicants = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
                                 ->where('status', 'Pending');
+
+                $this->applyYearFilter($applicants, $selectedYear);
                 
                 // Debug: Check if we have data
                 Log::info('Pending Applicants count: ' . $applicants->count());
@@ -57,15 +89,22 @@ class ApplicantController extends Controller
             }
         }
 
-        return view('applicants.index');
+        return view('applicants.index', [
+            'selectedYear' => $selectedYear,
+            'availableYears' => $this->availableYears(),
+        ]);
     }
 
     public function admissionList(Request $request)
     {
+        $selectedYear = $this->selectedYear($request);
+
         if ($request->ajax()) {
             try {
                 $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
                                 ->where('status', 'Admitted');
+
+                $this->applyYearFilter($admissions, $selectedYear);
                 
                 Log::info('Admitted Applicants count: ' . $admissions->count());
                 
@@ -100,15 +139,22 @@ class ApplicantController extends Controller
             }
         }
 
-        return view('admissions.index');
+        return view('admissions.index', [
+            'selectedYear' => $selectedYear,
+            'availableYears' => $this->availableYears(),
+        ]);
     }
 
     public function confirmationList(Request $request)
     {
+        $selectedYear = $this->selectedYear($request);
+
         if ($request->ajax()) {
             try {
                 $confirmations = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
                                 ->where('status', 'Confirmed');
+
+                $this->applyYearFilter($confirmations, $selectedYear);
                 
                 Log::info('Confirmed Applicants count: ' . $confirmations->count());
                 
@@ -144,7 +190,10 @@ class ApplicantController extends Controller
             }
         }
 
-        return view('confirmations.index');
+        return view('confirmations.index', [
+            'selectedYear' => $selectedYear,
+            'availableYears' => $this->availableYears(),
+        ]);
     }
 
     public function show($id)
@@ -165,11 +214,12 @@ class ApplicantController extends Controller
         }
     }
 
-    public function export()
+    public function export(Request $request)
     {
         try {
+            $selectedYear = $this->selectedYear($request);
             // Get all applications with all fields
-            $applications = Application::all();
+            $applications = Application::whereYear('created_at', $selectedYear)->get();
 
             // Define the CSV headers
             $headers = [
@@ -183,7 +233,7 @@ class ApplicantController extends Controller
             ];
 
             // Generate filename with current date
-            $filename = 'applicants_export_' . date('Y-m-d_H-i-s') . '.csv';
+            $filename = 'applicants_export_' . $selectedYear . '_' . date('Y-m-d_H-i-s') . '.csv';
 
             // Set headers for CSV download
             $headers_http = [
@@ -242,11 +292,14 @@ class ApplicantController extends Controller
         }
     }
 
-    public function exportAdmissions()
+    public function exportAdmissions(Request $request)
     {
         try {
+            $selectedYear = $this->selectedYear($request);
             // Get only admitted applications
-            $applications = Application::where('status', 'Admitted')->get();
+            $applications = Application::where('status', 'Admitted')
+                ->whereYear('created_at', $selectedYear)
+                ->get();
 
             // Define the CSV headers
             $headers = [
@@ -260,7 +313,7 @@ class ApplicantController extends Controller
             ];
 
             // Generate filename with current date
-            $filename = 'admissions_export_' . date('Y-m-d_H-i-s') . '.csv';
+            $filename = 'admissions_export_' . $selectedYear . '_' . date('Y-m-d_H-i-s') . '.csv';
 
             // Set headers for CSV download
             $headers_http = [
@@ -1070,10 +1123,13 @@ HTML;
         }
     }
 
-    public function exportConfirmations()
+    public function exportConfirmations(Request $request)
     {
         try {
-            $confirmations = Application::where('status', 'Confirmed')->get();
+            $selectedYear = $this->selectedYear($request);
+            $confirmations = Application::where('status', 'Confirmed')
+                ->whereYear('created_at', $selectedYear)
+                ->get();
             
             $csvData = [];
             $csvData[] = ['S/N', 'Application ID', 'Full Name', 'Email', 'Phone', 'Application Type', 'Status', 'Date Confirmed'];
@@ -1094,7 +1150,7 @@ HTML;
                 ];
             }
             
-            $filename = 'confirmations_export_' . date('Y-m-d_H-i-s') . '.csv';
+            $filename = 'confirmations_export_' . $selectedYear . '_' . date('Y-m-d_H-i-s') . '.csv';
             
             $handle = fopen('php://temp', 'r+');
             foreach ($csvData as $row) {
