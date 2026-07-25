@@ -13,17 +13,12 @@ class ApplicantController extends Controller
     private function selectedYear(Request $request, $availableYears): int
     {
         $requestedYear = (int) $request->input('year');
-        $currentYear = now()->year;
 
-        if ($requestedYear > 0 && $availableYears->contains($requestedYear)) {
+        if ($requestedYear > 0) {
             return $requestedYear;
         }
 
-        if ($availableYears->contains($currentYear)) {
-            return $currentYear;
-        }
-
-        return (int) ($availableYears->first() ?: $currentYear);
+        return now()->year;
     }
 
     private function availableYears(?string $status = null)
@@ -39,21 +34,16 @@ class ApplicantController extends Controller
             ->flatMap(function ($application) {
                 $years = [];
     
-                if ($application->created_at) {
-                    $years[] = (int) $application->created_at->format('Y');
-                }
-    
-                if ($application->updated_at) {
-                    $years[] = (int) $application->updated_at->format('Y');
-                }
-    
                 if (preg_match('/MAT(\d{2})/i', (string) $application->application_id, $matches)) {
                     $years[] = (int) ('20' . $matches[1]);
+                } elseif ($application->created_at) {
+                    $years[] = (int) $application->created_at->format('Y');
                 }
     
                 return $years;
             })
             ->filter()
+            ->push(now()->year)
             ->unique()
             ->sortDesc()
             ->values();
@@ -66,9 +56,11 @@ class ApplicantController extends Controller
         $endOfYear = "{$year}-12-31 23:59:59";
 
         return $query->where(function ($query) use ($startOfYear, $endOfYear, $shortYear) {
-            $query->whereBetween('created_at', [$startOfYear, $endOfYear])
-                ->orWhereBetween('updated_at', [$startOfYear, $endOfYear])
-                ->orWhere('application_id', 'like', 'MAT' . $shortYear . '%');
+            $query->where('application_id', 'like', 'MAT' . $shortYear . '%')
+                ->orWhere(function ($query) use ($startOfYear, $endOfYear) {
+                    $query->where('application_id', 'not regexp', '^MAT[0-9]{2}')
+                        ->whereBetween('created_at', [$startOfYear, $endOfYear]);
+                });
         });
     }
 
