@@ -28,37 +28,32 @@ class ApplicantController extends Controller
 
     private function availableYears(?string $status = null)
     {
-        $dateYearsQuery = Application::query()
-            ->selectRaw('YEAR(created_at) as year')
-            ->whereNotNull('created_at');
-
+        $query = Application::query()
+            ->select(['application_id', 'created_at', 'updated_at']);
+    
         if ($status) {
-            $dateYearsQuery->where('status', $status);
+            $query->where('status', $status);
         }
-
-        $dateYears = $dateYearsQuery
-            ->groupByRaw('YEAR(created_at)')
-            ->orderByRaw('YEAR(created_at) desc')
-            ->pluck('year')
+    
+        return $query->get()
+            ->flatMap(function ($application) {
+                $years = [];
+    
+                if ($application->created_at) {
+                    $years[] = (int) $application->created_at->format('Y');
+                }
+    
+                if ($application->updated_at) {
+                    $years[] = (int) $application->updated_at->format('Y');
+                }
+    
+                if (preg_match('/MAT(\d{2})/i', (string) $application->application_id, $matches)) {
+                    $years[] = (int) ('20' . $matches[1]);
+                }
+    
+                return $years;
+            })
             ->filter()
-            ->map(fn ($year) => (int) $year);
-
-        $applicationIdYearsQuery = Application::query()
-            ->selectRaw("CONCAT('20', SUBSTRING(application_id, 4, 2)) as year")
-            ->where('application_id', 'REGEXP', '^MAT[0-9]{2}');
-
-        if ($status) {
-            $applicationIdYearsQuery->where('status', $status);
-        }
-
-        $applicationIdYears = $applicationIdYearsQuery
-            ->groupByRaw("CONCAT('20', SUBSTRING(application_id, 4, 2))")
-            ->pluck('year')
-            ->filter()
-            ->map(fn ($year) => (int) $year);
-
-        return $dateYears
-            ->merge($applicationIdYears)
             ->unique()
             ->sortDesc()
             ->values();
@@ -67,10 +62,12 @@ class ApplicantController extends Controller
     private function applyYearFilter($query, int $year)
     {
         $shortYear = substr((string) $year, -2);
+        $startOfYear = "{$year}-01-01 00:00:00";
+        $endOfYear = "{$year}-12-31 23:59:59";
 
-        return $query->where(function ($query) use ($year, $shortYear) {
-            $query->whereYear('created_at', $year)
-                ->orWhereYear('updated_at', $year)
+        return $query->where(function ($query) use ($startOfYear, $endOfYear, $shortYear) {
+            $query->whereBetween('created_at', [$startOfYear, $endOfYear])
+                ->orWhereBetween('updated_at', [$startOfYear, $endOfYear])
                 ->orWhere('application_id', 'like', 'MAT' . $shortYear . '%');
         });
     }
