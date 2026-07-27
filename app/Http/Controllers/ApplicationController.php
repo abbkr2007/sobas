@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Application;
 
 class ApplicationController extends Controller
@@ -58,15 +59,13 @@ class ApplicationController extends Controller
             $extension = strtolower($photo->getClientOriginalExtension());
             $matNo = preg_replace('/[^A-Za-z0-9_-]/', '', $data['application_id']);
 
-            $uniqueName = $matNo . '.' . (in_array($extension, ['jpeg','jpg']) ? 'png' : $extension);
+            $uniqueName = $matNo . '.' . ($extension ?: 'jpg');
             $destinationPath = public_path('images/photos');
-
-            if (in_array($extension, ['jpeg','jpg'])) {
-                $image = Image::make($photo->getRealPath())->encode('png');
-                $image->save($destinationPath . '/' . $uniqueName);
-            } else {
-                $photo->move($destinationPath, $uniqueName);
+            if (!is_dir($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
             }
+
+            $photo->move($destinationPath, $uniqueName);
 
             $data['photo'] = 'images/photos/' . $uniqueName;
         }
@@ -89,14 +88,15 @@ class ApplicationController extends Controller
         $data['first_grades'] = $request->first_grade ?? [];
         $data['second_subjects'] = $request->second_subject ?? [];
         $data['second_grades'] = $request->second_grade ?? [];
+        $data['status'] = 'Pending';
 
         $application = Application::create($data);
 
         // Send confirmation email to applicant
         try {
-            \Mail::to($application->email)->send(new \App\Mail\ApplicationConfirmationMail($application));
+            Mail::to($application->email)->send(new \App\Mail\ApplicationConfirmationMail($application));
         } catch (\Exception $e) {
-            \Log::error('Failed to send application confirmation email: ' . $e->getMessage());
+            Log::error('Failed to send application confirmation email: ' . $e->getMessage());
         }
 
         // flash the id to session so we can open it in JS

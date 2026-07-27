@@ -170,6 +170,9 @@
                                                         JPG, PNG max 2MB. Passport size recommended.
                                                     </small>
                                                 </div>
+                                                <div id="photoInputError" class="error-message d-none" role="alert" aria-live="polite">
+                                                    Please select a photo before proceeding.
+                                                </div>
                                                 @error('photo')<div class="error-message">{{ $message }}</div>@enderror
                                             </div>
                                         </div>
@@ -720,6 +723,9 @@
                                                                     </tbody>
                                                                 </table>
                                                             </div>
+                                                            <div id="subjectSelectionError" class="error-message d-none" role="alert" aria-live="polite">
+                                                                Please select all 9 subjects and grades before proceeding.
+                                                            </div>
                                                             @error('first_subject.*')<div class="error-message">{{ $message }}</div>@enderror
                                                             @error('first_grade.*')<div class="error-message">{{ $message }}</div>@enderror
                                                         </div>
@@ -922,6 +928,78 @@
 
                                         <div class="form-section">
                                             <div class="section-header">
+                                                <h4><i class="fas fa-eye me-2"></i>Application Preview</h4>
+                                            </div>
+                                            <div class="preview-card" id="applicationPreviewCard">
+                                                <div class="preview-header-meta">
+                                                    <div class="preview-badge" id="previewCompletionBadge">
+                                                        <i class="fas fa-clipboard-check"></i>
+                                                        <span id="previewCompletionText">0 of 0 required complete</span>
+                                                    </div>
+                                                    <div class="preview-badge" id="previewSubjectBadge">
+                                                        <i class="fas fa-book-open"></i>
+                                                        <span id="previewSubjectText">0/9 subjects selected</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row g-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="preview-item">
+                                                            <span class="preview-label">Matric Number</span>
+                                                            <span class="preview-value" id="previewApplicationId">--</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="preview-item">
+                                                            <span class="preview-label">Application Type</span>
+                                                            <span class="preview-value" id="previewApplicationType">--</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="preview-item">
+                                                            <span class="preview-label">Full Name</span>
+                                                            <span class="preview-value" id="previewFullName">--</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="preview-item">
+                                                            <span class="preview-label">Gender</span>
+                                                            <span class="preview-value" id="previewGender">--</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="preview-item">
+                                                            <span class="preview-label">Email Address</span>
+                                                            <span class="preview-value" id="previewEmail">--</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="preview-item">
+                                                            <span class="preview-label">Phone Number</span>
+                                                            <span class="preview-value" id="previewPhone">--</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="preview-subjects mt-4">
+                                                    <h6 class="preview-subjects-title">First Sitting Subjects and Grades (9 compulsory)</h6>
+                                                    <div id="previewSubjectsList" class="preview-subject-grid"></div>
+                                                </div>
+
+                                                <div class="preview-subjects mt-4">
+                                                    <details class="preview-collapsible" id="previewMoreDetails">
+                                                        <summary>
+                                                            <span><i class="fas fa-list-ul me-2"></i>More Details</span>
+                                                            <small>Click to expand</small>
+                                                        </summary>
+                                                        <div id="previewAllFields" class="preview-details-grid mt-3"></div>
+                                                    </details>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-section">
+                                            <div class="section-header">
                                                 <h4><i class="fas fa-clipboard-check me-2"></i>Declaration</h4>
                                             </div>
                                             <div class="declaration-content">
@@ -960,8 +1038,15 @@
 
         <!-- Scripts -->
         <script>
-         let currentStep = 1;
+         const stepStorageKey = 'applicationFormCurrentStep';
+        const formDraftStorageKey = 'applicationFormDraftV1';
+        let currentStep = 1;
         const totalSteps = 3;
+
+        const savedStep = parseInt(sessionStorage.getItem(stepStorageKey), 10);
+        if (!Number.isNaN(savedStep) && savedStep >= 1 && savedStep <= totalSteps) {
+            currentStep = savedStep;
+        }
 
         function updateProgressBar(step) {
             const progress = (step / totalSteps) * 100;
@@ -984,6 +1069,15 @@
                 if (idx === step - 1) el.style.display = 'block';
             });
             document.getElementById('prevBtn').classList.toggle('d-none', step === 1);
+            sessionStorage.setItem(stepStorageKey, String(step));
+
+            if (step !== 2) {
+                showSubjectError(false);
+            }
+
+            if (step === 3) {
+                renderApplicationPreview();
+            }
 
             // Update button text
             const nextBtn = document.getElementById('nextBtn');
@@ -999,6 +1093,7 @@
 
         document.getElementById('nextBtn').addEventListener('click', () => {
             if (validateCurrentStep()) {
+                saveFormDraft();
                 if (currentStep < totalSteps) {
                     currentStep++;
                     showStep(currentStep);
@@ -1018,14 +1113,51 @@
             const requiredFields = currentStepElement.querySelectorAll('[required]');
             let isValid = true;
 
+            if (currentStep === 1) {
+                const photoInput = document.getElementById('photoInput');
+                const hasPhoto = photoInput && photoInput.files && photoInput.files.length > 0;
+
+                showPhotoError(!hasPhoto);
+                if (!hasPhoto) {
+                    isValid = false;
+                    if (photoInput) {
+                        photoInput.classList.add('is-invalid');
+                    }
+                }
+            }
+
             requiredFields.forEach(field => {
-                if (!field.value.trim()) {
+                const isFileField = field.type === 'file';
+                const isCheckboxField = field.type === 'checkbox';
+
+                if (isFileField && field.id === 'photoInput') {
+                    return;
+                }
+
+                if (isFileField && field.id === 'photoInput' && (!field.files || field.files.length === 0)) {
+                    field.classList.add('is-invalid');
+                    showPhotoError(true);
+                    isValid = false;
+                } else if (isCheckboxField && !field.checked) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else if (!isFileField && !isCheckboxField && !field.value.trim()) {
                     field.classList.add('is-invalid');
                     isValid = false;
                 } else {
                     field.classList.remove('is-invalid');
+                    if (field.id === 'photoInput') {
+                        showPhotoError(false);
+                    }
                 }
             });
+
+            if (currentStep === 2) {
+                const firstSittingComplete = validateFirstSittingComplete();
+                if (!firstSittingComplete) {
+                    isValid = false;
+                }
+            }
 
             if (!isValid) {
                 alert('Please fill in all required fields before proceeding.');
@@ -1060,7 +1192,565 @@
                     uploadBtn.innerHTML = '<i class="fas fa-check me-2"></i>Photo Selected';
                     uploadBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
                 }
+
+                showPhotoError(false);
+            } else {
+                showPhotoError(true);
             }
+        }
+
+        function showPhotoError(show) {
+            const photoError = document.getElementById('photoInputError');
+            const photoContainer = document.querySelector('.photo-upload-container');
+            const photoUploadBtn = document.querySelector('.photo-upload-btn');
+
+            if (photoError) {
+                photoError.classList.toggle('d-none', !show);
+            }
+
+            if (photoContainer) {
+                photoContainer.classList.toggle('has-error', show);
+            }
+
+            if (photoUploadBtn) {
+                photoUploadBtn.classList.toggle('has-error', show);
+            }
+        }
+
+        function showSubjectError(show) {
+            const subjectError = document.getElementById('subjectSelectionError');
+            if (subjectError) {
+                subjectError.classList.toggle('d-none', !show);
+            }
+        }
+
+        function validateFirstSittingComplete() {
+            const firstSubjectFields = document.querySelectorAll('select[name="first_subject[]"]');
+            const firstGradeFields = document.querySelectorAll('select[name="first_grade[]"]');
+
+            let hasMissingSubject = false;
+            firstSubjectFields.forEach(function (field) {
+                if (!field.value.trim()) {
+                    hasMissingSubject = true;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            let hasMissingGrade = false;
+            firstGradeFields.forEach(function (field) {
+                if (!field.value.trim()) {
+                    hasMissingGrade = true;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            const isComplete = !hasMissingSubject && !hasMissingGrade && firstSubjectFields.length === 9 && firstGradeFields.length === 9;
+            showSubjectError(!isComplete);
+
+            return isComplete;
+        }
+
+        function getFieldValueByName(fieldName) {
+            const field = document.querySelector(`[name="${fieldName}"]`);
+            if (!field) {
+                return '--';
+            }
+
+            const value = (field.value || '').trim();
+            return value || '--';
+        }
+
+        function renderApplicationPreview() {
+            const fullName = [
+                getFieldValueByName('surname'),
+                getFieldValueByName('firstname'),
+                getFieldValueByName('middlename')
+            ].filter(function (value) {
+                return value !== '--';
+            }).join(' ');
+
+            const previewApplicationId = document.getElementById('previewApplicationId');
+            const previewApplicationType = document.getElementById('previewApplicationType');
+            const previewFullName = document.getElementById('previewFullName');
+            const previewGender = document.getElementById('previewGender');
+            const previewEmail = document.getElementById('previewEmail');
+            const previewPhone = document.getElementById('previewPhone');
+            const previewSubjectsList = document.getElementById('previewSubjectsList');
+            const previewCompletionText = document.getElementById('previewCompletionText');
+            const previewSubjectText = document.getElementById('previewSubjectText');
+
+            if (previewApplicationId) {
+                previewApplicationId.textContent = getFieldValueByName('application_id');
+            }
+            if (previewApplicationType) {
+                previewApplicationType.textContent = getFieldValueByName('application_type');
+            }
+            if (previewFullName) {
+                previewFullName.textContent = fullName || '--';
+            }
+            if (previewGender) {
+                previewGender.textContent = getFieldValueByName('gender');
+            }
+            if (previewEmail) {
+                previewEmail.textContent = getFieldValueByName('email');
+            }
+            if (previewPhone) {
+                previewPhone.textContent = getFieldValueByName('phone');
+            }
+
+            if (previewSubjectsList) {
+                previewSubjectsList.innerHTML = '';
+                const firstSubjectFields = document.querySelectorAll('select[name="first_subject[]"]');
+                const firstGradeFields = document.querySelectorAll('select[name="first_grade[]"]');
+                let completedSubjectRows = 0;
+
+                for (let i = 0; i < 9; i++) {
+                    const subjectValue = firstSubjectFields[i] ? firstSubjectFields[i].value.trim() : '';
+                    const gradeValue = firstGradeFields[i] ? firstGradeFields[i].value.trim() : '';
+                    const subjectRow = document.createElement('div');
+                    subjectRow.className = `preview-subject-row${(!subjectValue || !gradeValue) ? ' preview-subject-row-missing' : ''}`;
+                    subjectRow.textContent = `${i + 1}. ${subjectValue || 'Subject not selected'} - ${gradeValue || 'Grade not selected'}`;
+                    previewSubjectsList.appendChild(subjectRow);
+
+                    if (subjectValue && gradeValue) {
+                        completedSubjectRows++;
+                    }
+                }
+
+                if (previewSubjectText) {
+                    previewSubjectText.textContent = `${completedSubjectRows}/9 subjects selected`;
+                }
+            }
+
+            const requiredFields = document.querySelectorAll('#applicationForm [required]');
+            let requiredCompleted = 0;
+            requiredFields.forEach(function (field) {
+                const isFileField = field.type === 'file';
+                const isCheckboxField = field.type === 'checkbox';
+                const hasValue = isFileField
+                    ? (field.files && field.files.length > 0)
+                    : (isCheckboxField ? field.checked : !!(field.value && field.value.trim()));
+
+                if (hasValue) {
+                    requiredCompleted++;
+                }
+            });
+
+            if (previewCompletionText) {
+                previewCompletionText.textContent = `${requiredCompleted} of ${requiredFields.length} required complete`;
+            }
+
+            renderAllInputPreview();
+        }
+
+        function humanizeFieldName(name) {
+            return name
+                .replace(/\[\]/g, '')
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, function (char) { return char.toUpperCase(); });
+        }
+
+        function getFieldValueForPreview(field) {
+            if (field.type === 'file') {
+                if (field.files && field.files.length > 0) {
+                    return Array.from(field.files).map(function (file) { return file.name; }).join(', ');
+                }
+                return '--';
+            }
+
+            if (field.type === 'checkbox') {
+                return field.checked ? 'Yes' : 'No';
+            }
+
+            if (field.tagName === 'SELECT') {
+                const selectedOption = field.options[field.selectedIndex];
+                if (selectedOption && selectedOption.value.trim()) {
+                    return selectedOption.text.trim();
+                }
+                return '--';
+            }
+
+            const value = (field.value || '').trim();
+            return value || '--';
+        }
+
+        function renderAllInputPreview() {
+            const previewAllFields = document.getElementById('previewAllFields');
+            const form = document.getElementById('applicationForm');
+
+            if (!previewAllFields || !form) {
+                return;
+            }
+
+            previewAllFields.innerHTML = '';
+
+            const groupedFields = {};
+            Array.from(form.elements).forEach(function (field) {
+                if (!field.name || field.disabled || field.name === '_token') {
+                    return;
+                }
+
+                if (!groupedFields[field.name]) {
+                    groupedFields[field.name] = [];
+                }
+                groupedFields[field.name].push(field);
+            });
+
+            const labelMap = {
+                application_id: 'Matric Number',
+                surname: 'Surname',
+                firstname: 'First Name',
+                middlename: 'Middle Name',
+                dob: 'Date of Birth',
+                gender: 'Gender',
+                phone: 'Phone Number',
+                email: 'Email Address',
+                place_of_birth: 'Place of Birth',
+                state: 'State',
+                lga: 'LGA',
+                town: 'Town',
+                country: 'Country',
+                home_address: 'Home Address',
+                guardian: 'Guardian Name',
+                guardian_phone: 'Guardian Phone',
+                guardian_address: 'Guardian Address',
+                application_type: 'Application Type',
+                school_name: 'School Name(s)',
+                school_from: 'School From Year(s)',
+                school_to: 'School To Year(s)',
+                first_exam_type: 'First Sitting Exam Type',
+                first_exam_year: 'First Sitting Exam Year',
+                first_exam_number: 'First Sitting Exam Number',
+                first_center_number: 'First Sitting Center Number',
+                first_subject: 'First Sitting Subjects',
+                first_grade: 'First Sitting Grades',
+                second_exam_type: 'Second Sitting Exam Type',
+                second_exam_year: 'Second Sitting Exam Year',
+                second_exam_number: 'Second Sitting Exam Number',
+                second_center_number: 'Second Sitting Center Number',
+                second_subject: 'Second Sitting Subjects',
+                second_grade: 'Second Sitting Grades',
+                jamb_no: 'JAMB Registration Number',
+                jamb_score: 'JAMB Score',
+                declaration: 'Declaration Accepted',
+                photo: 'Passport Photo'
+            };
+
+            const skipFields = new Set([
+                'application_id',
+                'surname',
+                'firstname',
+                'middlename',
+                'gender',
+                'email',
+                'phone',
+                'application_type',
+                'first_subject[]',
+                'first_grade[]'
+            ]);
+
+            const fieldOrder = [
+                'application_id', 'surname', 'firstname', 'middlename', 'dob', 'gender', 'phone', 'email',
+                'place_of_birth', 'state', 'lga', 'town', 'country', 'home_address',
+                'guardian', 'guardian_phone', 'guardian_address', 'application_type',
+                'school_name[]', 'school_from[]', 'school_to[]',
+                'first_exam_type', 'first_exam_year', 'first_exam_number', 'first_center_number',
+                'first_subject[]', 'first_grade[]',
+                'second_exam_type', 'second_exam_year', 'second_exam_number', 'second_center_number',
+                'second_subject[]', 'second_grade[]',
+                'jamb_no', 'jamb_score', 'declaration', 'photo'
+            ];
+
+            const orderedFieldNames = fieldOrder.filter(function (name) {
+                return groupedFields[name];
+            }).concat(Object.keys(groupedFields).filter(function (name) {
+                return !fieldOrder.includes(name);
+            }));
+
+            orderedFieldNames.forEach(function (fieldName) {
+                if (skipFields.has(fieldName)) {
+                    return;
+                }
+
+                const fields = groupedFields[fieldName];
+                const firstField = fields[0];
+                let displayValue = '--';
+
+                if (fieldName.endsWith('[]')) {
+                    const values = fields.map(function (field) {
+                        return getFieldValueForPreview(field);
+                    }).filter(function (value) {
+                        return value && value !== '--';
+                    });
+
+                    displayValue = values.length ? values.join(', ') : '--';
+                } else {
+                    displayValue = getFieldValueForPreview(firstField);
+                }
+
+                if (fieldName.startsWith('second_')) {
+                    const secondSittingSection = document.getElementById('secondSittingSection');
+                    const secondSittingVisible = secondSittingSection && !secondSittingSection.classList.contains('d-none');
+                    if (!secondSittingVisible && displayValue === '--') {
+                        return;
+                    }
+                }
+
+                if (displayValue === '--') {
+                    return;
+                }
+
+                const row = document.createElement('div');
+                row.className = 'preview-detail-row';
+
+                const label = document.createElement('span');
+                label.className = 'preview-detail-label';
+                const normalizedName = fieldName.replace(/\[\]/g, '');
+                label.textContent = labelMap[normalizedName] || humanizeFieldName(fieldName);
+
+                const value = document.createElement('span');
+                value.className = 'preview-detail-value';
+                value.textContent = displayValue;
+
+                row.appendChild(label);
+                row.appendChild(value);
+                previewAllFields.appendChild(row);
+            });
+
+            if (!previewAllFields.childElementCount) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'preview-detail-empty';
+                emptyState.textContent = 'No additional details to show.';
+                previewAllFields.appendChild(emptyState);
+            }
+        }
+
+        function validateFormBeforeSubmit() {
+            const form = document.getElementById('applicationForm');
+            if (!form) {
+                return true;
+            }
+
+            const requiredFields = form.querySelectorAll('[required]');
+            let firstInvalidField = null;
+
+            requiredFields.forEach(function (field) {
+                const isFileField = field.type === 'file';
+                const isCheckboxField = field.type === 'checkbox';
+                const hasValue = isFileField
+                    ? (field.files && field.files.length > 0)
+                    : (isCheckboxField ? field.checked : !!(field.value && field.value.trim()));
+
+                if (!hasValue && !firstInvalidField) {
+                    firstInvalidField = field;
+                }
+
+                field.classList.toggle('is-invalid', !hasValue);
+            });
+
+            const firstSittingComplete = validateFirstSittingComplete();
+            if (!firstSittingComplete) {
+                currentStep = 2;
+                showStep(currentStep);
+                alert('All 9 first sitting subjects and grades are compulsory before submitting.');
+                return false;
+            }
+
+            if (!firstInvalidField) {
+                return true;
+            }
+
+            const parentStep = firstInvalidField.closest('.step-content');
+            if (parentStep && parentStep.id) {
+                const stepNumber = parseInt(parentStep.id.replace('step-', ''), 10);
+                if (!Number.isNaN(stepNumber)) {
+                    currentStep = stepNumber;
+                    showStep(currentStep);
+                }
+            }
+
+            if (firstInvalidField.id === 'photoInput') {
+                showPhotoError(true);
+            }
+
+            alert('Please complete all required fields before submitting the form.');
+            return false;
+        }
+
+        function collectFormDraftData() {
+            const form = document.getElementById('applicationForm');
+            if (!form) {
+                return null;
+            }
+
+            const draft = {
+                values: {},
+                currentStep: currentStep,
+                secondSittingVisible: false
+            };
+
+            Array.from(form.elements).forEach(function (field) {
+                if (!field.name || field.disabled || field.type === 'file' || field.name === '_token') {
+                    return;
+                }
+
+                if (field.name.endsWith('[]')) {
+                    if (!Array.isArray(draft.values[field.name])) {
+                        draft.values[field.name] = [];
+                    }
+                    draft.values[field.name].push(field.type === 'checkbox' ? field.checked : field.value);
+                } else {
+                    draft.values[field.name] = field.type === 'checkbox' ? field.checked : field.value;
+                }
+            });
+
+            const secondSittingSection = document.getElementById('secondSittingSection');
+            if (secondSittingSection) {
+                draft.secondSittingVisible = !secondSittingSection.classList.contains('d-none');
+            }
+
+            return draft;
+        }
+
+        function saveFormDraft() {
+            const draft = collectFormDraftData();
+            if (!draft) {
+                return;
+            }
+            localStorage.setItem(formDraftStorageKey, JSON.stringify(draft));
+        }
+
+        function setSecondSittingVisibility(show) {
+            const addSecondSittingPanel = document.getElementById('addSecondSittingPanel');
+            const secondSittingSection = document.getElementById('secondSittingSection');
+            if (!addSecondSittingPanel || !secondSittingSection) {
+                return;
+            }
+
+            if (show) {
+                secondSittingSection.classList.remove('d-none');
+                addSecondSittingPanel.classList.add('d-none');
+            } else {
+                secondSittingSection.classList.add('d-none');
+                addSecondSittingPanel.classList.remove('d-none');
+            }
+        }
+
+        function restoreFormDraft() {
+            const form = document.getElementById('applicationForm');
+            if (!form) {
+                return;
+            }
+
+            const rawDraft = localStorage.getItem(formDraftStorageKey);
+            if (!rawDraft) {
+                return;
+            }
+
+            let draft;
+            try {
+                draft = JSON.parse(rawDraft);
+            } catch (error) {
+                localStorage.removeItem(formDraftStorageKey);
+                return;
+            }
+
+            if (!draft || !draft.values) {
+                return;
+            }
+
+            Object.keys(draft.values).forEach(function (name) {
+                const value = draft.values[name];
+                const fields = form.querySelectorAll(`[name="${name}"]`);
+                if (!fields.length) {
+                    return;
+                }
+
+                if (name.endsWith('[]') && Array.isArray(value)) {
+                    fields.forEach(function (field, index) {
+                        const itemValue = value[index];
+                        if (typeof itemValue === 'undefined') {
+                            return;
+                        }
+                        if (field.type === 'checkbox') {
+                            field.checked = !!itemValue;
+                        } else {
+                            field.value = itemValue;
+                        }
+                    });
+                    return;
+                }
+
+                const field = fields[0];
+                if (field.type === 'checkbox') {
+                    field.checked = !!value;
+                } else {
+                    field.value = value;
+                }
+            });
+
+            if (typeof draft.secondSittingVisible === 'boolean') {
+                setSecondSittingVisibility(draft.secondSittingVisible);
+            }
+
+            const savedStep = parseInt(draft.currentStep, 10);
+            if (!Number.isNaN(savedStep) && savedStep >= 1 && savedStep <= totalSteps) {
+                currentStep = savedStep;
+            }
+
+            if (typeof populateLGA === 'function') {
+                const savedLga = getFieldValueByName('lga');
+                populateLGA();
+                const lgaField = document.getElementById('lga');
+                if (lgaField && savedLga !== '--') {
+                    lgaField.value = savedLga;
+                }
+            }
+        }
+
+        const applicationForm = document.getElementById('applicationForm');
+        if (applicationForm) {
+            applicationForm.addEventListener('submit', function (event) {
+                const canSubmit = validateFormBeforeSubmit();
+                if (!canSubmit) {
+                    event.preventDefault();
+                    return;
+                }
+
+                sessionStorage.removeItem(stepStorageKey);
+                localStorage.removeItem(formDraftStorageKey);
+            });
+
+            applicationForm.addEventListener('input', function () {
+                saveFormDraft();
+            });
+
+            applicationForm.addEventListener('change', function () {
+                saveFormDraft();
+            });
+        }
+
+        document.querySelectorAll('select[name="first_subject[]"]').forEach(function (field) {
+            field.addEventListener('change', function () {
+                validateFirstSittingComplete();
+            });
+        });
+
+        document.querySelectorAll('select[name="first_grade[]"]').forEach(function (field) {
+            field.addEventListener('change', function () {
+                validateFirstSittingComplete();
+            });
+        });
+
+        const photoInputField = document.getElementById('photoInput');
+        if (photoInputField) {
+            photoInputField.addEventListener('change', function () {
+                showPhotoError(!(photoInputField.files && photoInputField.files.length > 0));
+            });
         }
 
 
@@ -1312,12 +2002,14 @@ const lgas = {
 
             // Populate graduation years dynamically
             const gradSelect = document.getElementById('graduation_year');
-            const currentYear = new Date().getFullYear();
-            for (let year = currentYear; year >= 1960; year--) {
-                const opt = document.createElement('option');
-                opt.value = year;
-                opt.textContent = year;
-                gradSelect.appendChild(opt);
+            if (gradSelect) {
+                const currentYear = new Date().getFullYear();
+                for (let year = currentYear; year >= 1960; year--) {
+                    const opt = document.createElement('option');
+                    opt.value = year;
+                    opt.textContent = year;
+                    gradSelect.appendChild(opt);
+                }
             }
 
             const addSecondSittingBtn = document.getElementById('addSecondSittingBtn');
@@ -1341,8 +2033,13 @@ const lgas = {
                     secondSittingSection.classList.add('d-none');
                     addSecondSittingPanel.classList.remove('d-none');
                     addSecondSittingPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    saveFormDraft();
                 });
             }
+
+            restoreFormDraft();
+            showStep(currentStep);
+            renderApplicationPreview();
         </script>
                     </div>
                 </div>
@@ -2088,10 +2785,11 @@ const lgas = {
 
         .subjects-table thead {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
+            color: #14532d;
         }
 
         .subjects-table th {
+            color: #14532d;
             font-weight: 600;
             border: none;
             padding: 0.75rem;
@@ -2185,6 +2883,171 @@ const lgas = {
 
         .review-notice {
             margin-bottom: 2rem;
+        }
+
+        .preview-card {
+            background: linear-gradient(180deg, #fbfcfd 0%, #f6faf8 100%);
+            border: 1px solid #dfe8e3;
+            border-radius: 16px;
+            padding: 1.35rem;
+            text-align: left;
+            box-shadow: 0 10px 24px rgba(17, 24, 39, 0.07);
+        }
+
+        .preview-header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #eaf7ef;
+            color: #166534;
+            border: 1px solid #ccead8;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 0.38rem 0.72rem;
+            letter-spacing: 0.01em;
+        }
+
+        .preview-item {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            height: 100%;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .preview-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 0.3rem;
+        }
+
+        .preview-value {
+            display: block;
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: #1f2937;
+            word-break: break-word;
+        }
+
+        .preview-subjects-title {
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .preview-subject-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 0.45rem;
+        }
+
+        .preview-details-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 0.45rem;
+        }
+
+        .preview-collapsible {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.2rem 0.8rem 0.8rem;
+        }
+
+        .preview-collapsible summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .preview-collapsible summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .preview-collapsible summary small {
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .preview-subject-row {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .preview-subject-row-missing {
+            border-color: #dc3545;
+            background: #fff5f5;
+            color: #b02a37;
+            font-weight: 600;
+        }
+
+        .preview-detail-row {
+            display: grid;
+            grid-template-columns: minmax(180px, 34%) 1fr;
+            gap: 0.75rem;
+            background: #ffffff;
+            border: 1px solid #e4ebe7;
+            border-radius: 10px;
+            padding: 0.62rem 0.8rem;
+            align-items: start;
+        }
+
+        .preview-detail-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+            color: #4b5563;
+        }
+
+        .preview-detail-value {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #1f2937;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+
+        .preview-detail-value-empty {
+            color: #9ca3af;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .preview-detail-empty {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-style: italic;
+            padding: 0.2rem;
+        }
+
+        @media (max-width: 767.98px) {
+            .preview-detail-row {
+                grid-template-columns: 1fr;
+                gap: 0.35rem;
+            }
         }
 
         .declaration-content {
@@ -2527,6 +3390,11 @@ const lgas = {
             background: #f0fff4;
         }
 
+        .photo-upload-container.has-error {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
         .photo-preview-wrapper {
             margin-bottom: 1.5rem;
         }
@@ -2588,6 +3456,12 @@ const lgas = {
         .photo-upload-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .photo-upload-btn.has-error,
+        .photo-upload-btn.has-error:hover {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.35);
         }
 
         .photo-input-hidden {

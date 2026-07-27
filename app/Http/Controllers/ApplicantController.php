@@ -21,6 +21,13 @@ class ApplicantController extends Controller
         return now()->year;
     }
 
+    private function selectedProgramme(Request $request): ?string
+    {
+        $programme = trim((string) $request->input('programme', ''));
+
+        return $programme !== '' ? $programme : null;
+    }
+
     private function availableYears(?string $status = null)
     {
         $query = Application::query()
@@ -49,6 +56,22 @@ class ApplicantController extends Controller
             ->values();
     }
 
+    private function availableProgrammes(?string $status = null)
+    {
+        $query = Application::query()
+            ->whereNotNull('application_type')
+            ->where('application_type', '!=', '');
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query->distinct()
+            ->orderBy('application_type')
+            ->pluck('application_type')
+            ->values();
+    }
+
     private function applyYearFilter($query, int $year)
     {
         $shortYear = substr((string) $year, -2);
@@ -64,10 +87,21 @@ class ApplicantController extends Controller
         });
     }
 
+    private function applyProgrammeFilter($query, ?string $programme)
+    {
+        if ($programme) {
+            $query->where('application_type', $programme);
+        }
+
+        return $query;
+    }
+
     public function index(Request $request)
     {
         $availableYears = $this->availableYears('Pending');
         $selectedYear = $this->selectedYear($request, $availableYears);
+        $availableProgrammes = $this->availableProgrammes('Pending');
+        $selectedProgramme = $this->selectedProgramme($request);
 
         if ($request->ajax()) {
             try {
@@ -75,6 +109,7 @@ class ApplicantController extends Controller
                                 ->where('status', 'Pending');
 
                 $this->applyYearFilter($applicants, $selectedYear);
+                $this->applyProgrammeFilter($applicants, $selectedProgramme);
                 
                 // Debug: Check if we have data
                 Log::info('Pending Applicants count: ' . $applicants->count());
@@ -119,6 +154,8 @@ class ApplicantController extends Controller
         return view('applicants.index', [
             'selectedYear' => $selectedYear,
             'availableYears' => $availableYears,
+            'selectedProgramme' => $selectedProgramme,
+            'availableProgrammes' => $availableProgrammes,
         ]);
     }
 
@@ -126,6 +163,8 @@ class ApplicantController extends Controller
     {
         $availableYears = $this->availableYears('Admitted');
         $selectedYear = $this->selectedYear($request, $availableYears);
+        $availableProgrammes = $this->availableProgrammes('Admitted');
+        $selectedProgramme = $this->selectedProgramme($request);
 
         if ($request->ajax()) {
             try {
@@ -133,6 +172,7 @@ class ApplicantController extends Controller
                                 ->where('status', 'Admitted');
 
                 $this->applyYearFilter($admissions, $selectedYear);
+                $this->applyProgrammeFilter($admissions, $selectedProgramme);
                 
                 Log::info('Admitted Applicants count: ' . $admissions->count());
                 
@@ -170,6 +210,8 @@ class ApplicantController extends Controller
         return view('admissions.index', [
             'selectedYear' => $selectedYear,
             'availableYears' => $availableYears,
+            'selectedProgramme' => $selectedProgramme,
+            'availableProgrammes' => $availableProgrammes,
         ]);
     }
 
@@ -177,6 +219,8 @@ class ApplicantController extends Controller
     {
         $availableYears = $this->availableYears('Confirmed');
         $selectedYear = $this->selectedYear($request, $availableYears);
+        $availableProgrammes = $this->availableProgrammes('Confirmed');
+        $selectedProgramme = $this->selectedProgramme($request);
 
         if ($request->ajax()) {
             try {
@@ -184,6 +228,7 @@ class ApplicantController extends Controller
                                 ->where('status', 'Confirmed');
 
                 $this->applyYearFilter($confirmations, $selectedYear);
+                $this->applyProgrammeFilter($confirmations, $selectedProgramme);
                 
                 Log::info('Confirmed Applicants count: ' . $confirmations->count());
                 
@@ -222,6 +267,8 @@ class ApplicantController extends Controller
         return view('confirmations.index', [
             'selectedYear' => $selectedYear,
             'availableYears' => $availableYears,
+            'selectedProgramme' => $selectedProgramme,
+            'availableProgrammes' => $availableProgrammes,
         ]);
     }
 
@@ -247,9 +294,11 @@ class ApplicantController extends Controller
     {
         try {
             $selectedYear = $this->selectedYear($request, $this->availableYears());
+            $selectedProgramme = $this->selectedProgramme($request);
             // Get all applications with all fields
             $applications = Application::query();
             $this->applyYearFilter($applications, $selectedYear);
+            $this->applyProgrammeFilter($applications, $selectedProgramme);
             $applications = $applications->get();
 
             // Define the CSV headers
@@ -327,12 +376,12 @@ class ApplicantController extends Controller
     {
         try {
             $selectedYear = $this->selectedYear($request, $this->availableYears('Admitted'));
+            $selectedProgramme = $this->selectedProgramme($request);
             // Get only admitted applications
-            $applications = Application::where('status', 'Admitted')
-                ->where(function ($query) use ($selectedYear) {
-                    $this->applyYearFilter($query, $selectedYear);
-                })
-                ->get();
+            $applications = Application::where('status', 'Admitted');
+            $this->applyYearFilter($applications, $selectedYear);
+            $this->applyProgrammeFilter($applications, $selectedProgramme);
+            $applications = $applications->get();
 
             // Define the CSV headers
             $headers = [
@@ -1160,11 +1209,11 @@ HTML;
     {
         try {
             $selectedYear = $this->selectedYear($request, $this->availableYears('Confirmed'));
-            $confirmations = Application::where('status', 'Confirmed')
-                ->where(function ($query) use ($selectedYear) {
-                    $this->applyYearFilter($query, $selectedYear);
-                })
-                ->get();
+            $selectedProgramme = $this->selectedProgramme($request);
+            $confirmations = Application::where('status', 'Confirmed');
+            $this->applyYearFilter($confirmations, $selectedYear);
+            $this->applyProgrammeFilter($confirmations, $selectedProgramme);
+            $confirmations = $confirmations->get();
             
             $csvData = [];
             $csvData[] = ['S/N', 'Application ID', 'Full Name', 'Email', 'Phone', 'Application Type', 'Status', 'Date Confirmed'];

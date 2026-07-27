@@ -11,14 +11,14 @@
                 <h4 class="text-success mb-1 fs-5 fs-md-4">Applicants Management</h4>
                 <p class="text-muted small mb-0">
                     @if($availableYears->count())
-                        Showing {{ $selectedYear }} applicants.
+                        Showing {{ $selectedYear }}{{ $selectedProgramme ? ' - ' . ucwords(str_replace('_', ' ', $selectedProgramme)) : '' }} applicants.
                     @else
                         No applicant records yet.
                     @endif
                 </p>
             </div>
             <div class="d-flex flex-column flex-sm-row gap-2">
-                <form method="GET" action="{{ route('applicants.index') }}">
+                <form method="GET" action="{{ route('applicants.index') }}" class="d-flex flex-column flex-sm-row gap-2">
                     <select name="year" id="yearFilter" class="form-select form-select-sm" {{ $availableYears->isEmpty() ? 'disabled' : '' }}>
                         @forelse($availableYears as $year)
                             <option value="{{ $year }}" {{ (int) $selectedYear === (int) $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -26,8 +26,16 @@
                             <option value="">No data</option>
                         @endforelse
                     </select>
+                    <select name="programme" id="programmeFilter" class="form-select form-select-sm">
+                        <option value="">All Programmes</option>
+                        @foreach($availableProgrammes as $programme)
+                            <option value="{{ $programme }}" {{ $selectedProgramme === $programme ? 'selected' : '' }}>
+                                {{ ucwords(str_replace('_', ' ', $programme)) }}
+                            </option>
+                        @endforeach
+                    </select>
                 </form>
-                <a href="{{ route('applicants.export', ['year' => $selectedYear]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
+                <a href="{{ route('applicants.export', ['year' => $selectedYear, 'programme' => $selectedProgramme]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
                     <i class="fas fa-download me-1 me-md-2"></i>
                     <span class="d-none d-sm-inline">Export CSV</span>
                     <span class="d-sm-none">Export</span>
@@ -302,6 +310,7 @@
                     url: '{{ route('applicants.index') }}',
                     data: function(data) {
                         data.year = $('#yearFilter').val();
+                        data.programme = $('#programmeFilter').val();
                     }
                 },
                 columns: [
@@ -315,9 +324,16 @@
                 order: [[1, 'desc']]
             });
 
-            $('#yearFilter').on('change', function() {
-                const selectedYear = $(this).val();
-                $('#exportCsv').attr('href', '{{ route('applicants.export') }}?year=' + encodeURIComponent(selectedYear));
+            function updateExportLink() {
+                const params = new URLSearchParams({
+                    year: $('#yearFilter').val() || '',
+                    programme: $('#programmeFilter').val() || ''
+                });
+                $('#exportCsv').attr('href', '{{ route('applicants.export') }}?' + params.toString());
+            }
+
+            $('#yearFilter, #programmeFilter').on('change', function() {
+                updateExportLink();
                 table.ajax.reload();
             });
 

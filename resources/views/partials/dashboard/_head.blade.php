@@ -32,4 +32,91 @@
     th.hide-search input{
        display: none;
     }
+
+      /* Professional, consistent form styling across pages */
+      form {
+         width: 100%;
+      }
+
+      .card form,
+      .login-content form,
+      .auth-card form {
+         max-width: 880px;
+         margin-left: auto;
+         margin-right: auto;
+      }
+
+      form .form-label {
+         font-weight: 600;
+         letter-spacing: 0.01em;
+         color: #1f2937;
+         margin-bottom: 0.45rem;
+      }
+
+      form .form-control,
+      form .form-select,
+      form textarea {
+         min-height: 44px;
+         border-radius: 10px;
+         border: 1px solid #d7dee8;
+         box-shadow: none;
+         transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      }
+
+      form textarea.form-control {
+         min-height: 110px;
+      }
+
+      form .form-control:focus,
+      form .form-select:focus,
+      form textarea:focus {
+         border-color: #198754;
+         box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.16);
+         background-color: #fff;
+      }
+
+      form .form-group,
+      form .mb-3,
+      form .mb-4 {
+         margin-bottom: 1rem;
+      }
+
+      /* Center Next and Previous actions in multi-step forms */
+      #form-wizard1 fieldset {
+         text-align: center;
+      }
+
+      #form-wizard1 .form-card {
+         text-align: left;
+      }
+
+      #form-wizard1 .action-button,
+      #form-wizard1 .action-button-previous,
+      #form-wizard1 button[name="next"],
+      #form-wizard1 button[name="previous"] {
+         float: none !important;
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         min-width: 130px;
+         border-radius: 999px;
+         font-weight: 600;
+         margin: 0.35rem;
+         padding: 0.55rem 1.15rem;
+      }
+
+      @media (max-width: 575.98px) {
+         .card form,
+         .login-content form,
+         .auth-card form {
+            max-width: 100%;
+         }
+
+         #form-wizard1 .action-button,
+         #form-wizard1 .action-button-previous,
+         #form-wizard1 button[name="next"],
+         #form-wizard1 button[name="previous"] {
+            min-width: 110px;
+         }
+      }
  </style>
