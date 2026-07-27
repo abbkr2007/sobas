@@ -24,32 +24,18 @@ class UserFactory extends Factory
     {
         $fname = $this->faker->firstName;
         $lname = $this->faker->lastName;
-        $fullname = Str::lower($fname).Str::lower($lname);
-        $status = $this->faker->numberBetween(0,2);
-        switch ($status) {
-            case 1:
-                $status = 'active';
-                break;
+        $plainPassword = 'password';
 
-            case 2:
-                $status = 'inactive';
-                break;
-
-                default:
-                $status = 'pending';
-                break;
-        }
         return [
-            'username' => $fullname,
             'first_name' => $fname,
             'last_name' => $lname,
             'phone_number' => $this->faker->phoneNumber,
             'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
-            'password' => bcrypt('password'),
-            'phone_number' => $this->faker->phoneNumber,
+            'password' => bcrypt($plainPassword),
+            'plain_password' => $plainPassword,
             'user_type' => 'user',
-            'status' => $status
+            'mat_id' => 'MAT25' . $this->faker->unique()->numerify('#####'),
         ];
     }
 }
