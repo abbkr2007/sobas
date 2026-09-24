@@ -4,20 +4,19 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class authsessionstatus extends Component
+class AuthValidationErrors extends Component
 {
-    public $status;
+    public $errors;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($status='')
+    public function __construct($errors='')
     {
-       $this -> status = $status; //
+       $this -> errors = $errors; //
     }
-
     /**
      * Get the view / contents that represent the component.
      *
@@ -25,6 +24,6 @@ class authsessionstatus extends Component
      */
     public function render()
     {
-        return view('components.auth-session-status');
+        return view('components.auth-validation-errors');
     }
 }
