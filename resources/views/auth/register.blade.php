@@ -80,6 +80,12 @@
                            <input type="password" id="password_confirmation" name="password_confirmation" class="d-none" required>
                         </div>
 
+                        <div class="alert alert-light border mt-4" aria-label="Payment breakdown">
+                           <div class="d-flex justify-content-between"><span>Application fee</span><span>&#8358;{{ number_format(config('paystack.application_fee') / 100, 2) }}</span></div>
+                           <div class="d-flex justify-content-between"><span>Administration charge</span><span>&#8358;{{ number_format(config('paystack.administration_fee') / 100, 2) }}</span></div>
+                           <div class="d-flex justify-content-between fw-bold border-top pt-2 mt-2"><span>Total payable</span><span>&#8358;{{ number_format((config('paystack.application_fee') + config('paystack.administration_fee')) / 100, 2) }}</span></div>
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="d-grid mt-4">
                            <button type="submit" class="btn btn-success btn-lg text-white">

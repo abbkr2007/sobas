@@ -32,7 +32,11 @@
                     <td style="border: 1px solid #28a745; padding: 8px; word-wrap: break-word; overflow-wrap: break-word; max-width: 0;">{{ $user->phone_number ?? 'N/A' }}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #28a745; padding: 8px; font-weight: bold; word-wrap: break-word; overflow-wrap: break-word; max-width: 0;">Amount Paid</td>
+                    <td style="border: 1px solid #28a745; padding: 8px; font-weight: bold; word-wrap: break-word; overflow-wrap: break-word; max-width: 0;">Amount Paid
+                        @if ((int) $payment->amount === 1100000 && $payment->currency === 'NGN')
+                            <div style="font-size: 11px; font-weight: normal; margin-top: 5px;">Application fee: &#8358;10,000.00<br>Administration charge: &#8358;1,000.00</div>
+                        @endif
+                    </td>
                     <td style="border: 1px solid #28a745; padding: 8px; color: #28a745; font-weight: bold; word-wrap: break-word; overflow-wrap: break-word; max-width: 0;">₦{{ number_format($payment->amount / 100, 2) }}</td>
                 </tr>
                 <tr>

@@ -35,4 +35,9 @@ return [
      */
     'merchantEmail' => getenv('MERCHANT_EMAIL'),
 
+    // Amounts are in kobo. The main account receives the application fee.
+    'application_fee' => 1000000,
+    'administration_fee' => 100000,
+    'administration_subaccount' => env('PAYSTACK_ADMIN_SUBACCOUNT'),
+
 ];

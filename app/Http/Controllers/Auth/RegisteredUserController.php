@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
             'phone_number' => 'required|string|max:20',
         ]);
 
-        $amountInKobo = 650000; // ₦6,300
+        $amountInKobo = config('paystack.application_fee') + config('paystack.administration_fee');
 
         $request->session()->put('user_data', [
             'first_name'   => $request->first_name,
@@ -65,9 +65,27 @@ class RegisteredUserController extends Controller
     {
         $userData = $request->session()->get('user_data');
 
+        if (!$userData) {
+            return redirect('/')->with('error', 'Please complete the application details before paying.');
+        }
+
+        $subaccount = trim((string) config('paystack.administration_subaccount'));
+        if (!preg_match('/^ACCT_[a-zA-Z0-9]+$/', $subaccount)) {
+            return redirect('/')->with('error', 'Payments are temporarily unavailable. Please try again later.');
+        }
+
+        // Always calculate the price on the server, including for older sessions.
+        $userData['amount'] = config('paystack.application_fee') + config('paystack.administration_fee');
+        $request->session()->put('user_data', $userData);
+
         return Paystack::getAuthorizationUrl([
             'email'  => $userData['email'],
             'amount' => $userData['amount'],
+            'currency' => 'NGN',
+            'callback_url' => route('payment.callback'),
+            'subaccount' => $subaccount,
+            'transaction_charge' => config('paystack.application_fee'),
+            'bearer' => 'subaccount',
         ])->redirectNow();
     }
 
@@ -83,6 +101,13 @@ class RegisteredUserController extends Controller
             }
 
             if ($paymentDetails['status'] && $paymentDetails['data']['status'] === 'success') {
+
+                $transaction = $paymentDetails['data'];
+                if ((int) ($transaction['amount'] ?? 0) !== (int) $userData['amount']
+                    || ($transaction['currency'] ?? '') !== 'NGN'
+                    || strcasecmp($transaction['customer']['email'] ?? '', $userData['email']) !== 0) {
+                    return redirect('/')->with('error', 'Payment details do not match your application. Please contact support.');
+                }
 
                 // Generate MAT ID with fixed year segment "25"
                 $year = '25';
