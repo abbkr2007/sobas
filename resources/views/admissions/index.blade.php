@@ -171,15 +171,22 @@
         }
 
         .table-actions {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
+            min-height: 32px;
         }
 
-        .table-actions .btn,
-        .table-actions .badge {
+        .table-actions .btn {
             margin: 0 !important;
+            width: 32px;
+            height: 32px;
+            padding: 0 !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
         }
         
         /* Prevent table from expanding beyond container */

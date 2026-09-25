@@ -277,7 +277,6 @@ class ApplicantController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     $actions = '<div class="table-actions">';
-                    $actions .= '<span class="badge bg-success" title="Confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>';
                     $actions .= '<a href="' . route('applicant.download-confirmation-letter', $row->id) . '" class="btn btn-info btn-sm" title="Download Confirmation Letter"><i class="fas fa-file-download" style="font-size: 12px;"></i></a>';
                     $actions .= '</div>';
                     

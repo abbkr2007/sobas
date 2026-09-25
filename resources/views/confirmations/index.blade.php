@@ -133,9 +133,9 @@
         /* Actions column optimization */
         .custom-table th:last-child,
         .custom-table td:last-child {
-            width: 130px !important;
-            min-width: 130px !important;
-            max-width: 130px !important;
+            width: 52px !important;
+            min-width: 52px !important;
+            max-width: 52px !important;
             text-align: center !important;
             white-space: nowrap !important;
         }
@@ -150,7 +150,7 @@
         }
 
         .custom-table th:nth-child(8),
-        .custom-table td:nth-child(8) { right: 130px; }
+        .custom-table td:nth-child(8) { right: 52px; }
         .custom-table th:nth-child(9),
         .custom-table td:nth-child(9) {
             right: 0;
@@ -171,15 +171,22 @@
         }
 
         .table-actions {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
+            min-height: 32px;
         }
 
-        .table-actions .btn,
-        .table-actions .badge {
+        .table-actions .btn {
             margin: 0 !important;
+            width: 32px;
+            height: 32px;
+            padding: 0 !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
         }
         
         /* Prevent table from expanding beyond container */
