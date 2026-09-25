@@ -169,6 +169,18 @@
             font-size: 0.8rem !important;
             line-height: 1.2 !important;
         }
+
+        .table-actions {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .table-actions .btn,
+        .table-actions .badge {
+            margin: 0 !important;
+        }
         
         /* Prevent table from expanding beyond container */
         .table-responsive {

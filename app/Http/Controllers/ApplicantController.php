@@ -137,9 +137,11 @@ class ApplicantController extends Controller
                     return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
                 ->addColumn('actions', function ($row) {
-                    $actions = '<a href="' . route('applicants.show', $row->id) . '" class="btn btn-sm btn-outline-primary" title="View Details"><i class="fas fa-eye" style="font-size: 12px;"></i></a>';
+                    $actions = '<div class="table-actions">';
+                    $actions .= '<a href="' . route('applicants.show', $row->id) . '" class="btn btn-sm btn-outline-primary" title="View Details"><i class="fas fa-eye" style="font-size: 12px;"></i></a>';
                     
                     $actions .= ' <button class="btn btn-sm btn-success update-status" data-id="' . $row->id . '" title="Mark as Admitted"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
+                    $actions .= '</div>';
                     
                     return $actions;
                 })
@@ -195,7 +197,9 @@ class ApplicantController extends Controller
                     return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
                 ->addColumn('actions', function ($row) {
-                    $actions = '<button class="btn btn-primary btn-sm me-1 confirm-admission" data-id="' . $row->id . '" title="Confirm Admission"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
+                    $actions = '<div class="table-actions">';
+                    $actions .= '<button class="btn btn-primary btn-sm confirm-admission" data-id="' . $row->id . '" title="Confirm Admission"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
+                    $actions .= '</div>';
                     
                     return $actions;
                 })
@@ -272,8 +276,10 @@ class ApplicantController extends Controller
                     return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
                 ->addColumn('actions', function ($row) {
-                    $actions = '<span class="badge bg-success me-1" title="Confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>';
+                    $actions = '<div class="table-actions">';
+                    $actions .= '<span class="badge bg-success" title="Confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>';
                     $actions .= '<a href="' . route('applicant.download-confirmation-letter', $row->id) . '" class="btn btn-info btn-sm" title="Download Confirmation Letter"><i class="fas fa-file-download" style="font-size: 12px;"></i></a>';
+                    $actions .= '</div>';
                     
                     return $actions;
                 })
