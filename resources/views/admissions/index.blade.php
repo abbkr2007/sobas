@@ -69,7 +69,7 @@
                 <thead class="table-success">
                     <tr>
                         <th class="text-nowrap">S/N</th>
-                        <th class="text-nowrap">Application ID</th>
+                        <th class="text-nowrap">Matric Number</th>
                         <th class="text-nowrap">Full Name</th>
                         <th class="text-nowrap">Programme offered</th>
                         <th class="text-nowrap">Gender</th>
@@ -178,9 +178,9 @@
         }
         
         .custom-table {
-            table-layout: fixed !important;
-            min-width: 1050px;
-            width: 100% !important;
+            table-layout: auto !important;
+            width: max-content !important;
+            min-width: 100% !important;
         }
         
         /* Prevent text wrapping in all cells */
@@ -191,26 +191,7 @@
             text-overflow: ellipsis !important;
         }
         
-        /* Column width distribution - Balanced spacing */
-        .custom-table th:nth-child(1) { width: 40px !important; } /* ID */
-        .custom-table th:nth-child(2) { width: 80px !important; } /* Application ID */
-        .custom-table th:nth-child(3) { width: 190px !important; } /* Full Name */
-        .custom-table th:nth-child(4) { width: 160px !important; } /* Application Type */
-        .custom-table th:nth-child(7) { width: 130px !important; } /* State / LGA */
-        .custom-table th:nth-child(8) { width: 80px !important; } /* Status */
-        .custom-table th:nth-child(9) { width: 55px !important; } /* Actions */
-        
-        .custom-table td:nth-child(1) { width: 40px !important; }
-        .custom-table td:nth-child(2) { width: 80px !important; }
-        .custom-table td:nth-child(3) { width: 190px !important; }
-        .custom-table td:nth-child(4) { width: 160px !important; }
-        .custom-table td:nth-child(7) { width: 130px !important; }
-        .custom-table td:nth-child(8) { width: 80px !important; }
-        .custom-table td:nth-child(9) { width: 55px !important; }
-        
-        /* Additional applicant details */
-        .custom-table th:nth-child(5), .custom-table td:nth-child(5) { width: 85px !important; }
-        .custom-table th:nth-child(6), .custom-table td:nth-child(6) { width: 110px !important; }
+        .custom-table th:nth-child(5), .custom-table td:nth-child(5) { width: 48px !important; }
 
         /* Text formatting */
         .custom-table td:nth-child(3), /* Full Name */
@@ -222,6 +203,8 @@
         /* Keep Application ID as uppercase */
         .custom-table td:nth-child(2) {
             text-transform: uppercase !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
         
         /* Make status badges reasonably sized */
