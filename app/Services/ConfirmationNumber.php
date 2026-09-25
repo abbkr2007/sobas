@@ -32,7 +32,9 @@ class ConfirmationNumber
                 return null;
             }
 
-            $year = now()->year;
+            $year = $record->academic_session_id
+                ? $record->academicSession()->value('start_year')
+                : now()->year;
             DB::table('confirmation_sequences')->insertOrIgnore([
                 'year' => $year, 'programme_code' => $code, 'last_serial' => 0,
             ]);

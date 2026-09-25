@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Application extends Model
 {
     protected $fillable = [
-        'application_id','surname','firstname','middlename','phone','email','dob','place_of_birth',
+        'application_id','academic_session_id','surname','firstname','middlename','phone','email','dob','place_of_birth',
         'gender','state','lga','town','country','foreign_country','home_address','guardian',
         'guardian_address','guardian_phone','application_type','status','photo',
         'schools',
@@ -22,4 +22,9 @@ class Application extends Model
         'second_subjects' => 'array',
         'second_grades' => 'array',
     ];
+
+    public function academicSession()
+    {
+        return $this->belongsTo(AcademicSession::class);
+    }
 }

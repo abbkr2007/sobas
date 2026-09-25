@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Application;
+use App\Models\User;
 
 class ApplicationController extends Controller
 {
@@ -89,6 +90,7 @@ class ApplicationController extends Controller
         $data['second_subjects'] = $request->second_subject ?? [];
         $data['second_grades'] = $request->second_grade ?? [];
         $data['status'] = 'Pending';
+        $data['academic_session_id'] = User::where('mat_id', $data['application_id'])->value('academic_session_id');
 
         $application = Application::create($data);
 

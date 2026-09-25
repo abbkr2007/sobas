@@ -137,33 +137,20 @@
             min-width: 94px !important;
             max-width: 94px !important;
             text-align: center !important;
-            white-space: nowrap !important;
         }
 
         .custom-table th:nth-child(8),
-        .custom-table td:nth-child(8),
-        .custom-table th:nth-child(9),
-        .custom-table td:nth-child(9) {
+        .custom-table td:nth-child(8) {
             position: sticky;
-            z-index: 2;
+            right: 0;
+            z-index: 3;
             background: #fff;
             box-sizing: border-box;
-        }
-
-        .custom-table th:nth-child(9),
-        .custom-table td:nth-child(9) { z-index: 3; overflow: hidden; }
-
-        .custom-table th:nth-child(8),
-        .custom-table th:nth-child(8),
-        .custom-table td:nth-child(8) { right: 94px; }
-        .custom-table th:nth-child(9),
-        .custom-table td:nth-child(9) {
-            right: 0;
+            overflow: hidden;
             box-shadow: -5px 0 8px -8px rgba(0, 0, 0, 0.7);
         }
 
-        .custom-table thead th:nth-child(8),
-        .custom-table thead th:nth-child(9) {
+        .custom-table thead th:nth-child(8) {
             z-index: 4;
             background: #28a745;
         }

@@ -7,13 +7,29 @@ use Illuminate\Http\Request;
 use App\Models\User;            // <-- add this
 use Illuminate\Support\Str;     // <-- add this
 use Illuminate\Support\Facades\Hash; // <-- and this
+use App\Models\AcademicSession;
+use App\Services\AcademicSessionService;
 
 class BulkUserController extends Controller
 {
     // Show the form to create bulk users
     public function showBulkForm()
     {
-        return view('users.create');
+        return view('users.create', [
+            'sessions' => AcademicSession::orderByDesc('start_year')->get(),
+            'activeSession' => app(AcademicSessionService::class)->current(),
+        ]);
+    }
+
+    public function createSession(Request $request, AcademicSessionService $sessions)
+    {
+        $data = $request->validate([
+            'start_year' => 'required|integer|min:2000|max:2100|unique:academic_sessions,start_year',
+        ]);
+
+        $sessions->create((int) $data['start_year']);
+
+        return back()->with('success', 'Academic session ' . $data['start_year'] . '/' . ($data['start_year'] + 1) . ' created and selected.');
     }
 
     // Handle bulk user creation
@@ -21,12 +37,14 @@ class BulkUserController extends Controller
     {
         $request->validate([
             'count' => 'required|integer|min:1|max:1000',
+            'academic_session_id' => 'required|exists:academic_sessions,id',
         ]);
 
-        for ($i = 0; $i < $request->count; $i++) {
-            $year = '25';
-            $prefix = 'MAT' . $year;
+        $session = AcademicSession::findOrFail($request->academic_session_id);
+        $year = substr((string) $session->start_year, -2);
+        $prefix = 'MAT' . $year;
 
+        for ($i = 0; $i < $request->count; $i++) {
             $lastUser = User::where('mat_id', 'like', $prefix.'%')
                             ->orderBy('id','desc')
                             ->first();
@@ -45,6 +63,7 @@ class BulkUserController extends Controller
                 'plain_password' => $plainPassword,
                 'user_type'      => 'user',
                 'mat_id'         => $matId,
+                'academic_session_id' => $session->id,
             ]);
         }
 

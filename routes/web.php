@@ -120,6 +120,7 @@ Route::get('/bulk-users/create', [BulkUserController::class, 'showBulkForm'])->n
 
 // Handle bulk creation
 Route::post('/bulk-users/create', [BulkUserController::class, 'create'])->name('bulk-users.create');
+Route::post('/academic-sessions/create', [BulkUserController::class, 'createSession'])->name('academic-sessions.create');
 
     
      // Users Module
