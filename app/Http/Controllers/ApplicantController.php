@@ -105,7 +105,7 @@ class ApplicantController extends Controller
 
         if ($request->ajax()) {
             try {
-                $applicants = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
+                $applicants = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
                                 ->where('status', 'Pending');
 
                 $this->applyYearFilter($applicants, $selectedYear);
@@ -168,7 +168,7 @@ class ApplicantController extends Controller
 
         if ($request->ajax()) {
             try {
-                $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
+                $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
                                 ->where('status', 'Admitted');
 
                 $this->applyYearFilter($admissions, $selectedYear);
@@ -245,7 +245,7 @@ class ApplicantController extends Controller
 
         if ($request->ajax()) {
             try {
-                $confirmations = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'status', 'created_at'])
+                $confirmations = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
                                 ->where('status', 'Confirmed');
 
                 $this->applyYearFilter($confirmations, $selectedYear);
@@ -698,13 +698,16 @@ class ApplicantController extends Controller
         }
     }
 
-    private function generateAdmissionLetterPDF($applicant, $fullName, $confirmationNumber = null)
+    private function generateAdmissionLetterPDF($applicant, $fullName, $confirmationNumber = null, $backUrl = null)
     {
         // Get dynamic data from applicant
         $currentDate = now()->format('d-m-Y');
         $studentName = strtoupper($fullName);
         $programme = strtoupper($applicant->application_type ?? 'N/A');
         $applicationId = $confirmationNumber ?? $applicant->application_id ?? 'N/A';
+        $backButton = $backUrl
+            ? '<a class="print-btn back-btn" href="' . e($backUrl) . '">Back</a>'
+            : '';
         
         // Get logo URL
         $logoUrl = 'https://sobas.cloud/images/logo.png';
@@ -1003,6 +1006,11 @@ class ApplicantController extends Controller
             margin: 8px auto 0 auto;
             display: block;
         }
+        .back-btn {
+            width: fit-content;
+            text-decoration: none;
+            background: #566573;
+        }
         .print-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(39, 174, 96, 0.4);
@@ -1095,6 +1103,7 @@ class ApplicantController extends Controller
                 </div>
             </div>
         </div>
+        {$backButton}
         <button class="print-btn" onclick="window.print()">
             🖨️ Print Letter
         </button>
@@ -1198,7 +1207,7 @@ HTML;
     {
         $number = app(\App\Services\ConfirmationNumber::class)->forApplication($applicant);
 
-        return $this->generateAdmissionLetterPDF($applicant, $fullName, $number);
+        return $this->generateAdmissionLetterPDF($applicant, $fullName, $number, route('confirmations.index'));
     }
 
     public function updateStatus(Request $request, $id)

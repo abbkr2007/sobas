@@ -71,7 +71,10 @@
                         <th class="text-nowrap">S/N</th>
                         <th class="text-nowrap">Application ID</th>
                         <th class="text-nowrap">Full Name</th>
-                        <th class="text-nowrap d-none d-lg-table-cell">Application Type</th>
+                        <th class="text-nowrap">Application Type</th>
+                        <th class="text-nowrap">Gender</th>
+                        <th class="text-nowrap">State</th>
+                        <th class="text-nowrap">LGA</th>
                         <th class="text-nowrap">Status</th>
                         <th class="text-nowrap">Actions</th>
                     </tr>
@@ -152,6 +155,7 @@
         
         .custom-table {
             table-layout: fixed !important;
+            min-width: 1300px;
             width: 100% !important;
         }
         
@@ -168,20 +172,25 @@
         .custom-table th:nth-child(2) { width: 80px !important; } /* Application ID */
         .custom-table th:nth-child(3) { width: 250px !important; } /* Full Name */
         .custom-table th:nth-child(4) { width: 200px !important; } /* Application Type */
-        .custom-table th:nth-child(5) { width: 80px !important; } /* Status */
-        .custom-table th:nth-child(6) { width: 55px !important; } /* Actions */
+        .custom-table th:nth-child(8) { width: 80px !important; } /* Status */
+        .custom-table th:nth-child(9) { width: 55px !important; } /* Actions */
         
         .custom-table td:nth-child(1) { width: 40px !important; }
         .custom-table td:nth-child(2) { width: 80px !important; }
         .custom-table td:nth-child(3) { width: 250px !important; }
         .custom-table td:nth-child(4) { width: 200px !important; }
-        .custom-table td:nth-child(5) { width: 80px !important; }
-        .custom-table td:nth-child(6) { width: 55px !important; }
+        .custom-table td:nth-child(8) { width: 80px !important; }
+        .custom-table td:nth-child(9) { width: 55px !important; }
         
+        /* Additional applicant details */
+        .custom-table th:nth-child(5), .custom-table td:nth-child(5) { width: 85px !important; }
+        .custom-table th:nth-child(6), .custom-table td:nth-child(6) { width: 140px !important; }
+        .custom-table th:nth-child(7), .custom-table td:nth-child(7) { width: 160px !important; }
+
         /* Text formatting */
         .custom-table td:nth-child(3), /* Full Name */
         .custom-table td:nth-child(4), /* Application Type */
-        .custom-table td:nth-child(5) { /* Status */
+        .custom-table td:nth-child(8) { /* Status */
             text-transform: capitalize !important;
         }
         
@@ -318,6 +327,9 @@
                     { data: 'application_id', name: 'application_id' },
                     { data: 'full_name', name: 'full_name' },
                     { data: 'application_type', name: 'application_type' },
+                    { data: 'gender', name: 'gender', defaultContent: '' },
+                    { data: 'state', name: 'state', defaultContent: '' },
+                    { data: 'lga', name: 'lga', defaultContent: '' },
                     { data: 'status', name: 'status', orderable: false },
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
