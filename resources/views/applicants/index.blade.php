@@ -111,7 +111,7 @@
         .custom-table td {
             border: 1px solid #e0e0e0 !important;
             vertical-align: middle;
-            padding: 10px 12px !important;
+            padding: 8px 9px !important;
             white-space: nowrap;
         }
         
@@ -127,7 +127,7 @@
             border: 1px solid #28a745 !important;
             font-weight: 600;
             font-size: 13px;
-            padding: 12px !important;
+            padding: 10px 9px !important;
         }
         
         /* Actions column optimization */
@@ -138,6 +138,29 @@
             max-width: 55px !important;
             text-align: center !important;
             white-space: nowrap !important;
+        }
+
+        .custom-table th:nth-child(8),
+        .custom-table td:nth-child(8),
+        .custom-table th:nth-child(9),
+        .custom-table td:nth-child(9) {
+            position: sticky;
+            z-index: 2;
+            background: #fff;
+        }
+
+        .custom-table th:nth-child(8),
+        .custom-table td:nth-child(8) { right: 55px; }
+        .custom-table th:nth-child(9),
+        .custom-table td:nth-child(9) {
+            right: 0;
+            box-shadow: -5px 0 8px -8px rgba(0, 0, 0, 0.7);
+        }
+
+        .custom-table thead th:nth-child(8),
+        .custom-table thead th:nth-child(9) {
+            z-index: 4;
+            background: #28a745;
         }
         
         /* Make action buttons reasonably compact */
@@ -171,23 +194,23 @@
         /* Column width distribution - Balanced spacing */
         .custom-table th:nth-child(1) { width: 40px !important; } /* ID */
         .custom-table th:nth-child(2) { width: 80px !important; } /* Application ID */
-        .custom-table th:nth-child(3) { width: 250px !important; } /* Full Name */
-        .custom-table th:nth-child(4) { width: 200px !important; } /* Application Type */
+        .custom-table th:nth-child(3) { width: 190px !important; } /* Full Name */
+        .custom-table th:nth-child(4) { width: 160px !important; } /* Application Type */
         .custom-table th:nth-child(7) { width: 130px !important; } /* State / LGA */
         .custom-table th:nth-child(8) { width: 80px !important; } /* Status */
         .custom-table th:nth-child(9) { width: 55px !important; } /* Actions */
         
         .custom-table td:nth-child(1) { width: 40px !important; }
         .custom-table td:nth-child(2) { width: 80px !important; }
-        .custom-table td:nth-child(3) { width: 250px !important; }
-        .custom-table td:nth-child(4) { width: 200px !important; }
+        .custom-table td:nth-child(3) { width: 190px !important; }
+        .custom-table td:nth-child(4) { width: 160px !important; }
         .custom-table td:nth-child(7) { width: 130px !important; }
         .custom-table td:nth-child(8) { width: 80px !important; }
         .custom-table td:nth-child(9) { width: 55px !important; }
         
         /* Additional applicant details */
         .custom-table th:nth-child(5), .custom-table td:nth-child(5) { width: 85px !important; }
-        .custom-table th:nth-child(6), .custom-table td:nth-child(6) { width: 130px !important; }
+        .custom-table th:nth-child(6), .custom-table td:nth-child(6) { width: 110px !important; }
 
         /* Text formatting */
         .custom-table td:nth-child(3), /* Full Name */
@@ -332,7 +355,16 @@
                     { data: 'application_id', name: 'application_id' },
                     { data: 'full_name', name: 'full_name' },
                     { data: 'application_type', name: 'application_type' },
-                    { data: 'gender', name: 'gender', defaultContent: '' },
+                    {
+                        data: 'gender',
+                        name: 'gender',
+                        defaultContent: '',
+                        render: function(data, type) {
+                            if (type !== 'display') return data;
+                            const gender = String(data || '').toLowerCase();
+                            return gender === 'male' ? 'M' : (gender === 'female' ? 'F' : data || '');
+                        }
+                    },
                     {
                         data: null,
                         name: 'state',
