@@ -96,6 +96,7 @@ Route::get('/clear', function () {
     // Admissions Module
     Route::get('/admissions', [ApplicantController::class, 'admissionList'])->name('admissions.index');
     Route::get('/admissions/export', [ApplicantController::class, 'exportAdmissions'])->name('admissions.export');
+    Route::post('/admissions/{id}/programme', [ApplicantController::class, 'updateOfferedProgramme'])->middleware('auth')->name('admissions.programme');
     Route::post('/admissions/{id}/confirm', [ApplicantController::class, 'confirmAdmission'])->name('admissions.confirm');
     
     // Confirmations Module

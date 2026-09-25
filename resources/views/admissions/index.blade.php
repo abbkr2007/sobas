@@ -71,7 +71,7 @@
                         <th class="text-nowrap">S/N</th>
                         <th class="text-nowrap">Application ID</th>
                         <th class="text-nowrap">Full Name</th>
-                        <th class="text-nowrap d-none d-lg-table-cell">Application Type</th>
+                        <th class="text-nowrap">Programme offered</th>
                         <th class="text-nowrap">Status</th>
                         <th class="text-nowrap">Actions</th>
                     </tr>
@@ -301,6 +301,9 @@
     @push('scripts')
     <script>
         $(document).ready(function() {
+            const programmes = @json(config('programmes'));
+            const canEditProgramme = @json(auth()->check() && auth()->user()->user_type === 'admin');
+            const programmeUrl = @json(route('admissions.programme', ['id' => '__ID__']));
             // Initialize DataTable
             const table = $('#admissions-table').DataTable({
                 processing: true,
@@ -317,7 +320,30 @@
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'application_id', name: 'application_id' },
                     { data: 'full_name', name: 'full_name' },
-                    { data: 'application_type', name: 'application_type' },
+                    {
+                        data: 'application_type', name: 'application_type',
+                        render: function(data, type, row) {
+                            if (type !== 'display') return data;
+                            data = $('<textarea>').html(data || '').text();
+                            if (!canEditProgramme) return $('<span>').text(data || '').html();
+                            const current = String(data || '').replace(/_/g, ' ').toLowerCase();
+                            const select = $('<select>', {
+                                class: 'form-select form-select-sm offered-programme',
+                                'aria-label': 'Programme offered for ' + row.application_id,
+                                'data-id': row.id
+                            });
+                            if (!programmes.some(p => p.toLowerCase() === current)) {
+                                select.append($('<option>', { value: '', text: data || 'Select programme', selected: true, disabled: true }));
+                            }
+                            programmes.forEach(function(programme) {
+                                select.append($('<option>', {
+                                    value: programme, text: programme,
+                                    selected: programme.toLowerCase() === current
+                                }));
+                            });
+                            return select.prop('outerHTML');
+                        }
+                    },
                     { data: 'status', name: 'status', orderable: false },
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
@@ -331,6 +357,27 @@
                 });
                 $('#exportCsv').attr('href', '{{ route('admissions.export') }}?' + params.toString());
             }
+
+            $('#admissions-table').on('change', '.offered-programme', function() {
+                const select = $(this);
+                const programme = select.val();
+                select.prop('disabled', true);
+                $.ajax({
+                    url: programmeUrl.replace('__ID__', select.attr('data-id')),
+                    type: 'POST',
+                    data: { programme: programme, _token: '{{ csrf_token() }}' },
+                    success: function() {
+                        if (!$('#programmeFilter option').filter(function() { return this.value === programme; }).length) {
+                            $('#programmeFilter').append($('<option>', { value: programme, text: programme }));
+                        }
+                        table.ajax.reload(null, false);
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON && xhr.responseJSON.message || 'Could not update programme offered. Please try again.');
+                        table.ajax.reload(null, false);
+                    }
+                });
+            });
 
             $('#yearFilter, #programmeFilter').on('change', function() {
                 updateExportLink();

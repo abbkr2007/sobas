@@ -215,6 +215,27 @@ class ApplicantController extends Controller
         ]);
     }
 
+    public function updateOfferedProgramme(Request $request, $id)
+    {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
+        $data = $request->validate([
+            'programme' => ['required', \Illuminate\Validation\Rule::in(config('programmes'))],
+        ]);
+
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id, $data) {
+            $application = Application::whereKey($id)->lockForUpdate()->firstOrFail();
+            if ($application->status !== 'Admitted') {
+                return response()->json(['message' => 'Only admitted applicants can be updated here.'], 422);
+            }
+
+            $application->application_type = $data['programme'];
+            $application->save();
+
+            return response()->json(['success' => true, 'message' => 'Programme offered updated successfully.']);
+        });
+    }
+
     public function confirmationList(Request $request)
     {
         $availableYears = $this->availableYears('Confirmed');
@@ -677,13 +698,13 @@ class ApplicantController extends Controller
         }
     }
 
-    private function generateAdmissionLetterPDF($applicant, $fullName)
+    private function generateAdmissionLetterPDF($applicant, $fullName, $confirmationNumber = null)
     {
         // Get dynamic data from applicant
         $currentDate = now()->format('d-m-Y');
         $studentName = strtoupper($fullName);
         $programme = strtoupper($applicant->application_type ?? 'N/A');
-        $applicationId = $applicant->application_id ?? 'N/A';
+        $applicationId = $confirmationNumber ?? $applicant->application_id ?? 'N/A';
         
         // Get logo URL
         $logoUrl = 'https://sobas.cloud/images/logo.png';
@@ -1175,8 +1196,9 @@ HTML;
 
     private function generateConfirmationLetterPDF($applicant, $fullName)
     {
-        // Use the same template as admission letter
-        return $this->generateAdmissionLetterPDF($applicant, $fullName);
+        $number = app(\App\Services\ConfirmationNumber::class)->forApplication($applicant);
+
+        return $this->generateAdmissionLetterPDF($applicant, $fullName, $number);
     }
 
     public function updateStatus(Request $request, $id)
