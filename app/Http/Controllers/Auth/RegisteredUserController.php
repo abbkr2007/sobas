@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Payment;
+use App\Services\AcademicSessionService;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
 class RegisteredUserController extends Controller
@@ -109,13 +110,14 @@ class RegisteredUserController extends Controller
                     return redirect('/')->with('error', 'Payment details do not match your application. Please contact support.');
                 }
 
-                // Generate MAT ID with fixed year segment "25"
-                $year = '25';
-                $prefix = 'MAT'.$year;
-                $lastUser = User::where('mat_id', 'like', $prefix.'%')
-                                ->orderBy('id', 'desc')
-                                ->first();
-                $number = $lastUser ? (int) substr($lastUser->mat_id, 5) + 1 : 1;
+                $session = app(AcademicSessionService::class)->current();
+                if (!$session) {
+                    return redirect('/')->with('error', 'Academic session is not configured. Please contact support.');
+                }
+
+                $year = substr((string) $session->start_year, -2);
+                $prefix = 'MAT' . $year;
+                $number = User::nextMatSerial($session->id, $prefix);
                 $matId = $prefix . str_pad($number, 5, '0', STR_PAD_LEFT);
 
                 // Generate random password
@@ -131,6 +133,7 @@ class RegisteredUserController extends Controller
                     'plain_password' => $plainPassword,
                     'user_type'      => 'user',
                     'mat_id'         => $matId,
+                    'academic_session_id' => $session->id,
                 ]);
 
                 // Save payment
