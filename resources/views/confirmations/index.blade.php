@@ -147,7 +147,11 @@
             position: sticky;
             z-index: 2;
             background: #fff;
+            box-sizing: border-box;
         }
+
+        .custom-table th:nth-child(9),
+        .custom-table td:nth-child(9) { z-index: 3; overflow: hidden; }
 
         .custom-table th:nth-child(8),
         .custom-table td:nth-child(8) { right: 52px; }
@@ -176,6 +180,8 @@
             justify-content: center;
             gap: 4px;
             min-height: 32px;
+            width: 100%;
+            overflow: hidden;
         }
 
         .table-actions .btn {
