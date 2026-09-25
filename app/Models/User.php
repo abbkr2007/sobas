@@ -63,9 +63,21 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         $session = AcademicSession::where('is_active', true)->latest('start_year')->first();
         $year = $session ? substr((string) $session->start_year, -2) : now()->format('y');
         $prefix = 'MAT' . $year;
-        $lastUser = self::where('mat_id', 'like', $prefix . '%')->orderByDesc('id')->first();
-        $serial = $lastUser ? (int) substr($lastUser->mat_id, 5) + 1 : 1;
+        $serial = self::nextMatSerial();
 
         return $prefix . str_pad($serial, 5, '0', STR_PAD_LEFT);
+    }
+
+    public static function nextMatSerial(): int
+    {
+        $highestSerial = 0;
+
+        self::whereNotNull('mat_id')->pluck('mat_id')->each(function ($matId) use (&$highestSerial) {
+            if (preg_match('/^MAT\d{2}(\d+)$/i', (string) $matId, $matches)) {
+                $highestSerial = max($highestSerial, (int) $matches[1]);
+            }
+        });
+
+        return $highestSerial + 1;
     }
 }

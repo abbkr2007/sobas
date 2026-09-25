@@ -44,11 +44,7 @@ class BulkUserController extends Controller
         $prefix = 'MAT' . $year;
 
         for ($i = 0; $i < $request->count; $i++) {
-            $lastUser = User::where('mat_id', 'like', $prefix.'%')
-                            ->orderBy('id','desc')
-                            ->first();
-
-            $number = $lastUser ? (int)substr($lastUser->mat_id, 5) + 1 : 1;
+            $number = User::nextMatSerial();
             $matId = $prefix . str_pad($number, 5, '0', STR_PAD_LEFT);
 
             $plainPassword = Str::random(10);

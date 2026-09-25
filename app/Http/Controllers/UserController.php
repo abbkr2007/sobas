@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AcademicSession;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
@@ -13,9 +14,17 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::select(['id','mat_id','first_name','last_name','email','phone_number','plain_password']);
+            $users = User::with('academicSession')
+                ->select(['id','mat_id','academic_session_id','first_name','last_name','email','phone_number','plain_password']);
+
+            if ($request->filled('academic_session_id')) {
+                $users->where('academic_session_id', $request->academic_session_id);
+            }
 
             return DataTables::of($users)
+                ->addColumn('academic_session', function ($row) {
+                    return $row->academicSession ? $row->academicSession->label : 'Legacy';
+                })
                 ->addColumn('full_name', function ($row) {
                     return '<span class="editable" contenteditable="true" data-id="'.$row->id.'" data-column="first_name">'.e($row->first_name).'</span> '.
                            '<span class="editable" contenteditable="true" data-id="'.$row->id.'" data-column="last_name">'.e($row->last_name).'</span>';
@@ -23,11 +32,14 @@ class UserController extends Controller
                 ->addColumn('email', fn($row) => '<span class="editable" contenteditable="true" data-id="'.$row->id.'" data-column="email">'.e($row->email).'</span>')
                 ->addColumn('phone_number', fn($row) => '<span class="editable" contenteditable="true" data-id="'.$row->id.'" data-column="phone_number">'.e($row->phone_number).'</span>')
                 ->addColumn('plain_password', fn($row) => '<span class="editable" contenteditable="true" data-id="'.$row->id.'" data-column="plain_password">'.e($row->plain_password).'</span>')
-                ->rawColumns(['full_name','email','phone_number','plain_password'])
+                ->rawColumns(['academic_session','full_name','email','phone_number','plain_password'])
                 ->make(true);
         }
 
-        return view('users.index');
+        return view('users.index', [
+            'sessions' => \App\Models\AcademicSession::orderByDesc('start_year')->get(),
+            'activeSession' => app(\App\Services\AcademicSessionService::class)->current(),
+        ]);
     }
 public function inlineUpdate(Request $request)
 {
@@ -82,6 +94,34 @@ public function inlineUpdate(Request $request)
         return response()->json([
             'success' => true,
             'message' => 'User deleted successfully.',
+        ]);
+    }
+
+    public function destroyBySession(Request $request)
+    {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
+        $data = $request->validate([
+            'academic_session_id' => 'required|exists:academic_sessions,id',
+        ]);
+
+        $session = AcademicSession::findOrFail($data['academic_session_id']);
+        $prefix = 'MAT' . substr((string) $session->start_year, -2);
+
+        $users = User::where('user_type', 'user')
+            ->where('id', '<>', auth()->id())
+            ->where(function ($query) use ($data, $prefix) {
+                $query->where('academic_session_id', $data['academic_session_id'])
+                    ->orWhere('mat_id', 'like', $prefix . '%');
+            });
+
+        $count = $users->count();
+        $users->delete();
+
+        return response()->json([
+            'success' => true,
+            'count' => $count,
+            'message' => $count . ' users from ' . $session->label . ' were deleted.',
         ]);
     }
 }

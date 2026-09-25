@@ -4,7 +4,19 @@
         <!-- Responsive Button Container -->
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
             <h4 class="text-success mb-2 mb-sm-0 fs-5 fs-md-4">User Management</h4>
-            <a href="{{ route('bulk-users.create') }}" class="btn btn-success btn-sm btn-md-normal">
+            <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
+                <select id="sessionFilter" class="form-select form-select-sm" aria-label="Filter users by academic session">
+                    <option value="">All Sessions</option>
+                    @foreach ($sessions as $session)
+                        <option value="{{ $session->id }}" {{ optional($activeSession)->id === $session->id ? 'selected' : '' }}>
+                            {{ $session->label }}{{ $session->is_active ? ' (Active)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="button" id="deleteSessionUsers" class="btn btn-outline-danger btn-sm" title="Delete all regular users in the selected session">
+                    <i class="fas fa-trash-alt me-1"></i>Delete Session Users
+                </button>
+                <a href="{{ route('bulk-users.create') }}" class="btn btn-success btn-sm btn-md-normal">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white" class="me-1 me-md-2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
@@ -12,16 +24,18 @@
                 </svg>
                 <span class="d-none d-sm-inline">Generate Bulk Users</span>
                 <span class="d-sm-none">Add Users</span>
-            </a>
+                </a>
+            </div>
         </div>
         
         <!-- Responsive Table Container -->
-        <div class="table-responsive">
+        <div class="table-responsive list-table-scroll">
             <table id="users-table" class="table table-bordered table-striped custom-table w-100">
                 <thead class="table-success">
                     <tr>
                         <th class="text-nowrap">ID</th>
                         <th class="text-nowrap">Matric No</th>
+                        <th class="text-nowrap">Session</th>
                         <th class="text-nowrap d-none d-md-table-cell">First Name</th>
                         <th class="text-nowrap d-none d-md-table-cell">Last Name</th>
                         <th class="text-nowrap d-md-none">Name</th>
@@ -40,6 +54,9 @@
         .table-responsive {
             border-radius: 8px;
             overflow: hidden;
+            overflow-x: auto;
+            overflow-y: hidden;
+            max-width: 100%;
             box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
         }
         
@@ -49,6 +66,9 @@
             overflow: hidden;
             font-size: 14px;
             margin-bottom: 0;
+            min-width: 100%;
+            width: max-content;
+            table-layout: auto;
         }
         
         .custom-table th,
@@ -142,6 +162,15 @@
             align-items: center;
             justify-content: center;
         }
+
+        #sessionFilter {
+            min-width: 170px;
+        }
+
+        .user-session {
+            color: #198754;
+            font-weight: 600;
+        }
     </style>
 
     @push('scripts')
@@ -153,7 +182,13 @@
                 responsive: true,
                 scrollX: true,
                 scrollCollapse: true,
-                ajax: '{{ route('users.index') }}',
+                autoWidth: false,
+                ajax: {
+                    url: '{{ route('users.index') }}',
+                    data: function (data) {
+                        data.academic_session_id = $('#sessionFilter').val();
+                    }
+                },
                 language: {
                     processing: '<div class="d-flex align-items-center"><div class="spinner-border text-success me-2" role="status"></div>Loading...</div>',
                     lengthMenu: '_MENU_',
@@ -177,16 +212,16 @@
                         width: '120px' 
                     },
                     { 
-                        targets: [2, 3], 
+                        targets: [3, 4],
                         responsivePriority: 1,
                         className: 'd-none d-md-table-cell'
                     },
                     { 
-                        targets: [4], 
+                        targets: [5],
                         responsivePriority: 2 
                     },
                     { 
-                        targets: [5, 6], 
+                        targets: [6, 7],
                         className: 'd-none d-lg-table-cell',
                         responsivePriority: 3
                     }
@@ -201,6 +236,14 @@
                         data: 'mat_id', 
                         name: 'mat_id',
                         title: 'Matric No'
+                    },
+                    {
+                        data: 'academic_session',
+                        name: 'academic_session_id',
+                        title: 'Session',
+                        render: function (data) {
+                            return `<span class="user-session">${data || 'Legacy'}</span>`;
+                        }
                     },
                     {
                         data: 'first_name', 
@@ -264,6 +307,46 @@
                         }
                     },
                 ]
+            });
+
+            $('#sessionFilter').on('change', function () {
+                table.ajax.reload();
+            });
+
+            $('#deleteSessionUsers').on('click', function () {
+                const sessionId = $('#sessionFilter').val();
+                const sessionLabel = $('#sessionFilter option:selected').text().trim();
+
+                if (!sessionId) {
+                    alert('Select an academic session first.');
+                    return;
+                }
+
+                if (!window.confirm('Delete all regular users for ' + sessionLabel + '? This cannot be undone.')) {
+                    return;
+                }
+
+                const button = $(this);
+                button.prop('disabled', true);
+                $.ajax({
+                    url: '{{ route('users.destroy-by-session') }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE',
+                        academic_session_id: sessionId
+                    },
+                    success: function (response) {
+                        showSuccessToast(response.message);
+                        table.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseJSON?.message || 'Unable to delete session users.');
+                    },
+                    complete: function () {
+                        button.prop('disabled', false);
+                    }
+                });
             });
 
             $(document).on('blur', '.editable', function () {
