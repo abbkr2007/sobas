@@ -73,8 +73,7 @@
                         <th class="text-nowrap">Full Name</th>
                         <th class="text-nowrap">Application Type</th>
                         <th class="text-nowrap">Gender</th>
-                        <th class="text-nowrap">State</th>
-                        <th class="text-nowrap">LGA</th>
+                        <th class="text-nowrap">State / LGA</th>
                         <th class="text-nowrap">Status</th>
                         <th class="text-nowrap">Actions</th>
                     </tr>
@@ -174,6 +173,7 @@
         .custom-table th:nth-child(2) { width: 80px !important; } /* Application ID */
         .custom-table th:nth-child(3) { width: 220px !important; } /* Full Name */
         .custom-table th:nth-child(4) { width: 180px !important; } /* Application Type */
+        .custom-table th:nth-child(7) { width: 130px !important; } /* State / LGA */
         .custom-table th:nth-child(8) { width: 80px !important; } /* Status */
         .custom-table th:nth-child(9) { width: 130px !important; } /* Actions */
         
@@ -181,13 +181,13 @@
         .custom-table td:nth-child(2) { width: 80px !important; }
         .custom-table td:nth-child(3) { width: 220px !important; }
         .custom-table td:nth-child(4) { width: 180px !important; }
+        .custom-table td:nth-child(7) { width: 130px !important; }
         .custom-table td:nth-child(8) { width: 80px !important; }
         .custom-table td:nth-child(9) { width: 130px !important; }
         
         /* Additional applicant details */
         .custom-table th:nth-child(5), .custom-table td:nth-child(5) { width: 85px !important; }
-        .custom-table th:nth-child(6), .custom-table td:nth-child(6) { width: 140px !important; }
-        .custom-table th:nth-child(7), .custom-table td:nth-child(7) { width: 160px !important; }
+        .custom-table th:nth-child(6), .custom-table td:nth-child(6) { width: 130px !important; }
 
         /* Text formatting */
         .custom-table td:nth-child(3), /* Full Name */
@@ -253,8 +253,14 @@
                     { data: 'full_name', name: 'full_name' },
                     { data: 'application_type', name: 'application_type' },
                     { data: 'gender', name: 'gender', defaultContent: '' },
-                    { data: 'state', name: 'state', defaultContent: '' },
-                    { data: 'lga', name: 'lga', defaultContent: '' },
+                    {
+                        data: null,
+                        name: 'state',
+                        defaultContent: '',
+                        render: function(data, type, row) {
+                            return [row.state, row.lga].filter(Boolean).join(' / ');
+                        }
+                    },
                     { data: 'status', name: 'status', orderable: false },
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
