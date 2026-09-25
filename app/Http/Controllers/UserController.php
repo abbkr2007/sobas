@@ -41,6 +41,43 @@ class UserController extends Controller
             'activeSession' => app(\App\Services\AcademicSessionService::class)->current(),
         ]);
     }
+
+    public function export(Request $request)
+    {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
+        $data = $request->validate([
+            'academic_session_id' => 'required|exists:academic_sessions,id',
+        ]);
+
+        $session = AcademicSession::findOrFail($data['academic_session_id']);
+        $users = User::where('academic_session_id', $session->id)
+            ->orderBy('mat_id')
+            ->get(['id', 'mat_id', 'first_name', 'last_name', 'email', 'phone_number', 'plain_password']);
+
+        $filename = 'users_' . $session->start_year . '_' . ($session->end_year) . '.csv';
+
+        return response()->streamDownload(function () use ($users, $session) {
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['ID', 'Matric No', 'Session', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Plain Password']);
+
+            foreach ($users as $user) {
+                fputcsv($output, [
+                    $user->id,
+                    $user->mat_id,
+                    $session->label,
+                    $user->first_name,
+                    $user->last_name,
+                    $user->email,
+                    $user->phone_number,
+                    $user->plain_password,
+                ]);
+            }
+
+            fclose($output);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
 public function inlineUpdate(Request $request)
 {
     try {

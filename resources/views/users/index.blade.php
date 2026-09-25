@@ -16,6 +16,9 @@
                 <button type="button" id="deleteSessionUsers" class="btn btn-outline-danger btn-sm" title="Delete all regular users in the selected session">
                     <i class="fas fa-trash-alt me-1"></i>Delete Session Users
                 </button>
+                <a href="{{ route('users.export') }}" id="exportUsers" class="btn btn-outline-success btn-sm" title="Export users in the selected session">
+                    <i class="fas fa-download me-1"></i>Export
+                </a>
                 <a href="{{ route('bulk-users.create') }}" class="btn btn-success btn-sm btn-md-normal">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white" class="me-1 me-md-2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -309,8 +312,26 @@
                 ]
             });
 
+            function updateExportLink() {
+                const sessionId = $('#sessionFilter').val();
+                $('#exportUsers').attr(
+                    'href',
+                    '{{ route('users.export') }}?academic_session_id=' + encodeURIComponent(sessionId || '')
+                );
+            }
+
+            updateExportLink();
+
             $('#sessionFilter').on('change', function () {
+                updateExportLink();
                 table.ajax.reload();
+            });
+
+            $('#exportUsers').on('click', function (event) {
+                if (!$('#sessionFilter').val()) {
+                    event.preventDefault();
+                    alert('Select an academic session before exporting users.');
+                }
             });
 
             $('#deleteSessionUsers').on('click', function () {

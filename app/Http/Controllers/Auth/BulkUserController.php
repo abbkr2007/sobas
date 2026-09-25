@@ -44,7 +44,7 @@ class BulkUserController extends Controller
         $prefix = 'MAT' . $year;
 
         for ($i = 0; $i < $request->count; $i++) {
-            $number = User::nextMatSerial();
+            $number = User::nextMatSerial($session->id, $prefix);
             $matId = $prefix . str_pad($number, 5, '0', STR_PAD_LEFT);
 
             $plainPassword = Str::random(10);

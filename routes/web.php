@@ -126,6 +126,7 @@ Route::post('/academic-sessions/create', [BulkUserController::class, 'createSess
      // Users Module
      
     Route::delete('/users/by-session', [UserController::class, 'destroyBySession'])->name('users.destroy-by-session');
+    Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
     Route::resource('users', UserController::class);
     Route::post('/users/inline-update', [UserController::class, 'inlineUpdate'])->name('users.inline-update');
 

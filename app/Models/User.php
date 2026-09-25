@@ -63,16 +63,29 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         $session = AcademicSession::where('is_active', true)->latest('start_year')->first();
         $year = $session ? substr((string) $session->start_year, -2) : now()->format('y');
         $prefix = 'MAT' . $year;
-        $serial = self::nextMatSerial();
+        $serial = self::nextMatSerial($session ? $session->id : null, $prefix);
 
         return $prefix . str_pad($serial, 5, '0', STR_PAD_LEFT);
     }
 
-    public static function nextMatSerial(): int
+    public static function nextMatSerial(?int $sessionId = null, ?string $prefix = null): int
     {
         $highestSerial = 0;
 
-        self::whereNotNull('mat_id')->pluck('mat_id')->each(function ($matId) use (&$highestSerial) {
+        $users = self::whereNotNull('mat_id');
+        if ($sessionId !== null) {
+            $users->where(function ($query) use ($sessionId, $prefix) {
+                $query->where('academic_session_id', $sessionId);
+                if ($prefix) {
+                    $query->orWhere(function ($legacyQuery) use ($prefix) {
+                        $legacyQuery->whereNull('academic_session_id')
+                            ->where('mat_id', 'like', $prefix . '%');
+                    });
+                }
+            });
+        }
+
+        $users->pluck('mat_id')->each(function ($matId) use (&$highestSerial) {
             if (preg_match('/^MAT\d{2}(\d+)$/i', (string) $matId, $matches)) {
                 $highestSerial = max($highestSerial, (int) $matches[1]);
             }
