@@ -5,7 +5,7 @@
                 <div>
                     <p class="settings-eyebrow mb-1">Admin Control</p>
                     <h4 class="settings-title mb-1">Application Portal Settings</h4>
-                    <p class="settings-subtitle mb-0">Open or close the application portal and update the closed page message.</p>
+                            <p class="settings-subtitle mb-0">Control portal access, academic year, and the closed page message.</p>
                 </div>
                 <span class="settings-state {{ $registrationOpen ? 'is-open' : 'is-closed' }}">
                     <i class="fas {{ $registrationOpen ? 'fa-check-circle' : 'fa-lock' }} me-2"></i>
@@ -102,6 +102,26 @@
                             </div>
 
                             <div class="form-group mb-0">
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-7">
+                                        <label class="form-label fw-bold" for="academicSession">Active Academic Session</label>
+                                        <select class="form-select" name="academic_session_id" id="academicSession">
+                                            <option value="">Keep current session</option>
+                                            @foreach($sessions as $session)
+                                                <option value="{{ $session->id }}" {{ optional($activeSession)->id === $session->id ? 'selected' : '' }}>
+                                                    {{ $session->label }}{{ $session->is_active ? ' (Active)' : '' }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="form-text">This year controls new matric and confirmation numbers.</div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-bold" for="newSessionYear">Create New Session</label>
+                                        <input class="form-control" type="number" name="new_session_start_year" id="newSessionYear" min="2000" max="2100" placeholder="2026">
+                                        <div class="form-text">Creates and activates YYYY/YYYY+1.</div>
+                                    </div>
+                                </div>
+
                                 <label class="form-label fw-bold" for="closedMessage">Closed Page Message</label>
                                 <textarea class="form-control" name="registration_closed_message"
                                           id="closedMessage" rows="4" required>{{ $closedMessage }}</textarea>

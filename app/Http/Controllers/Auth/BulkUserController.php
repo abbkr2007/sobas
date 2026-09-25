@@ -16,7 +16,6 @@ class BulkUserController extends Controller
     public function showBulkForm()
     {
         return view('users.create', [
-            'sessions' => AcademicSession::orderByDesc('start_year')->get(),
             'activeSession' => app(AcademicSessionService::class)->current(),
         ]);
     }
@@ -35,12 +34,12 @@ class BulkUserController extends Controller
     // Handle bulk user creation
     public function Create(Request $request)
     {
-        $request->validate([
-            'count' => 'required|integer|min:1|max:1000',
-            'academic_session_id' => 'required|exists:academic_sessions,id',
-        ]);
+        $request->validate(['count' => 'required|integer|min:1|max:1000']);
 
-        $session = AcademicSession::findOrFail($request->academic_session_id);
+        $session = app(AcademicSessionService::class)->current();
+        if (!$session) {
+            return back()->withErrors(['count' => 'Create and select an active academic session in Application Portal Settings first.']);
+        }
         $year = substr((string) $session->start_year, -2);
         $prefix = 'MAT' . $year;
 
