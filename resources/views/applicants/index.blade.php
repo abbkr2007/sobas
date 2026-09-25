@@ -74,7 +74,6 @@
                         <th class="text-nowrap">Application Type</th>
                         <th class="text-nowrap">Gender</th>
                         <th class="text-nowrap">State / LGA</th>
-                        <th class="text-nowrap">Status</th>
                         <th class="text-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -139,8 +138,8 @@
             text-align: center !important;
         }
 
-        .custom-table th:nth-child(8),
-        .custom-table td:nth-child(8) {
+        .custom-table th:nth-child(7),
+        .custom-table td:nth-child(7) {
             position: sticky;
             right: 0;
             z-index: 3;
@@ -150,7 +149,7 @@
             box-shadow: -5px 0 8px -8px rgba(0, 0, 0, 0.7);
         }
 
-        .custom-table thead th:nth-child(8) {
+        .custom-table thead th:nth-child(7) {
             z-index: 4;
             background: #28a745;
         }
@@ -208,8 +207,7 @@
 
         /* Text formatting */
         .custom-table td:nth-child(3), /* Full Name */
-        .custom-table td:nth-child(4), /* Application Type */
-        .custom-table td:nth-child(8) { /* Status */
+        .custom-table td:nth-child(4) { /* Application Type */
             text-transform: capitalize !important;
         }
         
@@ -369,7 +367,6 @@
                             return [row.state, row.lga].filter(Boolean).join(' / ');
                         }
                     },
-                    { data: 'status', name: 'status', orderable: false },
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
                 order: [[1, 'desc']]
