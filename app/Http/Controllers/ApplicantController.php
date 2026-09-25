@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use App\Services\ConfirmedApplicantPhoto;
+use App\Services\ConfirmationNumber;
 
 class ApplicantController extends Controller
 {
@@ -1155,8 +1158,15 @@ HTML;
                 ], 400);
             }
             
-            $application->status = 'Confirmed';
-            $application->save();
+            DB::transaction(function () use ($application) {
+                $application->status = 'Confirmed';
+                $application->save();
+
+                $admissionNumber = app(ConfirmationNumber::class)->forApplication($application)
+                    ?: $application->application_id;
+
+                app(ConfirmedApplicantPhoto::class)->copy($application, $admissionNumber);
+            });
 
             return response()->json([
                 'success' => true,

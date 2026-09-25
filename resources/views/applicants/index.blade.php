@@ -64,7 +64,7 @@
         </script>
         
         <!-- Responsive Table Container -->
-        <div class="table-responsive">
+        <div class="table-responsive list-table-scroll">
             <table id="applicants-table" class="table table-bordered table-striped custom-table w-100">
                 <thead class="table-success">
                     <tr>
@@ -151,11 +151,13 @@
         /* Prevent table from expanding beyond container */
         .table-responsive {
             overflow-x: auto;
+            overflow-y: hidden;
+            max-width: 100%;
         }
         
         .custom-table {
             table-layout: fixed !important;
-            min-width: 1300px;
+            min-width: 1050px;
             width: 100% !important;
         }
         
@@ -314,6 +316,9 @@
             const table = $('#applicants-table').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
+                scrollCollapse: true,
+                autoWidth: false,
                 pageLength: 25,
                 ajax: {
                     url: '{{ route('applicants.index') }}',
