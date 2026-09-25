@@ -57,7 +57,7 @@ class BulkUserController extends Controller
                 'first_name'     => 'User'.$number,
                 'last_name'      => 'Example',
                 'phone_number'   => '080000000'.$number,
-                'email'          => 'user'.$number.'@example.com',
+                'email'          => strtolower($matId) . '@example.com',
                 'password'       => Hash::make($plainPassword),
                 'plain_password' => $plainPassword,
                 'user_type'      => 'user',

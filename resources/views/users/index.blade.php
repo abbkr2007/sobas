@@ -28,6 +28,7 @@
                         <th class="text-nowrap">Email</th>
                         <th class="text-nowrap d-none d-lg-table-cell">Phone Number</th>
                         <th class="text-nowrap d-none d-lg-table-cell">Plain Password</th>
+                        <th class="text-nowrap">Actions</th>
                     </tr>
                 </thead>
             </table>
@@ -132,6 +133,14 @@
         .editable:focus {
             outline: 2px solid #28a745;
             background: #f0fff4;
+        }
+
+        .delete-user {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 
@@ -242,6 +251,18 @@
                             return `<span class="editable" contenteditable="true" data-id="${row.id}" data-column="plain_password">${data ?? ''}</span>`;
                         }
                     },
+                    {
+                        data: null,
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center',
+                        render: function (data, type, row) {
+                            return `<button type="button" class="btn btn-outline-danger btn-sm delete-user" data-id="${row.id}" title="Delete user" aria-label="Delete user">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>`;
+                        }
+                    },
                 ]
             });
 
@@ -269,6 +290,33 @@
                     error: function (xhr) {
                         console.error(xhr.responseText);
                         alert('Error updating! Status: ' + xhr.status);
+                    }
+                });
+            });
+
+            $(document).on('click', '.delete-user', function () {
+                const button = $(this);
+                const userId = button.data('id');
+
+                if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                    return;
+                }
+
+                button.prop('disabled', true);
+                $.ajax({
+                    url: '{{ url('/users') }}/' + userId,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE'
+                    },
+                    success: function (response) {
+                        showSuccessToast(response.message || 'User deleted successfully.');
+                        table.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        button.prop('disabled', false);
+                        alert(xhr.responseJSON?.message || 'Unable to delete user.');
                     }
                 });
             });

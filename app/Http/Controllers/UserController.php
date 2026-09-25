@@ -64,4 +64,24 @@ public function inlineUpdate(Request $request)
         ], 500);
     }
 }
+
+    public function destroy($id)
+    {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
+        $user = User::findOrFail($id);
+        if ((int) $user->id === (int) auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot delete your own account.',
+            ], 422);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User deleted successfully.',
+        ]);
+    }
 }
