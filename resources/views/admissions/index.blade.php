@@ -154,6 +154,7 @@
         .custom-table td:nth-child(9) { z-index: 3; overflow: hidden; }
 
         .custom-table th:nth-child(8),
+        .custom-table th:nth-child(8),
         .custom-table td:nth-child(8) { right: 76px; }
         .custom-table th:nth-child(9),
         .custom-table td:nth-child(9) {

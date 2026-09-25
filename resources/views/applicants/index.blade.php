@@ -133,9 +133,9 @@
         /* Actions column optimization */
         .custom-table th:last-child,
         .custom-table td:last-child {
-            width: 76px !important;
-            min-width: 76px !important;
-            max-width: 76px !important;
+            width: 94px !important;
+            min-width: 94px !important;
+            max-width: 94px !important;
             text-align: center !important;
             white-space: nowrap !important;
         }
@@ -154,7 +154,8 @@
         .custom-table td:nth-child(9) { z-index: 3; overflow: hidden; }
 
         .custom-table th:nth-child(8),
-        .custom-table td:nth-child(8) { right: 76px; }
+        .custom-table th:nth-child(8),
+        .custom-table td:nth-child(8) { right: 94px; }
         .custom-table th:nth-child(9),
         .custom-table td:nth-child(9) {
             right: 0;
