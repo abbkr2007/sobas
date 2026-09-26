@@ -41,10 +41,8 @@
                             <th>Date</th>
                             <th>Applicant</th>
                             <th>Matric number</th>
-                            <th>Payment</th>
                             <th>Reference</th>
                             <th class="text-end">Amount</th>
-                            <th>Status</th>
                             <th class="text-end">Receipt</th>
                         </tr>
                     </thead>
@@ -57,12 +55,8 @@
                                     <div class="applicant-email">{{ $payment->email ?: '—' }}</div>
                                 </td>
                                 <td>{{ $payment->matric_number ?: '—' }}</td>
-                                <td><span class="type-label {{ $payment->source === 'confirmation' ? 'type-confirmation' : 'type-application' }}">{{ $payment->payment_type }}</span></td>
                                 <td class="reference-cell">{{ $payment->reference }}</td>
                                 <td class="text-end amount-cell">{{ $payment->currency }} {{ number_format(((int) $payment->amount) / 100, 2) }}</td>
-                                <td>
-                                    <span class="status-label status-{{ strtolower($payment->status) }}">{{ ucfirst($payment->status) }}</span>
-                                </td>
                                 <td class="text-end">
                                     @if(strtolower($payment->status) === 'success')
                                         <a class="receipt-link" href="{{ route($isAdmin ? 'payment-history.receipt' : 'my-payment-history.receipt', [$payment->source, $payment->payment_id]) }}" title="Download receipt" aria-label="Download receipt for {{ $payment->reference }}">
@@ -74,7 +68,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="8" class="empty-state">No payments match these filters.</td></tr>
+                            <tr><td colspan="6" class="empty-state">No payments match these filters.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

@@ -107,7 +107,10 @@ class PaymentHistoryTest extends TestCase
         foreach ([['application', $applicationPaymentId], ['confirmation', $confirmationPaymentId]] as [$source, $paymentId]) {
             $response = $this->get(route('payment-history.receipt', [$source, $paymentId], false));
             $response->assertOk()->assertHeader('content-type', 'application/pdf');
-            $this->assertStringStartsWith('%PDF-', $response->getContent());
+            $pdf = $response->getContent();
+            $this->assertStringStartsWith('%PDF-', $pdf);
+            preg_match_all('/\/Type\s*\/Page\b/', $pdf, $pageObjects);
+            $this->assertCount(1, $pageObjects[0], 'Each payment receipt must fit on one page.');
         }
     }
 

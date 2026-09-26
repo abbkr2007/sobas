@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <title>Payment Receipt</title>
     <style>
-        @page { margin: 22px; }
-        body { margin:0; color:#203c36; font-family:DejaVu Sans, sans-serif; font-size:10px; }
-        .receipt { border:1px solid #d8e3df; padding:18px; }
-        .brand { padding-bottom:13px; border-bottom:2px solid #176c59; }
-        .brand-name { margin:0; color:#174d41; font-size:15px; font-weight:bold; }
-        .brand-subtitle { margin:4px 0 0; color:#70817c; font-size:8px; text-transform:uppercase; }
-        .receipt-title { margin:16px 0 4px; color:#173b35; font-size:16px; }
-        .receipt-subtitle { margin:0 0 13px; color:#71817d; font-size:9px; }
-        .amount-panel { margin:12px 0; padding:12px; background:#f0f6f3; text-align:center; }
-        .amount-label { color:#61736e; font-size:8px; text-transform:uppercase; }
-        .amount { margin-top:5px; color:#176c59; font-size:19px; font-weight:bold; }
+        @page { margin: 12px; }
+        body { margin:0; color:#203c36; font-family:DejaVu Sans, sans-serif; font-size:8px; line-height:1.25; }
+        .receipt { border:1px solid #d8e3df; padding:10px; }
+        .brand { padding-bottom:6px; border-bottom:2px solid #176c59; }
+        .brand-name { margin:0; color:#174d41; font-size:12px; font-weight:bold; }
+        .brand-subtitle { margin:2px 0 0; color:#70817c; font-size:7px; text-transform:uppercase; }
+        .receipt-title { margin:8px 0 2px; color:#173b35; font-size:13px; }
+        .receipt-subtitle { margin:0 0 7px; color:#71817d; font-size:8px; }
+        .amount-panel { margin:6px 0; padding:7px; background:#f0f6f3; text-align:center; }
+        .amount-label { color:#61736e; font-size:7px; text-transform:uppercase; }
+        .amount { margin-top:3px; color:#176c59; font-size:15px; font-weight:bold; }
         table { width:100%; border-collapse:collapse; }
-        td { padding:7px 0; border-bottom:1px solid #e9efed; vertical-align:top; }
+        tr { page-break-inside:avoid; }
+        td { padding:4px 0; border-bottom:1px solid #e9efed; vertical-align:top; font-size:8px; }
         td:first-child { width:40%; color:#71817d; }
         td:last-child { color:#263e38; font-weight:bold; word-break:break-word; }
-        .paid { margin-top:14px; padding:7px; border:1px solid #b6d9c7; color:#216b48; font-weight:bold; text-align:center; }
-        .footer { margin-top:16px; color:#85928f; font-size:8px; text-align:center; }
+        .paid { margin-top:7px; padding:4px; border:1px solid #b6d9c7; color:#216b48; font-weight:bold; text-align:center; }
+        .footer { margin-top:8px; color:#85928f; font-size:7px; text-align:center; }
     </style>
 </head>
 <body>
