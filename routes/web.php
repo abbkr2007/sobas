@@ -110,6 +110,8 @@ Route::get('/clear', function () {
     Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/confirmation-payment/checkout', [ConfirmationPaymentController::class, 'checkout'])->name('confirmation-payment.checkout');
+    Route::get('/my-payment-history', [PaymentHistoryController::class, 'applicantIndex'])->name('my-payment-history.index');
+    Route::get('/my-payment-history/{source}/{id}/receipt', [PaymentHistoryController::class, 'applicantReceipt'])->name('my-payment-history.receipt');
 
     // Application Form
     Route::get('/application', [ApplicationController::class, 'create'])->name('application.form');

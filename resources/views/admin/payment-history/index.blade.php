@@ -4,12 +4,12 @@
             <div>
                 <p class="eyebrow">Finance</p>
                 <h1>Payment History</h1>
-                <p class="header-note">Application and confirmation transactions</p>
+                <p class="header-note">{{ $isAdmin ? 'Application and confirmation transactions' : 'Your application and confirmation transactions' }}</p>
             </div>
             <div class="record-count"><strong>{{ $payments->total() }}</strong><span>transactions</span></div>
         </header>
 
-        <form method="GET" action="{{ route('payment-history.index') }}" class="history-filters">
+        <form method="GET" action="{{ route($isAdmin ? 'payment-history.index' : 'my-payment-history.index') }}" class="history-filters">
             <label>
                 <span>Payment type</span>
                 <select name="type" class="form-select">
@@ -29,7 +29,7 @@
             </label>
             <button class="btn btn-dark" type="submit"><i class="fas fa-filter me-2"></i>Filter</button>
             @if($type || $status)
-                <a class="btn btn-light" href="{{ route('payment-history.index') }}">Clear</a>
+                <a class="btn btn-light" href="{{ route($isAdmin ? 'payment-history.index' : 'my-payment-history.index') }}">Clear</a>
             @endif
         </form>
 
@@ -65,7 +65,7 @@
                                 </td>
                                 <td class="text-end">
                                     @if(strtolower($payment->status) === 'success')
-                                        <a class="receipt-link" href="{{ route('payment-history.receipt', [$payment->source, $payment->payment_id]) }}" title="Download receipt" aria-label="Download receipt for {{ $payment->reference }}">
+                                        <a class="receipt-link" href="{{ route($isAdmin ? 'payment-history.receipt' : 'my-payment-history.receipt', [$payment->source, $payment->payment_id]) }}" title="Download receipt" aria-label="Download receipt for {{ $payment->reference }}">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     @else

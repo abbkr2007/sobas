@@ -98,6 +98,7 @@ class PaymentHistoryTest extends TestCase
         $this->get(route('payment-history.index', [], false))
             ->assertOk()
             ->assertSee('Payment History')
+            ->assertSee(route('payment-history.index'))
             ->assertSee('Application fee')
             ->assertSee('Confirmation fee')
             ->assertSee('REG-REF-1')
@@ -149,6 +150,87 @@ class PaymentHistoryTest extends TestCase
         $this->actingAs($applicant)
             ->get(route('payment-history.index', [], false))
             ->assertForbidden();
+    }
+
+    public function test_applicant_sees_only_own_payment_history_and_receipts(): void
+    {
+        $applicantId = DB::table('users')->insertGetId([
+            'mat_id' => 'MAT2600003',
+            'first_name' => 'Alex',
+            'last_name' => 'Applicant',
+            'email' => 'alex@example.com',
+            'user_type' => 'user',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $otherUserId = DB::table('users')->insertGetId([
+            'mat_id' => 'MAT2600004',
+            'first_name' => 'Other',
+            'last_name' => 'Applicant',
+            'email' => 'other@example.com',
+            'user_type' => 'user',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $applicationId = DB::table('applications')->insertGetId([
+            'application_id' => 'MAT2600003',
+            'application_type' => 'Matric Science',
+            'status' => 'Admitted',
+            'email' => 'alex@example.com',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('payments')->insert([
+            'user_id' => $applicantId,
+            'transaction_id' => 'own-app-transaction',
+            'amount' => 1100000,
+            'currency' => 'NGN',
+            'status' => 'success',
+            'reference' => 'OWN-APP-REF',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('confirmation_fee_payments')->insert([
+            'application_id' => $applicationId,
+            'user_id' => $applicantId,
+            'transaction_id' => 'own-conf-transaction',
+            'amount' => 1100000,
+            'currency' => 'NGN',
+            'status' => 'success',
+            'reference' => 'OWN-CONF-REF',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('payments')->insert([
+            'user_id' => $otherUserId,
+            'transaction_id' => 'other-transaction',
+            'amount' => 1100000,
+            'currency' => 'NGN',
+            'status' => 'success',
+            'reference' => 'OTHER-REF',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $applicant = new User(['mat_id' => 'MAT2600003', 'email' => 'alex@example.com', 'user_type' => 'user']);
+        $applicant->id = $applicantId;
+        $this->actingAs($applicant);
+
+        $this->get(route('my-payment-history.index', [], false))
+            ->assertOk()
+            ->assertSee('Your application and confirmation transactions')
+            ->assertSee(route('my-payment-history.index'))
+            ->assertSee('OWN-APP-REF')
+            ->assertSee('OWN-CONF-REF')
+            ->assertDontSee('OTHER-REF');
+
+        $confirmationPaymentId = DB::table('confirmation_fee_payments')->where('reference', 'OWN-CONF-REF')->value('id');
+        $otherPaymentId = DB::table('payments')->where('reference', 'OTHER-REF')->value('id');
+        $this->get(route('my-payment-history.receipt', ['confirmation', $confirmationPaymentId], false))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+        $this->get(route('my-payment-history.receipt', ['application', $otherPaymentId], false))
+            ->assertNotFound();
     }
 
     private function adminUser(): User
