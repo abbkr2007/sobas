@@ -95,6 +95,21 @@
         </a>
     </li>
 
+    <!-- Payment History -->
+    <li class="nav-item">
+        <a class="nav-link {{ activeRoute(route('payment-history.index')) }}"
+           href="{{ route('payment-history.index') }}"
+           style="{{ activeRoute(route('payment-history.index')) ? 'background: rgba(15, 93, 79, 0.12) !important; color:#0f5d4f !important; border-left:4px solid #0f5d4f !important; border-radius: 0 8px 8px 0 !important; margin: 4px 8px !important;' : 'color:#6c757d !important; margin: 4px 8px !important; border-radius: 0 8px 8px 0 !important; transition: all 0.2s ease !important;' }}">
+            <i class="icon" style="color:{{ activeRoute(route('payment-history.index')) ? '#0f5d4f' : '#6c757d' }} !important;">
+                <svg width="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="M3 10h18M7 15h4"></path>
+                </svg>
+            </i>
+            <span class="item-name" style="{{ activeRoute(route('payment-history.index')) ? 'color:#0f5d4f !important; font-weight:600 !important;' : 'color:#6c757d !important;' }}">Payment History</span>
+        </a>
+    </li>
+
     <!-- Application Settings -->
     <li class="nav-item">
         <a class="nav-link {{ activeRoute(route('admin.registration.index')) }}"

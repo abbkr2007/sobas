@@ -6,6 +6,7 @@ use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Admin\RegistrationSettingsController;
+use App\Http\Controllers\Admin\PaymentHistoryController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -162,6 +163,8 @@ Route::post('/academic-sessions/create', [BulkUserController::class, 'createSess
 
     // Admin Registration Settings Routes
     Route::prefix('admin')->middleware('auth')->group(function () {
+        Route::get('/payment-history', [PaymentHistoryController::class, 'index'])->name('payment-history.index');
+        Route::get('/payment-history/{source}/{id}/receipt', [PaymentHistoryController::class, 'receipt'])->name('payment-history.receipt');
         Route::get('/registration-settings', [RegistrationSettingsController::class, 'index'])->name('admin.registration.index');
         Route::post('/registration-settings/toggle', [RegistrationSettingsController::class, 'toggle'])->name('admin.registration.toggle');
         Route::post('/registration-settings/update', [RegistrationSettingsController::class, 'update'])->name('admin.registration.update');
