@@ -57,19 +57,17 @@
                                 <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
                             @endif
                             @if($application->status === 'Admitted')
-                                <p class="submitted-message">Your application has been admitted. Pay the confirmation fee, then wait for the admissions office to confirm your place.</p>
-                                <p class="mb-1">Confirmation fee: ₦{{ number_format($confirmationFee / 100, 2) }}</p>
-                                <p class="mb-1">Administration charge: ₦{{ number_format($administrationFee / 100, 2) }}</p>
-                                <p class="fw-bold">Total due: ₦{{ number_format(($confirmationFee + $administrationFee) / 100, 2) }}</p>
+                                <p class="submitted-message">Your application has been admitted. Make the payment and wait for the announcement of the screening.</p>
+                                <p class="fw-bold">Amount to pay: ₦{{ number_format(($confirmationFee + $administrationFee) / 100, 2) }}</p>
                                 @if($confirmationFeePaid)
-                                    <p class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Confirmation fee paid</p>
-                                    <p class="submitted-message">Your admission will appear in the Confirmations list after an administrator clicks Confirm.</p>
+                                    <p class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Payment received</p>
+                                    <p class="submitted-message">Please wait for the announcement of the screening.</p>
                                 @else
-                                    <p class="text-warning fw-bold"><i class="fas fa-clock me-1"></i>Confirmation fee unpaid</p>
+                                    <p class="text-warning fw-bold"><i class="fas fa-clock me-1"></i>Payment not yet received</p>
                                     <form method="POST" action="{{ route('confirmation-payment.checkout') }}" class="mb-3">
                                         @csrf
                                         <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="fas fa-credit-card me-2"></i>Pay Confirmation Fee
+                                            <i class="fas fa-credit-card me-2"></i>Make Payment
                                         </button>
                                     </form>
                                 @endif

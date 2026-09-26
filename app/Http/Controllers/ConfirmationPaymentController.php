@@ -91,7 +91,7 @@ class ConfirmationPaymentController extends Controller
             }
 
             $request->session()->forget('confirmation_payment');
-            return redirect()->route('dashboard')->with('success', 'Confirmation and administration fees paid successfully.');
+            return redirect()->route('dashboard')->with('success', 'Payment completed successfully.');
         } catch (\Throwable $exception) {
             report($exception);
             return redirect()->route('dashboard')->with('error', 'Payment could not be verified. Please contact support if you were charged.');
