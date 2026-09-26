@@ -10,6 +10,19 @@
         </header>
 
         <form method="GET" action="{{ route($isAdmin ? 'payment-history.index' : 'my-payment-history.index') }}" class="history-filters">
+            @if($isAdmin)
+                <label>
+                    <span>Academic session</span>
+                    <select name="session_id" class="form-select">
+                        <option value="all" {{ $sessionSelection === 'all' ? 'selected' : '' }}>All sessions</option>
+                        @foreach($sessions as $session)
+                            <option value="{{ $session->id }}" {{ $sessionSelection === (string) $session->id ? 'selected' : '' }}>
+                                {{ $session->label }}{{ $session->is_active ? ' (Active)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+            @endif
             <label>
                 <span>Payment type</span>
                 <select name="type" class="form-select">

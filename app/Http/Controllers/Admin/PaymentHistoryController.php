@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicSession;
 use App\Models\Payment;
+use App\Services\AcademicSessionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,19 +27,38 @@ class PaymentHistoryController extends Controller
 
     private function historyView(Request $request, ?int $userId, bool $isAdmin)
     {
-
         $type = in_array($request->input('type'), ['application', 'confirmation'], true)
             ? $request->input('type')
             : null;
         $status = in_array($request->input('status'), ['success', 'pending', 'failed'], true)
             ? $request->input('status')
             : null;
+        $sessions = collect();
+        $sessionSelection = 'all';
+
+        if ($isAdmin) {
+            $sessions = AcademicSession::orderByDesc('start_year')->get();
+            $activeSession = app(AcademicSessionService::class)->current();
+            $sessionSelection = $activeSession ? (string) $activeSession->id : 'all';
+
+            if ($request->has('session_id')) {
+                $requestedSession = (string) $request->input('session_id');
+                if ($requestedSession === 'all') {
+                    $sessionSelection = 'all';
+                } elseif (ctype_digit($requestedSession) && $sessions->contains('id', (int) $requestedSession)) {
+                    $sessionSelection = $requestedSession;
+                }
+            }
+        }
+        $sessionId = $sessionSelection === 'all' ? null : (int) $sessionSelection;
 
         $applicationPayments = DB::table('payments')
             ->leftJoin('users', 'users.id', '=', 'payments.user_id')
             ->selectRaw("payments.id as payment_id, 'application' as source, 'Application fee' as payment_type, users.first_name, users.last_name, users.mat_id as matric_number, users.email, payments.reference, payments.transaction_id, payments.amount, payments.currency, payments.status, payments.created_at");
         if ($userId !== null) {
             $applicationPayments->where('payments.user_id', $userId);
+        } elseif ($sessionId !== null) {
+            $applicationPayments->where('users.academic_session_id', $sessionId);
         }
 
         $confirmationPayments = DB::table('confirmation_fee_payments')
@@ -46,6 +67,11 @@ class PaymentHistoryController extends Controller
             ->selectRaw("confirmation_fee_payments.id as payment_id, 'confirmation' as source, 'Confirmation fee' as payment_type, users.first_name, users.last_name, users.mat_id as matric_number, applications.email, confirmation_fee_payments.reference, confirmation_fee_payments.transaction_id, confirmation_fee_payments.amount, confirmation_fee_payments.currency, confirmation_fee_payments.status, confirmation_fee_payments.created_at");
         if ($userId !== null) {
             $confirmationPayments->where('confirmation_fee_payments.user_id', $userId);
+        } elseif ($sessionId !== null) {
+            $confirmationPayments->whereRaw(
+                'COALESCE(applications.academic_session_id, users.academic_session_id) = ?',
+                [$sessionId]
+            );
         }
 
         $historyQuery = DB::query()->fromSub(
@@ -62,7 +88,9 @@ class PaymentHistoryController extends Controller
 
         $payments = $historyQuery->orderByDesc('created_at')->paginate(25)->appends($request->query());
 
-        return view('admin.payment-history.index', compact('payments', 'type', 'status', 'isAdmin'));
+        return view('admin.payment-history.index', compact(
+            'payments', 'type', 'status', 'isAdmin', 'sessions', 'sessionSelection'
+        ));
     }
 
     public function receipt(Request $request, string $source, int $id)

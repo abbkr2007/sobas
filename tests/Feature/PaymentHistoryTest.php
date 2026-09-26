@@ -11,6 +11,9 @@ use Tests\TestCase;
 
 class PaymentHistoryTest extends TestCase
 {
+    private $activeSessionId;
+    private $previousSessionId;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,6 +22,27 @@ class PaymentHistoryTest extends TestCase
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         DB::purge('sqlite');
 
+        Schema::create('academic_sessions', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedSmallInteger('start_year');
+            $table->unsignedSmallInteger('end_year');
+            $table->boolean('is_active')->default(false);
+            $table->timestamps();
+        });
+        $this->activeSessionId = DB::table('academic_sessions')->insertGetId([
+            'start_year' => 2026,
+            'end_year' => 2027,
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $this->previousSessionId = DB::table('academic_sessions')->insertGetId([
+            'start_year' => 2025,
+            'end_year' => 2026,
+            'is_active' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('mat_id')->unique();
@@ -27,6 +51,7 @@ class PaymentHistoryTest extends TestCase
             $table->string('email');
             $table->string('password')->nullable();
             $table->string('user_type')->default('user');
+            $table->unsignedBigInteger('academic_session_id')->nullable();
             $table->timestamps();
         });
         Schema::create('applications', function (Blueprint $table) {
@@ -35,6 +60,7 @@ class PaymentHistoryTest extends TestCase
             $table->string('application_type')->nullable();
             $table->string('status');
             $table->string('email');
+            $table->unsignedBigInteger('academic_session_id')->nullable();
             $table->timestamps();
         });
         Schema::create('payments', function (Blueprint $table) {
@@ -60,6 +86,7 @@ class PaymentHistoryTest extends TestCase
             'last_name' => 'Applicant',
             'email' => 'ada@example.com',
             'user_type' => 'user',
+            'academic_session_id' => $this->activeSessionId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -68,6 +95,7 @@ class PaymentHistoryTest extends TestCase
             'application_type' => 'Matric Science',
             'status' => 'Admitted',
             'email' => 'ada@example.com',
+            'academic_session_id' => $this->activeSessionId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -92,6 +120,26 @@ class PaymentHistoryTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $previousUserId = DB::table('users')->insertGetId([
+            'mat_id' => 'MAT2500001',
+            'first_name' => 'Previous',
+            'last_name' => 'Applicant',
+            'email' => 'previous@example.com',
+            'user_type' => 'user',
+            'academic_session_id' => $this->previousSessionId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('payments')->insert([
+            'user_id' => $previousUserId,
+            'transaction_id' => 'previous-txn',
+            'amount' => 1100000,
+            'currency' => 'NGN',
+            'status' => 'success',
+            'reference' => 'PREVIOUS-SESSION-REF',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         $this->actingAs($this->adminUser());
 
@@ -103,6 +151,15 @@ class PaymentHistoryTest extends TestCase
             ->assertSee('Confirmation fee')
             ->assertSee('REG-REF-1')
             ->assertSee('CONF-REF-1');
+
+        $this->get(route('payment-history.index', ['session_id' => $this->previousSessionId], false))
+            ->assertOk()
+            ->assertSee('PREVIOUS-SESSION-REF')
+            ->assertDontSee('REG-REF-1');
+        $this->get(route('payment-history.index', ['session_id' => 'all'], false))
+            ->assertOk()
+            ->assertSee('PREVIOUS-SESSION-REF')
+            ->assertSee('REG-REF-1');
 
         foreach ([['application', $applicationPaymentId], ['confirmation', $confirmationPaymentId]] as [$source, $paymentId]) {
             $response = $this->get(route('payment-history.receipt', [$source, $paymentId], false));
@@ -223,6 +280,7 @@ class PaymentHistoryTest extends TestCase
         $this->get(route('my-payment-history.index', [], false))
             ->assertOk()
             ->assertSee('Your application and confirmation transactions')
+            ->assertDontSee('Academic session')
             ->assertSee(route('my-payment-history.index'))
             ->assertSee('OWN-APP-REF')
             ->assertSee('OWN-CONF-REF')
