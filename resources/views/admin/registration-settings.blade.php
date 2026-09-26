@@ -103,6 +103,25 @@
 
                             <div class="form-group mb-0">
                                 <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold" for="applicationFee">Application Fee (NGN)</label>
+                                        <input class="form-control" type="number" name="application_fee_naira" id="applicationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($applicationFee / 100, 2, '.', '') }}" required>
+                                        @error('application_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold" for="administrationFee">Administration Fee (NGN)</label>
+                                        <input class="form-control" type="number" name="administration_fee_naira" id="administrationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($administrationFee / 100, 2, '.', '') }}" required>
+                                        @error('administration_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold" for="confirmationFee">Confirmation Fee (NGN)</label>
+                                        <input class="form-control" type="number" name="confirmation_fee_naira" id="confirmationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($confirmationFee / 100, 2, '.', '') }}" required>
+                                        <div class="form-text">Applicants pay this after admission. Default: ₦10,000.</div>
+                                        @error('confirmation_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
                                     <div class="col-md-7">
                                         <label class="form-label fw-bold" for="academicSession">Active Academic Session</label>
                                         <select class="form-select" name="academic_session_id" id="academicSession">

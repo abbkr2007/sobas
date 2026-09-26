@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\ConfirmationFeePayment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Response;
@@ -166,6 +167,9 @@ class ApplicantController extends Controller
 
     public function admissionList(Request $request)
     {
+        $feeStatus = in_array($request->input('fee_status'), ['paid', 'unpaid'], true)
+            ? $request->input('fee_status')
+            : null;
         $availableYears = $this->availableYears('Admitted');
         $selectedYear = $this->selectedYear($request, $availableYears);
         $availableProgrammes = $this->availableProgrammes('Admitted');
@@ -174,10 +178,29 @@ class ApplicantController extends Controller
         if ($request->ajax()) {
             try {
                 $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
+                                ->selectSub(ConfirmationFeePayment::selectRaw('1')
+                                    ->whereColumn('application_id', 'applications.id')
+                                    ->where('status', 'success')
+                                    ->limit(1), 'confirmation_fee_paid')
                                 ->where('status', 'Admitted');
 
                 $this->applyYearFilter($admissions, $selectedYear);
                 $this->applyProgrammeFilter($admissions, $selectedProgramme);
+                if ($feeStatus === 'paid') {
+                    $admissions->whereExists(function ($query) {
+                        $query->select(DB::raw(1))
+                            ->from('confirmation_fee_payments')
+                            ->whereColumn('confirmation_fee_payments.application_id', 'applications.id')
+                            ->where('confirmation_fee_payments.status', 'success');
+                    });
+                } elseif ($feeStatus === 'unpaid') {
+                    $admissions->whereNotExists(function ($query) {
+                        $query->select(DB::raw(1))
+                            ->from('confirmation_fee_payments')
+                            ->whereColumn('confirmation_fee_payments.application_id', 'applications.id')
+                            ->where('confirmation_fee_payments.status', 'success');
+                    });
+                }
                 
                 Log::info('Admitted Applicants count: ' . $admissions->count());
                 
@@ -196,6 +219,11 @@ class ApplicantController extends Controller
                     $badgeClass = 'bg-success';
                     return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
+                ->addColumn('fee_status', function ($row) {
+                    return $row->confirmation_fee_paid
+                        ? '<span class="badge bg-success">Paid</span>'
+                        : '<span class="badge bg-warning text-dark">Unpaid</span>';
+                })
                 ->addColumn('actions', function ($row) {
                     $actions = '<div class="table-actions">';
                     $actions .= '<button class="btn btn-primary btn-sm confirm-admission" data-id="' . $row->id . '" title="Confirm Admission"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
@@ -206,7 +234,7 @@ class ApplicantController extends Controller
                 ->editColumn('application_type', function ($row) {
                     return $row->application_type ? ucwords(str_replace('_', ' ', strtolower($row->application_type))) : '';
                 })
-                ->rawColumns(['status', 'actions'])
+                ->rawColumns(['status', 'fee_status', 'actions'])
                 ->make(true);
             } catch (\Exception $e) {
                 Log::error('DataTable error: ' . $e->getMessage());
@@ -406,10 +434,33 @@ class ApplicantController extends Controller
         try {
             $selectedYear = $this->selectedYear($request, $this->availableYears('Admitted'));
             $selectedProgramme = $this->selectedProgramme($request);
+            $feeStatus = in_array($request->input('fee_status'), ['paid', 'unpaid'], true)
+                ? $request->input('fee_status')
+                : null;
             // Get only admitted applications
-            $applications = Application::where('status', 'Admitted');
+            $applications = Application::select('applications.*')
+                ->selectSub(ConfirmationFeePayment::selectRaw('1')
+                    ->whereColumn('application_id', 'applications.id')
+                    ->where('status', 'success')
+                    ->limit(1), 'confirmation_fee_paid')
+                ->where('status', 'Admitted');
             $this->applyYearFilter($applications, $selectedYear);
             $this->applyProgrammeFilter($applications, $selectedProgramme);
+            if ($feeStatus === 'paid') {
+                $applications->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('confirmation_fee_payments')
+                        ->whereColumn('confirmation_fee_payments.application_id', 'applications.id')
+                        ->where('confirmation_fee_payments.status', 'success');
+                });
+            } elseif ($feeStatus === 'unpaid') {
+                $applications->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('confirmation_fee_payments')
+                        ->whereColumn('confirmation_fee_payments.application_id', 'applications.id')
+                        ->where('confirmation_fee_payments.status', 'success');
+                });
+            }
             $applications = $applications->get();
 
             // Define the CSV headers
@@ -420,7 +471,7 @@ class ApplicantController extends Controller
                 'photo', 'schools', 'first_exam_type', 'first_exam_year', 'first_exam_number', 
                 'first_center_number', 'first_subjects', 'first_grades', 'second_exam_type', 
                 'second_exam_year', 'second_exam_number', 'second_center_number', 'second_subjects', 
-                'second_grades', 'created_at', 'updated_at'
+                'second_grades', 'confirmation_fee_status', 'created_at', 'updated_at'
             ];
 
             // Generate filename with current date
@@ -448,6 +499,10 @@ class ApplicantController extends Controller
                     foreach ($applications as $application) {
                         $row = [];
                         foreach ($headers as $header) {
+                            if ($header === 'confirmation_fee_status') {
+                                $row[] = $application->confirmation_fee_paid ? 'Paid' : 'Unpaid';
+                                continue;
+                            }
                             $value = $application->$header ?? '';
                             
                             // Handle JSON fields
@@ -601,6 +656,8 @@ class ApplicantController extends Controller
 
     public function updateField(Request $request, $id)
     {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
         try {
             $applicant = Application::findOrFail($id);
             
@@ -633,6 +690,13 @@ class ApplicantController extends Controller
                     'success' => false,
                     'message' => 'Field and value are required'
                 ], 400);
+            }
+
+            if ($field === 'status' && $value === 'Confirmed') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Use Confirm in the Admissions list to confirm an admission.',
+                ], 422);
             }
             
             // Update the field
@@ -1152,6 +1216,8 @@ HTML;
 
     public function confirmAdmission(Request $request, $id)
     {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
         try {
             $application = Application::findOrFail($id);
             
@@ -1227,9 +1293,11 @@ HTML;
 
     public function updateStatus(Request $request, $id)
     {
+        abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+
         try {
             $request->validate([
-                'status' => 'required|string|in:Pending,Admitted,Confirmed'
+                'status' => 'required|string|in:Pending,Admitted'
             ]);
 
             $application = Application::findOrFail($id);

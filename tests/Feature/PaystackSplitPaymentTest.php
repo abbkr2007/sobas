@@ -4,11 +4,29 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
 class PaystackSplitPaymentTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
+        DB::purge('sqlite');
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('key')->unique();
+            $table->text('value')->nullable();
+            $table->string('type')->default('string');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+    }
+
     private function paymentRequest(array $userData = null): Request
     {
         $request = Request::create('/payment/redirect', 'GET', [
@@ -43,6 +61,28 @@ class PaystackSplitPaymentTest extends TestCase
 
         $this->assertSame('https://checkout.paystack.com/test', $response->getTargetUrl());
         $this->assertSame(1100000, $request->session()->get('user_data.amount'));
+    }
+
+    public function test_checkout_uses_fee_values_saved_in_settings()
+    {
+        \App\Models\Setting::setSetting('application_fee', 250000, 'integer');
+        \App\Models\Setting::setSetting('administration_fee', 50000, 'integer');
+        config(['paystack.administration_subaccount' => 'ACCT_admin123']);
+        $request = $this->paymentRequest(['email' => 'applicant@example.com', 'amount' => 1100000]);
+        Paystack::shouldReceive('getAuthorizationUrl')->once()->with([
+            'email' => 'applicant@example.com',
+            'amount' => 300000,
+            'currency' => 'NGN',
+            'callback_url' => route('payment.callback'),
+            'subaccount' => 'ACCT_admin123',
+            'transaction_charge' => 250000,
+            'bearer' => 'subaccount',
+        ])->andReturnSelf();
+        Paystack::shouldReceive('redirectNow')->once()->andReturn(redirect('https://checkout.paystack.com/test'));
+
+        (new RegisteredUserController)->redirectToGateway($request);
+
+        $this->assertSame(300000, $request->session()->get('user_data.amount'));
     }
 
     /** @dataProvider invalidSubaccounts */

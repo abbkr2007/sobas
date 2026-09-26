@@ -5,7 +5,7 @@
         <section class="main-content-section">
             <div class="container-fluid px-3 px-md-4">
                 <div class="professional-form-container">
-                 @if(session('success'))
+                 @if(session('success') && session('application_id'))
                     <!-- Success State with Enhanced Design -->
                     <div class="success-state-container">
                         <div class="success-card">
@@ -39,10 +39,43 @@
                     <div class="submitted-state-container text-center">
                         <div class="submitted-card mx-auto">
                             <div class="submitted-icon">
-                                <i class="fas fa-clipboard-check fa-4x text-success"></i>
+                                <i class="fas {{ $application->status === 'Admitted' ? 'fa-graduation-cap' : 'fa-clipboard-check' }} fa-4x text-success"></i>
                             </div>
-                            <h3 class="submitted-title">Application Already Submitted</h3>
-                            <p class="submitted-message">You have already submitted your application. You can download your Biodata Slip below.</p>
+                            <h3 class="submitted-title">
+                                @if($application->status === 'Admitted')
+                                    Admission Offer Received
+                                @elseif($application->status === 'Confirmed')
+                                    Admission Confirmed
+                                @else
+                                    Application Already Submitted
+                                @endif
+                            </h3>
+                            @if(session('success'))
+                                <div class="alert alert-success" role="status">{{ session('success') }}</div>
+                            @endif
+                            @if(session('error'))
+                                <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+                            @endif
+                            @if($application->status === 'Admitted')
+                                <p class="submitted-message">Your application has been admitted. Pay the confirmation fee, then wait for the admissions office to confirm your place.</p>
+                                <p class="fw-bold">Confirmation fee: ₦{{ number_format($confirmationFee / 100, 2) }}</p>
+                                @if($confirmationFeePaid)
+                                    <p class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Confirmation fee paid</p>
+                                    <p class="submitted-message">Your admission will appear in the Confirmations list after an administrator clicks Confirm.</p>
+                                @else
+                                    <p class="text-warning fw-bold"><i class="fas fa-clock me-1"></i>Confirmation fee unpaid</p>
+                                    <form method="POST" action="{{ route('confirmation-payment.checkout') }}" class="mb-3">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-credit-card me-2"></i>Pay Confirmation Fee
+                                        </button>
+                                    </form>
+                                @endif
+                            @elseif($application->status === 'Confirmed')
+                                <p class="submitted-message">Your admission has been confirmed. You can download your Biodata Slip below.</p>
+                            @else
+                                <p class="submitted-message">Your application is {{ strtolower($application->status ?: 'being reviewed') }}. You can download your Biodata Slip below.</p>
+                            @endif
                             <div class="submitted-actions">
                                 <a href="{{ route('applications.show', $application->id) }}" target="_blank" 
                                    class="btn btn-success btn-lg">

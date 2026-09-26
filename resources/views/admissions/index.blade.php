@@ -34,8 +34,13 @@
                             </option>
                         @endforeach
                     </select>
+                    <select name="fee_status" id="feeStatusFilter" class="form-select form-select-sm" aria-label="Confirmation fee payment status">
+                        <option value="">All fee statuses</option>
+                        <option value="paid" {{ request('fee_status') === 'paid' ? 'selected' : '' }}>Fee paid</option>
+                        <option value="unpaid" {{ request('fee_status') === 'unpaid' ? 'selected' : '' }}>Fee unpaid</option>
+                    </select>
                 </form>
-                <a href="{{ route('admissions.export', ['year' => $selectedYear, 'programme' => $selectedProgramme]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
+                <a href="{{ route('admissions.export', ['year' => $selectedYear, 'programme' => $selectedProgramme, 'fee_status' => request('fee_status')]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
                     <i class="fas fa-download me-1 me-md-2"></i>
                     <span class="d-none d-sm-inline">Export CSV</span>
                     <span class="d-sm-none">Export</span>
@@ -74,6 +79,7 @@
                         <th class="text-nowrap">Programme offered</th>
                         <th class="text-nowrap">Gender</th>
                         <th class="text-nowrap">State / LGA</th>
+                        <th class="text-nowrap">Confirmation Fee</th>
                         <th class="text-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -138,8 +144,8 @@
             text-align: center !important;
         }
 
-        .custom-table th:nth-child(7),
-        .custom-table td:nth-child(7) {
+        .custom-table th:nth-child(8),
+        .custom-table td:nth-child(8) {
             position: sticky;
             right: 0;
             z-index: 3;
@@ -149,7 +155,7 @@
             box-shadow: -5px 0 8px -8px rgba(0, 0, 0, 0.7);
         }
 
-        .custom-table thead th:nth-child(7) {
+        .custom-table thead th:nth-child(8) {
             z-index: 4;
             background: #28a745;
         }
@@ -345,6 +351,7 @@
                     data: function(data) {
                         data.year = $('#yearFilter').val();
                         data.programme = $('#programmeFilter').val();
+                        data.fee_status = $('#feeStatusFilter').val();
                     }
                 },
                 columns: [
@@ -393,6 +400,7 @@
                             return [row.state, row.lga].filter(Boolean).join(' / ');
                         }
                     },
+                    { data: 'fee_status', name: 'fee_status', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false }
                 ],
                 order: [[0, 'desc']]
@@ -401,7 +409,8 @@
             function updateExportLink() {
                 const params = new URLSearchParams({
                     year: $('#yearFilter').val() || '',
-                    programme: $('#programmeFilter').val() || ''
+                    programme: $('#programmeFilter').val() || '',
+                    fee_status: $('#feeStatusFilter').val() || ''
                 });
                 $('#exportCsv').attr('href', '{{ route('admissions.export') }}?' + params.toString());
             }
@@ -427,7 +436,7 @@
                 });
             });
 
-            $('#yearFilter, #programmeFilter').on('change', function() {
+            $('#yearFilter, #programmeFilter, #feeStatusFilter').on('change', function() {
                 updateExportLink();
                 table.ajax.reload();
             });

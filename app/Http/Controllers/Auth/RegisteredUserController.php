@@ -48,7 +48,9 @@ class RegisteredUserController extends Controller
             'phone_number' => 'required|string|max:20',
         ]);
 
-        $amountInKobo = config('paystack.application_fee') + config('paystack.administration_fee');
+        $applicationFee = (int) Setting::getSetting('application_fee', config('paystack.application_fee'));
+        $administrationFee = (int) Setting::getSetting('administration_fee', config('paystack.administration_fee'));
+        $amountInKobo = $applicationFee + $administrationFee;
 
         $request->session()->put('user_data', [
             'first_name'   => $request->first_name,
@@ -76,7 +78,9 @@ class RegisteredUserController extends Controller
         }
 
         // Always calculate the price on the server, including for older sessions.
-        $userData['amount'] = config('paystack.application_fee') + config('paystack.administration_fee');
+        $applicationFee = (int) Setting::getSetting('application_fee', config('paystack.application_fee'));
+        $administrationFee = (int) Setting::getSetting('administration_fee', config('paystack.administration_fee'));
+        $userData['amount'] = $applicationFee + $administrationFee;
         $request->session()->put('user_data', $userData);
 
         return Paystack::getAuthorizationUrl([
@@ -85,7 +89,7 @@ class RegisteredUserController extends Controller
             'currency' => 'NGN',
             'callback_url' => route('payment.callback'),
             'subaccount' => $subaccount,
-            'transaction_charge' => config('paystack.application_fee'),
+            'transaction_charge' => $applicationFee,
             'bearer' => 'subaccount',
         ])->redirectNow();
     }

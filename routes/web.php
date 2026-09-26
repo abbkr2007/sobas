@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SlipController;
 use App\Http\Controllers\Auth\BulkUserController;
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\ConfirmationPaymentController;
 
 // Packages
 
@@ -74,6 +75,7 @@ Route::get('/clear', function () {
 
     Route::get('/payment/redirect', [RegisteredUserController::class, 'redirectToGateway'])->name('payment.redirectToGateway');
     Route::get('/payment/callback', [RegisteredUserController::class, 'handleGatewayCallback'])->name('payment.callback');
+    Route::get('/confirmation-payment/callback', [ConfirmationPaymentController::class, 'callback'])->name('confirmation-payment.callback');
     Route::get('/slip', [SlipController::class, 'index'])->name('slip');
 
     // Public Application Data Route (No Authentication Required)
@@ -105,6 +107,8 @@ Route::get('/clear', function () {
     Route::get('/applicant/{id}/download-confirmation-letter', [ApplicantController::class, 'downloadConfirmationLetter'])->name('applicant.download-confirmation-letter');
 
     Route::group(['middleware' => 'auth'], function () {
+
+    Route::post('/confirmation-payment/checkout', [ConfirmationPaymentController::class, 'checkout'])->name('confirmation-payment.checkout');
 
     // Application Form
     Route::get('/application', [ApplicationController::class, 'create'])->name('application.form');

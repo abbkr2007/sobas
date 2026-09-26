@@ -15,6 +15,8 @@ use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
 
 use App\Models\Application;
+use App\Models\ConfirmationFeePayment;
+use App\Models\Setting;
 
 class HomeController extends Controller
 {
@@ -30,9 +32,13 @@ class HomeController extends Controller
     $application = $hasSubmitted 
         ? Application::where('application_id', $user->mat_id)->first() 
         : null;
+    $confirmationFee = (int) Setting::getSetting('confirmation_fee', 1000000);
+    $confirmationFeePaid = $application
+        ? ConfirmationFeePayment::where('application_id', $application->id)->where('status', 'success')->exists()
+        : false;
 
     // Pass data to the view
-    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application'));
+    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application', 'confirmationFee', 'confirmationFeePaid'));
 }
 
 
