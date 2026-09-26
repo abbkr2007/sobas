@@ -34,12 +34,13 @@ class HomeController extends Controller
         : null;
     $confirmationFee = (int) Setting::getSetting('confirmation_fee', 1000000);
     $administrationFee = (int) Setting::getSetting('administration_fee', config('paystack.administration_fee'));
+    $applicationFee = (int) Setting::getSetting('application_fee', config('paystack.application_fee'));
     $confirmationFeePaid = $application
         ? ConfirmationFeePayment::where('application_id', $application->id)->where('status', 'success')->exists()
         : false;
 
     // Pass data to the view
-    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application', 'confirmationFee', 'administrationFee', 'confirmationFeePaid'));
+    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application', 'applicationFee', 'confirmationFee', 'administrationFee', 'confirmationFeePaid'));
 }
 
 

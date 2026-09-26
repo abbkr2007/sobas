@@ -13,7 +13,10 @@
                                 <i class="fas fa-check-circle fa-4x text-success"></i>
                             </div>
                             <h3 class="success-title">Application Submitted Successfully!</h3>
-                            <p class="success-message">Your application has been received and is being processed.</p>
+                            <p class="success-message">
+                                Your application for the {{ ucwords(str_replace('_', ' ', $application->application_type)) }} Programme has been submitted successfully.
+                                Admission will be published soon. After making payment of ₦{{ number_format(($applicationFee + $administrationFee) / 100, 2) }}, please present your credentials for verification and confirmation.
+                            </p>
                             <div class="success-actions">
                                 <a href="{{ route('applications.show', session('application_id')) }}" target="_blank" 
                                    class="btn btn-success btn-lg">

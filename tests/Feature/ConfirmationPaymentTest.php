@@ -168,6 +168,26 @@ class ConfirmationPaymentTest extends TestCase
         $this->assertSame('unpaid', $unpaidView->getData()['feeStatus']);
     }
 
+    public function test_submission_success_dashboard_shows_programme_payment_and_verification_notice(): void
+    {
+        $application = $this->admittedApplication();
+        $user = $this->applicantUser();
+        Setting::setSetting('application_fee', 1000000, 'integer');
+        Setting::setSetting('administration_fee', 100000, 'integer');
+
+        $this->actingAs($user)
+            ->withSession([
+                'success' => 'Application submitted successfully.',
+                'application_id' => $application->id,
+            ])
+            ->get(route('dashboard', [], false))
+            ->assertOk()
+            ->assertSee('Your application for the Matric Science Programme has been submitted successfully.')
+            ->assertSee('Admission will be published soon.')
+            ->assertSee('11,000.00')
+            ->assertSee('verification and confirmation.');
+    }
+
     public function test_admin_cannot_set_confirmed_through_the_generic_status_editor(): void
     {
         $application = $this->admittedApplication();
