@@ -35,12 +35,11 @@
                         @endforeach
                     </select>
                     <select name="fee_status" id="feeStatusFilter" class="form-select form-select-sm" aria-label="Confirmation fee payment status">
-                        <option value="">All fee statuses</option>
-                        <option value="paid" {{ request('fee_status') === 'paid' ? 'selected' : '' }}>Fee paid</option>
-                        <option value="unpaid" {{ request('fee_status') === 'unpaid' ? 'selected' : '' }}>Fee unpaid</option>
+                        <option value="paid" {{ $feeStatus === 'paid' ? 'selected' : '' }}>Fee paid</option>
+                        <option value="unpaid" {{ $feeStatus === 'unpaid' ? 'selected' : '' }}>Fee unpaid</option>
                     </select>
                 </form>
-                <a href="{{ route('admissions.export', ['year' => $selectedYear, 'programme' => $selectedProgramme, 'fee_status' => request('fee_status')]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
+                <a href="{{ route('admissions.export', ['year' => $selectedYear, 'programme' => $selectedProgramme, 'fee_status' => $feeStatus]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
                     <i class="fas fa-download me-1 me-md-2"></i>
                     <span class="d-none d-sm-inline">Export CSV</span>
                     <span class="d-sm-none">Export</span>

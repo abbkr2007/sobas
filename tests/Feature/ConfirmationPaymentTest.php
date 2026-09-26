@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Application;
+use App\Http\Controllers\ApplicantController;
 use App\Models\ConfirmationFeePayment;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -154,6 +156,16 @@ class ConfirmationPaymentTest extends TestCase
         $this->assertSame(1250050, Setting::getSetting('application_fee'));
         $this->assertSame(125020, Setting::getSetting('administration_fee'));
         $this->assertSame(1000000, Setting::getSetting('confirmation_fee'));
+    }
+
+    public function test_admissions_fee_filter_defaults_to_paid_and_allows_unpaid(): void
+    {
+        $controller = new ApplicantController;
+        $paidView = $controller->admissionList(Request::create('/admissions'));
+        $unpaidView = $controller->admissionList(Request::create('/admissions?fee_status=unpaid'));
+
+        $this->assertSame('paid', $paidView->getData()['feeStatus']);
+        $this->assertSame('unpaid', $unpaidView->getData()['feeStatus']);
     }
 
     public function test_admin_cannot_set_confirmed_through_the_generic_status_editor(): void

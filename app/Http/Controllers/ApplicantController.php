@@ -32,6 +32,13 @@ class ApplicantController extends Controller
         return $programme !== '' ? $programme : null;
     }
 
+    private function selectedFeeStatus(Request $request): string
+    {
+        return in_array($request->input('fee_status'), ['paid', 'unpaid'], true)
+            ? $request->input('fee_status')
+            : 'paid';
+    }
+
     private function availableYears(?string $status = null)
     {
         $query = Application::query()
@@ -167,9 +174,7 @@ class ApplicantController extends Controller
 
     public function admissionList(Request $request)
     {
-        $feeStatus = in_array($request->input('fee_status'), ['paid', 'unpaid'], true)
-            ? $request->input('fee_status')
-            : null;
+        $feeStatus = $this->selectedFeeStatus($request);
         $availableYears = $this->availableYears('Admitted');
         $selectedYear = $this->selectedYear($request, $availableYears);
         $availableProgrammes = $this->availableProgrammes('Admitted');
@@ -238,6 +243,7 @@ class ApplicantController extends Controller
             'availableYears' => $availableYears,
             'selectedProgramme' => $selectedProgramme,
             'availableProgrammes' => $availableProgrammes,
+            'feeStatus' => $feeStatus,
         ]);
     }
 
@@ -425,9 +431,7 @@ class ApplicantController extends Controller
         try {
             $selectedYear = $this->selectedYear($request, $this->availableYears('Admitted'));
             $selectedProgramme = $this->selectedProgramme($request);
-            $feeStatus = in_array($request->input('fee_status'), ['paid', 'unpaid'], true)
-                ? $request->input('fee_status')
-                : null;
+            $feeStatus = $this->selectedFeeStatus($request);
             // Get only admitted applications
             $applications = Application::select('applications.*')
                 ->selectSub(ConfirmationFeePayment::selectRaw('1')
