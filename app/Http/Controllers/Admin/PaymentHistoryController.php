@@ -110,9 +110,13 @@ class PaymentHistoryController extends Controller
         }
 
         abort_unless($payment, 404);
+        $logoPath = public_path('images/logo-receipt.jpg');
+        $logoData = is_file($logoPath)
+            ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath))
+            : null;
 
         return app('dompdf.wrapper')
-            ->loadView('admin.payment-history.receipt', compact('payment', 'paymentType'))
+            ->loadView('admin.payment-history.receipt', compact('payment', 'paymentType', 'logoData'))
             ->setPaper('a6', 'portrait')
             ->download('receipt-' . preg_replace('/[^A-Za-z0-9_-]/', '', $payment->reference) . '.pdf');
     }

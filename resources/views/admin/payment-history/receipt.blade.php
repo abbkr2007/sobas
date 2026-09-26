@@ -8,6 +8,10 @@
         body { margin:0; color:#203c36; font-family:DejaVu Sans, sans-serif; font-size:8px; line-height:1.25; }
         .receipt { border:1px solid #d8e3df; padding:10px; }
         .brand { padding-bottom:6px; border-bottom:2px solid #176c59; }
+        .brand-table { margin:0; }
+        .brand-table td { padding:0; border:0; }
+        .brand-logo { width:40px; }
+        .brand-logo img { display:block; width:32px; height:32px; }
         .brand-name { margin:0; color:#174d41; font-size:12px; font-weight:bold; }
         .brand-subtitle { margin:2px 0 0; color:#70817c; font-size:7px; text-transform:uppercase; }
         .receipt-title { margin:8px 0 2px; color:#173b35; font-size:13px; }
@@ -27,8 +31,17 @@
 <body>
     <main class="receipt">
         <header class="brand">
-            <p class="brand-name">School of Basic and Advanced Studies</p>
-            <p class="brand-subtitle">Official payment receipt</p>
+            <table class="brand-table">
+                <tr>
+                    @if($logoData)
+                        <td class="brand-logo"><img src="{{ $logoData }}" alt="SOBAS logo"></td>
+                    @endif
+                    <td>
+                        <p class="brand-name">School of Basic and Advanced Studies</p>
+                        <p class="brand-subtitle">Official payment receipt</p>
+                    </td>
+                </tr>
+            </table>
         </header>
         <h1 class="receipt-title">Payment Receipt</h1>
         <p class="receipt-subtitle">Keep this receipt for your records.</p>

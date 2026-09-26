@@ -109,6 +109,7 @@ class PaymentHistoryTest extends TestCase
             $response->assertOk()->assertHeader('content-type', 'application/pdf');
             $pdf = $response->getContent();
             $this->assertStringStartsWith('%PDF-', $pdf);
+            $this->assertStringContainsString('/Subtype /Image', $pdf);
             preg_match_all('/\/Type\s*\/Page\b/', $pdf, $pageObjects);
             $this->assertCount(1, $pageObjects[0], 'Each payment receipt must fit on one page.');
         }
