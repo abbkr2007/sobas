@@ -57,7 +57,8 @@
                                 <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
                             @endif
                             @if($application->status === 'Admitted')
-                                <p class="submitted-message">Your application has been admitted. Make the payment and wait for the announcement of the screening.</p>
+                                <p class="submitted-message text-danger fw-bold">Your application has been admitted to the {{ ucwords(str_replace('_', ' ', $application->application_type)) }} programme.</p>
+                                <p class="submitted-message text-danger fw-bold">The screening announcement will be made later.</p>
                                 <p class="fw-bold">Amount to pay: ₦{{ number_format(($confirmationFee + $administrationFee) / 100, 2) }}</p>
                                 @if($confirmationFeePaid)
                                     <p class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Payment received</p>
