@@ -67,7 +67,7 @@ class ConfirmationPaymentTest extends TestCase
             'application_id' => $application->id,
             'user_id' => $user->id,
             'reference' => 'CONF-test-reference',
-            'amount' => 1000000,
+            'amount' => 1100000,
             'currency' => 'NGN',
             'status' => 'pending',
         ]);
@@ -83,7 +83,7 @@ class ConfirmationPaymentTest extends TestCase
                 'id' => 12345,
                 'reference' => 'CONF-test-reference',
                 'status' => 'success',
-                'amount' => 1000000,
+                'amount' => 1100000,
                 'currency' => 'NGN',
                 'customer' => ['email' => 'applicant@example.com'],
             ],
@@ -100,11 +100,12 @@ class ConfirmationPaymentTest extends TestCase
     {
         $application = $this->admittedApplication();
         Setting::setSetting('confirmation_fee', 1250000, 'integer');
+        Setting::setSetting('administration_fee', 125020, 'integer');
         $user = $this->applicantUser();
         $this->actingAs($user);
         Paystack::shouldReceive('getAuthorizationUrl')->once()->with(\Mockery::on(function ($payload) {
             return $payload['email'] === 'applicant@example.com'
-                && $payload['amount'] === 1250000
+                && $payload['amount'] === 1375020
                 && $payload['currency'] === 'NGN'
                 && strpos($payload['reference'], 'CONF-') === 0
                 && $payload['callback_url'] === route('confirmation-payment.callback');
@@ -117,7 +118,7 @@ class ConfirmationPaymentTest extends TestCase
         $this->assertDatabaseHas('confirmation_fee_payments', [
             'application_id' => $application->id,
             'user_id' => $user->id,
-            'amount' => 1250000,
+            'amount' => 1375020,
             'status' => 'pending',
         ]);
         $this->assertSame('Admitted', $application->fresh()->status);

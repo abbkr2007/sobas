@@ -58,7 +58,9 @@
                             @endif
                             @if($application->status === 'Admitted')
                                 <p class="submitted-message">Your application has been admitted. Pay the confirmation fee, then wait for the admissions office to confirm your place.</p>
-                                <p class="fw-bold">Confirmation fee: ₦{{ number_format($confirmationFee / 100, 2) }}</p>
+                                <p class="mb-1">Confirmation fee: ₦{{ number_format($confirmationFee / 100, 2) }}</p>
+                                <p class="mb-1">Administration charge: ₦{{ number_format($administrationFee / 100, 2) }}</p>
+                                <p class="fw-bold">Total due: ₦{{ number_format(($confirmationFee + $administrationFee) / 100, 2) }}</p>
                                 @if($confirmationFeePaid)
                                     <p class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Confirmation fee paid</p>
                                     <p class="submitted-message">Your admission will appear in the Confirmations list after an administrator clicks Confirm.</p>

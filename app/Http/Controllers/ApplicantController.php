@@ -178,10 +178,6 @@ class ApplicantController extends Controller
         if ($request->ajax()) {
             try {
                 $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
-                                ->selectSub(ConfirmationFeePayment::selectRaw('1')
-                                    ->whereColumn('application_id', 'applications.id')
-                                    ->where('status', 'success')
-                                    ->limit(1), 'confirmation_fee_paid')
                                 ->where('status', 'Admitted');
 
                 $this->applyYearFilter($admissions, $selectedYear);
@@ -219,11 +215,6 @@ class ApplicantController extends Controller
                     $badgeClass = 'bg-success';
                     return '<span class="badge ' . $badgeClass . '">' . $formattedStatus . '</span>';
                 })
-                ->addColumn('fee_status', function ($row) {
-                    return $row->confirmation_fee_paid
-                        ? '<span class="badge bg-success">Paid</span>'
-                        : '<span class="badge bg-warning text-dark">Unpaid</span>';
-                })
                 ->addColumn('actions', function ($row) {
                     $actions = '<div class="table-actions">';
                     $actions .= '<button class="btn btn-primary btn-sm confirm-admission" data-id="' . $row->id . '" title="Confirm Admission"><i class="fas fa-check" style="font-size: 12px;"></i></button>';
@@ -234,7 +225,7 @@ class ApplicantController extends Controller
                 ->editColumn('application_type', function ($row) {
                     return $row->application_type ? ucwords(str_replace('_', ' ', strtolower($row->application_type))) : '';
                 })
-                ->rawColumns(['status', 'fee_status', 'actions'])
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
             } catch (\Exception $e) {
                 Log::error('DataTable error: ' . $e->getMessage());

@@ -6,7 +6,6 @@ use App\Models\Application;
 use App\Models\ConfirmationFeePayment;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
@@ -25,7 +24,9 @@ class ConfirmationPaymentController extends Controller
             return redirect()->route('dashboard')->with('success', 'Your confirmation fee is already paid.');
         }
 
-        $amount = (int) Setting::getSetting('confirmation_fee', 1000000);
+        $confirmationFee = (int) Setting::getSetting('confirmation_fee', 1000000);
+        $administrationFee = (int) Setting::getSetting('administration_fee', config('paystack.administration_fee'));
+        $amount = $confirmationFee + $administrationFee;
         $reference = 'CONF-' . Str::uuid()->toString();
         $payment = ConfirmationFeePayment::create([
             'application_id' => $application->id,
@@ -90,7 +91,7 @@ class ConfirmationPaymentController extends Controller
             }
 
             $request->session()->forget('confirmation_payment');
-            return redirect()->route('dashboard')->with('success', 'Confirmation fee paid successfully.');
+            return redirect()->route('dashboard')->with('success', 'Confirmation and administration fees paid successfully.');
         } catch (\Throwable $exception) {
             report($exception);
             return redirect()->route('dashboard')->with('error', 'Payment could not be verified. Please contact support if you were charged.');
