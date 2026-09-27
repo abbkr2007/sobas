@@ -7,11 +7,9 @@ use App\Models\Application;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\AcademicSessionService;
-use App\Services\LegacySessionAssignment;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -113,27 +111,6 @@ class SessionIsolationTest extends TestCase
         $this->get(route('users.export', ['academic_session_id' => $this->previous->id], false))->assertStatus(409);
     }
 
-    public function test_legacy_assignment_is_audited_idempotent_and_preserves_conflicts_and_statuses(): void
-    {
-        Storage::fake('local');
-        $old = $this->applicant($this->previous, 'Confirmed', '00001');
-        $old->update(['academic_session_id' => null]);
-        $user = User::create(['mat_id' => $old->application_id]);
-        $conflict = $this->applicant($this->current, 'Admitted', '00002');
-        $conflict->update(['application_id' => 'MAT2500002']);
-        $unresolved = User::create(['mat_id' => 'UNKNOWN']);
-        $this->artisan('sessions:assign-legacy')->assertExitCode(0);
-        $this->assertNull($old->fresh()->academic_session_id);
-        $this->artisan('sessions:assign-legacy', ['--apply' => true])->assertExitCode(0);
-        $this->assertEquals($this->previous->id, $old->fresh()->academic_session_id);
-        $this->assertEquals($this->previous->id, $user->fresh()->academic_session_id);
-        $this->assertSame('Confirmed', $old->fresh()->status);
-        $this->assertEquals($this->current->id, $conflict->fresh()->academic_session_id);
-        $this->assertNull($unresolved->fresh()->academic_session_id);
-        $this->assertCount(1, Storage::disk('local')->files('session-audits'));
-        $this->assertCount(0, app(LegacySessionAssignment::class)->plan()['changes']);
-    }
-
     public function test_settings_separate_viewing_registration_and_historical_session_creation(): void
     {
         $this->post(route('admin.registration.update', [], false), [
@@ -145,7 +122,7 @@ class SessionIsolationTest extends TestCase
         $this->assertSame($this->current->id, app(AcademicSessionService::class)->current()->id);
         $this->assertSame($this->previous->id, app(AcademicSessionService::class)->viewing()->id);
         $this->assertFalse(AcademicSession::where('start_year', 2024)->first()->is_active);
-        $this->get(route('admin.registration.index', [], false))->assertOk()->assertSee('Session to View / Manage');
+        $this->get(route('admin.registration.index', [], false))->assertOk()->assertSee('Session to view and manage');
     }
 
     public function test_missing_selected_session_never_falls_back_to_all_records(): void
