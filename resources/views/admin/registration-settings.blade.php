@@ -4,8 +4,8 @@
             <div class="settings-header">
                 <div>
                     <p class="settings-eyebrow mb-1">Admin Control</p>
-                    <h4 class="settings-title mb-1">Application Portal Settings</h4>
-                            <p class="settings-subtitle mb-0">Control portal access, academic year, and the closed page message.</p>
+                    <h4 class="settings-title mb-1">Application Control</h4>
+                    <p class="settings-subtitle mb-0">Manage portal access, academic sessions, and applicant fees.</p>
                 </div>
                 <span class="settings-state {{ $registrationOpen ? 'is-open' : 'is-closed' }}">
                     <i class="fas {{ $registrationOpen ? 'fa-check-circle' : 'fa-lock' }} me-2"></i>
@@ -74,107 +74,107 @@
                 </div>
             </div>
 
-            <div class="settings-panel mb-4">
-                <h5 class="panel-title">Link Older Records to Sessions</h5>
-                <p class="panel-text">Matching MAT25 records belong to 2025/2026; MAT26 records belong to 2026/2027. Create the corresponding session first. Only missing assignments with consistent evidence will be filled.</p>
-                <p>{{ $legacyReadyCount }} records ready to link. {{ $legacyUnresolvedCount }} records need review.</p>
-                <form method="POST" action="{{ route('admin.registration.assign-legacy') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-success" {{ $legacyReadyCount ? '' : 'disabled' }}>Link Matching Legacy Records</button>
-                </form>
-                <p class="form-text mb-0">Payments and admission statuses are preserved. An assignment audit is saved on the server.</p>
-            </div>
-
             <form method="POST" action="{{ route('admin.registration.update') }}">
                 @csrf
 
-                <div class="settings-panel form-panel mb-4">
-                    <div class="row g-4">
-                        <div class="col-lg-4">
+                <section class="settings-panel settings-section form-panel mb-4" aria-labelledby="portal-access-heading">
+                    <div class="section-heading">
+                        <span class="section-number">01</span>
+                        <div>
                             <p class="panel-label mb-1">Portal Access</p>
-                            <h5 class="panel-title mb-2">Application Availability</h5>
-                            <p class="panel-text mb-0">
-                                Use this when admissions are ready to open or need to be paused.
-                            </p>
-                        </div>
-
-                        <div class="col-lg-8">
-                            <input type="hidden" name="registration_open" value="0">
-                            <div class="access-switch mb-4">
-                                <div>
-                                    <label class="form-label fw-bold mb-1" for="registrationOpen">Allow New Applications</label>
-                                    <p class="text-muted small mb-0">Turn this off to show the closed page.</p>
-                                </div>
-                                <div class="form-check form-switch mb-0">
-                                    <input class="form-check-input" type="checkbox" name="registration_open"
-                                           id="registrationOpen" value="1"
-                                           {{ $registrationOpen ? 'checked' : '' }}>
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-0">
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-bold" for="applicationFee">Application Fee (NGN)</label>
-                                        <input class="form-control" type="number" name="application_fee_naira" id="applicationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($applicationFee / 100, 2, '.', '') }}" required>
-                                        @error('application_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-bold" for="administrationFee">Administration Fee (NGN)</label>
-                                        <input class="form-control" type="number" name="administration_fee_naira" id="administrationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($administrationFee / 100, 2, '.', '') }}" required>
-                                        @error('administration_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-bold" for="confirmationFee">Confirmation Fee (NGN)</label>
-                                        <input class="form-control" type="number" name="confirmation_fee_naira" id="confirmationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($confirmationFee / 100, 2, '.', '') }}" required>
-                                        <div class="form-text">Applicants pay this after admission. Default: ₦10,000.</div>
-                                        @error('confirmation_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-7">
-                                        <label class="form-label fw-bold" for="academicSession">Registration Session</label>
-                                        <select class="form-select" name="academic_session_id" id="academicSession">
-                                            <option value="">Keep current session</option>
-                                            @foreach($sessions as $session)
-                                                <option value="{{ $session->id }}" {{ optional($activeSession)->id === $session->id ? 'selected' : '' }}>
-                                                    {{ $session->label }}{{ $session->is_active ? ' (Active)' : '' }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <div class="form-text">New applicants register into this session. Viewing an older session below does not change this.</div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="form-label fw-bold" for="newSessionYear">Create New Session</label>
-                                        <input class="form-control" type="number" name="new_session_start_year" id="newSessionYear" min="2000" max="2100" placeholder="2026">
-                                        <div class="form-text">Creates YYYY/YYYY+1 without changing registration. After saving, select it above only if it should receive new registrations.</div>
-                                        @error('new_session_start_year')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                                    </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold" for="viewingSession">Session to View / Manage</label>
-                                    <select class="form-select" name="viewing_academic_session_id" id="viewingSession">
-                                        <option value="">Follow registration session</option>
-                                        @foreach($sessions as $session)
-                                            <option value="{{ $session->id }}" {{ (string) old('viewing_academic_session_id', $viewingSessionId) === (string) $session->id ? 'selected' : '' }}>{{ $session->label }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="form-text">Controls dashboard totals, applicants, admissions, confirmations, users, payments and exports for all administrators. Other sessions remain saved and hidden.</div>
-                                    @error('viewing_academic_session_id')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                                </div>
-
-                                <label class="form-label fw-bold" for="closedMessage">Closed Page Message</label>
-                                <textarea class="form-control" name="registration_closed_message"
-                                          id="closedMessage" rows="4" required>{{ $closedMessage }}</textarea>
-                                @error('registration_closed_message')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            <h5 class="panel-title mb-1" id="portal-access-heading">Application availability</h5>
+                            <p class="panel-text mb-0">Choose whether new applicants can submit applications and set the message shown while the portal is closed.</p>
                         </div>
                     </div>
-                </div>
+                    <input type="hidden" name="registration_open" value="0">
+                    <div class="row g-4 align-items-start">
+                        <div class="col-lg-5">
+                            <div class="access-switch h-100">
+                                <div>
+                                    <label class="form-label fw-bold mb-1" for="registrationOpen">Allow new applications</label>
+                                    <p class="text-muted small mb-0">Turn this off to show the closed-page message.</p>
+                                </div>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" name="registration_open" id="registrationOpen" value="1" {{ $registrationOpen ? 'checked' : '' }}>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <label class="form-label fw-bold" for="closedMessage">Closed-page message</label>
+                            <textarea class="form-control" name="registration_closed_message" id="closedMessage" rows="3" required>{{ $closedMessage }}</textarea>
+                            @error('registration_closed_message')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-panel settings-section form-panel mb-4" aria-labelledby="academic-sessions-heading">
+                    <div class="section-heading">
+                        <span class="section-number">02</span>
+                        <div>
+                            <p class="panel-label mb-1">Academic Sessions</p>
+                            <h5 class="panel-title mb-1" id="academic-sessions-heading">Registration and admin view</h5>
+                            <p class="panel-text mb-0">Set the session for new registrations separately from the session administrators are currently viewing.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <label class="form-label fw-bold" for="academicSession">Registration session</label>
+                            <select class="form-select" name="academic_session_id" id="academicSession">
+                                <option value="">Keep current session</option>
+                                @foreach($sessions as $session)
+                                    <option value="{{ $session->id }}" {{ optional($activeSession)->id === $session->id ? 'selected' : '' }}>{{ $session->label }}{{ $session->is_active ? ' (Active)' : '' }}</option>
+                                @endforeach
+                            </select>
+                            <div class="form-text">New applicants are assigned to this session.</div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="form-label fw-bold" for="newSessionYear">Create a session</label>
+                            <input class="form-control" type="number" name="new_session_start_year" id="newSessionYear" min="2000" max="2100" placeholder="2026">
+                            <div class="form-text">Creates a session without changing registration settings.</div>
+                            @error('new_session_start_year')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold" for="viewingSession">Session to view and manage</label>
+                            <select class="form-select" name="viewing_academic_session_id" id="viewingSession">
+                                <option value="">Follow registration session</option>
+                                @foreach($sessions as $session)
+                                    <option value="{{ $session->id }}" {{ (string) old('viewing_academic_session_id', $viewingSessionId) === (string) $session->id ? 'selected' : '' }}>{{ $session->label }}</option>
+                                @endforeach
+                            </select>
+                            <div class="form-text">Controls dashboard totals, applicants, admissions, confirmations, users, payments, and exports for administrators.</div>
+                            @error('viewing_academic_session_id')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-panel settings-section form-panel mb-4" aria-labelledby="payment-fees-heading">
+                    <div class="section-heading">
+                        <span class="section-number">03</span>
+                        <div>
+                            <p class="panel-label mb-1">Payment Fees</p>
+                            <h5 class="panel-title mb-1" id="payment-fees-heading">Applicant charges</h5>
+                            <p class="panel-text mb-0">Set the amounts used at checkout. Values are entered in naira.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold" for="applicationFee">Application fee (NGN)</label>
+                            <input class="form-control" type="number" name="application_fee_naira" id="applicationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($applicationFee / 100, 2, '.', '') }}" required>
+                            @error('application_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold" for="administrationFee">Administration fee (NGN)</label>
+                            <input class="form-control" type="number" name="administration_fee_naira" id="administrationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($administrationFee / 100, 2, '.', '') }}" required>
+                            @error('administration_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold" for="confirmationFee">Confirmation fee (NGN)</label>
+                            <input class="form-control" type="number" name="confirmation_fee_naira" id="confirmationFee" min="0.01" max="1000000" step="0.01" value="{{ number_format($confirmationFee / 100, 2, '.', '') }}" required>
+                            <div class="form-text">Charged after admission. Default: ₦10,000.</div>
+                            @error('confirmation_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </section>
 
                 <div class="settings-actions">
                     <button type="submit" class="btn btn-success btn-lg">
@@ -185,6 +185,26 @@
                     </a>
                 </div>
             </form>
+
+            <section class="settings-panel settings-section legacy-section mb-4" aria-labelledby="legacy-records-heading">
+                <div class="section-heading">
+                    <span class="section-number">04</span>
+                    <div>
+                        <p class="panel-label mb-1">Data Maintenance</p>
+                        <h5 class="panel-title mb-1" id="legacy-records-heading">Link older records to sessions</h5>
+                        <p class="panel-text mb-0">Matching MAT25 records belong to 2025/2026 and MAT26 records to 2026/2027. Create the corresponding sessions first.</p>
+                    </div>
+                </div>
+                <div class="legacy-summary">
+                    <span><strong>{{ $legacyReadyCount }}</strong> records ready to link</span>
+                    <span><strong>{{ $legacyUnresolvedCount }}</strong> records need review</span>
+                </div>
+                <form method="POST" action="{{ route('admin.registration.assign-legacy') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-success" {{ $legacyReadyCount ? '' : 'disabled' }}>Link Matching Legacy Records</button>
+                    <span class="form-text ms-md-3">Payments and admission statuses are preserved. An assignment audit is saved on the server.</span>
+                </form>
+            </section>
         </div>
     </div>
 
@@ -257,6 +277,47 @@
             box-shadow: 0 8px 22px rgba(17, 24, 39, 0.06);
         }
 
+        .settings-section {
+            box-shadow: 0 3px 12px rgba(17, 24, 39, 0.035);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 22px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #edf1f0;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            border-radius: 6px;
+            background: #e8f3ee;
+            color: #176c59;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .legacy-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            margin: 0 0 18px 48px;
+            color: #526762;
+            font-size: 13px;
+        }
+
+        .legacy-summary strong {
+            color: #173b35;
+            font-size: 16px;
+        }
+
         .status-panel {
             display: flex;
             align-items: center;
@@ -325,6 +386,18 @@
             resize: vertical;
         }
 
+        .form-panel .form-control,
+        .form-panel .form-select,
+        .form-panel .input-group-text {
+            border-color: #d8e1df;
+            border-radius: 6px;
+        }
+
+        .form-panel .input-group-text {
+            color: #526762;
+            background: #f3f7f6;
+        }
+
         .form-panel textarea:focus,
         .access-switch .form-check-input:focus {
             border-color: #198754;
@@ -351,6 +424,15 @@
 
             .settings-panel {
                 padding: 20px;
+            }
+
+            .legacy-summary {
+                margin-left: 0;
+            }
+
+            .legacy-section .form-text {
+                display: block;
+                margin: 10px 0 0 !important;
             }
         }
     </style>
