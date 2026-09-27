@@ -170,7 +170,6 @@ Route::post('/academic-sessions/create', [BulkUserController::class, 'createSess
         Route::get('/registration-settings', [RegistrationSettingsController::class, 'index'])->name('admin.registration.index');
         Route::post('/registration-settings/toggle', [RegistrationSettingsController::class, 'toggle'])->name('admin.registration.toggle');
         Route::post('/registration-settings/update', [RegistrationSettingsController::class, 'update'])->name('admin.registration.update');
-        Route::post('/registration-settings/assign-legacy-sessions', [RegistrationSettingsController::class, 'assignLegacySessions'])->name('admin.registration.assign-legacy');
     });
 
 

@@ -84,9 +84,6 @@
                 <button type="button" class="wizard-step" id="wizard-tab-3" role="tab" aria-selected="false" aria-controls="payment-fees-step" data-step-target="3">
                     <span class="wizard-step-number">03</span><span>Payment Fees</span>
                 </button>
-                <button type="button" class="wizard-step" id="wizard-tab-4" role="tab" aria-selected="false" aria-controls="legacy-records-step" data-step-target="4">
-                    <span class="wizard-step-number">04</span><span>Legacy Records</span>
-                </button>
             </nav>
 
             <form method="POST" action="{{ route('admin.registration.update') }}" id="applicationControlForm" novalidate>
@@ -206,30 +203,6 @@
                 </section>
             </form>
 
-            <section class="settings-panel settings-section legacy-section mb-4 wizard-pane" id="legacy-records-step" role="tabpanel" aria-labelledby="wizard-tab-4" data-step-panel="4">
-                <div class="section-heading">
-                    <span class="section-number">04</span>
-                    <div>
-                        <p class="panel-label mb-1">Data Maintenance</p>
-                        <h5 class="panel-title mb-1" id="legacy-records-heading" tabindex="-1">Link older records to sessions</h5>
-                        <p class="panel-text mb-0">Matching MAT25 records belong to 2025/2026 and MAT26 records to 2026/2027. Create the corresponding sessions first.</p>
-                    </div>
-                </div>
-                <div class="legacy-summary">
-                    <span><strong>{{ $legacyReadyCount }}</strong> records ready to link</span>
-                    <span><strong>{{ $legacyUnresolvedCount }}</strong> records need review</span>
-                </div>
-                <form method="POST" action="{{ route('admin.registration.assign-legacy') }}">
-                    @csrf
-                    <div class="wizard-actions">
-                        <button type="button" class="btn btn-light wizard-back" data-previous-step="3"><i class="fas fa-arrow-left me-2"></i>Back</button>
-                        <div>
-                            <button type="submit" class="btn btn-outline-success" {{ $legacyReadyCount ? '' : 'disabled' }}>Link Matching Legacy Records</button>
-                            <span class="form-text ms-md-3">Payments and admission statuses are preserved. An assignment audit is saved on the server.</span>
-                        </div>
-                    </div>
-                </form>
-            </section>
         </div>
     </div>
 
@@ -308,7 +281,7 @@
 
         .settings-wizard-nav {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             margin-bottom: 18px;
             overflow: hidden;
             border: 1px solid #dce5e3;
@@ -374,20 +347,6 @@
             color: #176c59;
             font-size: 12px;
             font-weight: 700;
-        }
-
-        .legacy-summary {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 22px;
-            margin: 0 0 18px 48px;
-            color: #526762;
-            font-size: 13px;
-        }
-
-        .legacy-summary strong {
-            color: #173b35;
-            font-size: 16px;
         }
 
         .status-panel {
@@ -484,7 +443,7 @@
 
         @media (max-width: 767.98px) {
             .settings-wizard-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .wizard-step:nth-child(2) { border-right:0; }
+            .wizard-step:nth-child(3) { border-right:0; }
             .wizard-step:nth-child(-n+2) { border-bottom:1px solid #e8eeec; }
             .wizard-actions { align-items:stretch; flex-direction:column-reverse; }
             .wizard-actions .btn, .wizard-actions > div { width:100%; }

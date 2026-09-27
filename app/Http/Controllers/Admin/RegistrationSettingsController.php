@@ -23,7 +23,6 @@ class RegistrationSettingsController extends Controller
         $applicationFee = Setting::getSetting('application_fee', config('paystack.application_fee'));
         $administrationFee = Setting::getSetting('administration_fee', config('paystack.administration_fee'));
         $confirmationFee = Setting::getSetting('confirmation_fee', 1000000);
-        $legacyPlan = app(\App\Services\LegacySessionAssignment::class)->plan();
 
         return view('admin.registration-settings', [
             'registrationOpen' => $registrationOpen,
@@ -34,8 +33,6 @@ class RegistrationSettingsController extends Controller
             'applicationFee' => $applicationFee,
             'administrationFee' => $administrationFee,
             'confirmationFee' => $confirmationFee,
-            'legacyReadyCount' => count($legacyPlan['changes']),
-            'legacyUnresolvedCount' => count($legacyPlan['unresolved']),
         ]);
     }
 
@@ -100,11 +97,4 @@ class RegistrationSettingsController extends Controller
         abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
     }
 
-    public function assignLegacySessions()
-    {
-        $this->authorizeAdmin();
-        \Illuminate\Support\Facades\Artisan::call('sessions:assign-legacy', ['--apply' => true]);
-
-        return back()->with('success', 'Matching legacy records have been linked to their sessions. Existing assignments, payments and admission statuses were preserved. Unresolved records remain unchanged.');
-    }
 }
