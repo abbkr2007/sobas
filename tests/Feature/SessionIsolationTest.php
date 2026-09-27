@@ -98,6 +98,11 @@ class SessionIsolationTest extends TestCase
             ->assertJsonPath('data.0.DT_RowIndex', 1)
             ->assertJsonPath('data.0.id', $listedUser->id)
             ->assertJsonPath('data.0.mat_id', 'MAT2500001');
+        $this->get(route('users.index', [], false))
+            ->assertOk()
+            ->assertSee('Users')
+            ->assertSee('S/N')
+            ->assertDontSee('User Management');
         $this->assertSame($this->current->id, app(AcademicSessionService::class)->current()->id);
         $this->assertStringStartsWith('MAT26', User::generateMatId());
     }
