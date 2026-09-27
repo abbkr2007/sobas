@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 class PaymentHistoryTest extends TestCase
 {
+    use \Tests\Support\SessionFixtures;
+
     private $activeSessionId;
     private $previousSessionId;
 
@@ -76,6 +78,7 @@ class PaymentHistoryTest extends TestCase
 
         $paymentMigration = require database_path('migrations/2026_09_26_000001_create_confirmation_fee_payments_table.php');
         $paymentMigration->up();
+        $this->setUpSessionFixtures(2026);
     }
 
     public function test_admin_history_combines_both_payment_types_and_downloads_receipts(): void
@@ -152,14 +155,17 @@ class PaymentHistoryTest extends TestCase
             ->assertSee('REG-REF-1')
             ->assertSee('CONF-REF-1');
 
+        // URL filters cannot override the session selected in Settings.
         $this->get(route('payment-history.index', ['session_id' => $this->previousSessionId], false))
-            ->assertOk()
-            ->assertSee('PREVIOUS-SESSION-REF')
-            ->assertDontSee('REG-REF-1');
+            ->assertOk()->assertDontSee('PREVIOUS-SESSION-REF')->assertSee('REG-REF-1');
         $this->get(route('payment-history.index', ['session_id' => 'all'], false))
-            ->assertOk()
-            ->assertSee('PREVIOUS-SESSION-REF')
-            ->assertSee('REG-REF-1');
+            ->assertOk()->assertDontSee('PREVIOUS-SESSION-REF')->assertSee('REG-REF-1');
+        \App\Models\Setting::setSetting('viewing_academic_session_id', $this->previousSessionId, 'integer');
+        $this->get(route('payment-history.index', [], false))
+            ->assertOk()->assertSee('PREVIOUS-SESSION-REF')->assertDontSee('REG-REF-1');
+        $this->get(route('payment-history.receipt', ['application', $applicationPaymentId], false))->assertNotFound();
+        $this->get(route('payment-history.receipt', ['confirmation', $confirmationPaymentId], false))->assertNotFound();
+        \App\Models\Setting::setSetting('viewing_academic_session_id', null, 'integer');
 
         foreach ([['application', $applicationPaymentId], ['confirmation', $confirmationPaymentId]] as [$source, $paymentId]) {
             $response = $this->get(route('payment-history.receipt', [$source, $paymentId], false));

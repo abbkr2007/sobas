@@ -33,24 +33,8 @@ class PaymentHistoryController extends Controller
         $status = in_array($request->input('status'), ['success', 'pending', 'failed'], true)
             ? $request->input('status')
             : null;
-        $sessions = collect();
-        $sessionSelection = 'all';
-
-        if ($isAdmin) {
-            $sessions = AcademicSession::orderByDesc('start_year')->get();
-            $activeSession = app(AcademicSessionService::class)->current();
-            $sessionSelection = $activeSession ? (string) $activeSession->id : 'all';
-
-            if ($request->has('session_id')) {
-                $requestedSession = (string) $request->input('session_id');
-                if ($requestedSession === 'all') {
-                    $sessionSelection = 'all';
-                } elseif (ctype_digit($requestedSession) && $sessions->contains('id', (int) $requestedSession)) {
-                    $sessionSelection = $requestedSession;
-                }
-            }
-        }
-        $sessionId = $sessionSelection === 'all' ? null : (int) $sessionSelection;
+        $viewingSession = $isAdmin ? app(AcademicSessionService::class)->viewing() : null;
+        $sessionId = $isAdmin ? ($viewingSession ? $viewingSession->id : 0) : null;
 
         $applicationPayments = DB::table('payments')
             ->leftJoin('users', 'users.id', '=', 'payments.user_id')
@@ -86,10 +70,10 @@ class PaymentHistoryController extends Controller
             $historyQuery->where('status', $status);
         }
 
-        $payments = $historyQuery->orderByDesc('created_at')->paginate(25)->appends($request->query());
+        $payments = $historyQuery->orderByDesc('created_at')->paginate(25)->appends($request->only(['type', 'status']));
 
         return view('admin.payment-history.index', compact(
-            'payments', 'type', 'status', 'isAdmin', 'sessions', 'sessionSelection'
+            'payments', 'type', 'status', 'isAdmin', 'viewingSession'
         ));
     }
 
@@ -119,6 +103,9 @@ class PaymentHistoryController extends Controller
                 ->when($userId !== null, function ($query) use ($userId) {
                     $query->where('payments.user_id', $userId);
                 })
+                ->when($userId === null, function ($query) {
+                    app(AcademicSessionService::class)->scope($query, 'users.academic_session_id');
+                })
                 ->first();
             $paymentType = 'Application fee';
         } elseif ($source === 'confirmation') {
@@ -130,6 +117,10 @@ class PaymentHistoryController extends Controller
                 ->selectRaw("confirmation_fee_payments.*, users.first_name, users.last_name, users.mat_id as matric_number, applications.email")
                 ->when($userId !== null, function ($query) use ($userId) {
                     $query->where('confirmation_fee_payments.user_id', $userId);
+                })
+                ->when($userId === null, function ($query) {
+                    $session = app(AcademicSessionService::class)->viewing();
+                    $query->whereRaw('COALESCE(applications.academic_session_id, users.academic_session_id) = ?', [$session ? $session->id : 0]);
                 })
                 ->first();
             $paymentType = 'Confirmation fee';

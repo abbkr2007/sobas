@@ -17,6 +17,7 @@ use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use App\Models\Application;
 use App\Models\ConfirmationFeePayment;
 use App\Models\Setting;
+use App\Services\AcademicSessionService;
 
 class HomeController extends Controller
 {
@@ -39,8 +40,22 @@ class HomeController extends Controller
         ? ConfirmationFeePayment::where('application_id', $application->id)->where('status', 'success')->exists()
         : false;
 
+    $currentSession = $user->user_type === 'admin'
+        ? app(AcademicSessionService::class)->viewing()
+        : null;
+    $currentSessionApplicationCount = $currentSession
+        ? Application::where('academic_session_id', $currentSession->id)->count()
+        : 0;
+
+    $sessionTodayCount = $currentSession
+        ? Application::where('academic_session_id', $currentSession->id)->whereDate('created_at', today())->count()
+        : 0;
+    $sessionUserCount = $currentSession
+        ? \App\Models\User::where('academic_session_id', $currentSession->id)->count()
+        : 0;
+
     // Pass data to the view
-    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application', 'applicationFee', 'confirmationFee', 'administrationFee', 'confirmationFeePaid'));
+    return view('dashboards.dashboard', compact('assets', 'hasSubmitted', 'application', 'applicationFee', 'confirmationFee', 'administrationFee', 'confirmationFeePaid', 'currentSession', 'currentSessionApplicationCount', 'sessionTodayCount', 'sessionUserCount'));
 }
 
 
@@ -89,7 +104,14 @@ public function downloadQR()
 
     //         // // Pass data to the view
     //         // return view('dashboards.dashboard', compact('assets', 'documents'));
-    //          // Pass data to the view
+    //          $sessionTodayCount = $currentSession
+        ? Application::where('academic_session_id', $currentSession->id)->whereDate('created_at', today())->count()
+        : 0;
+    $sessionUserCount = $currentSession
+        ? \App\Models\User::where('academic_session_id', $currentSession->id)->count()
+        : 0;
+
+    // Pass data to the view
     //     return view('dashboards.dashboard', compact('assets', 'documents', 'submissionCount'));
     //     }
 

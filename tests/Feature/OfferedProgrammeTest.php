@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 class OfferedProgrammeTest extends TestCase
 {
+    use \Tests\Support\SessionFixtures;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,6 +27,7 @@ class OfferedProgrammeTest extends TestCase
             $table->string('status');
             $table->timestamps();
         });
+        $this->setUpSessionFixtures(2025);
     }
 
     public function test_admin_can_change_programme_without_changing_matric_or_status(): void

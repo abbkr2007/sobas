@@ -10,22 +10,12 @@
             <div>
                 <h4 class="text-info mb-1 fs-5 fs-md-4">Confirmation List</h4>
                 <p class="text-muted small mb-0">
-                    @if($availableYears->count())
-                        Showing {{ $selectedYear }}{{ $selectedProgramme ? ' - ' . ucwords(str_replace('_', ' ', $selectedProgramme)) : '' }} confirmations.
-                    @else
-                        No confirmation records yet.
-                    @endif
+                    Session: {{ $viewingSession ? $viewingSession->label : 'No session selected' }}.
+                    <a href="{{ route('admin.registration.index') }}">Change in Settings</a>
                 </p>
             </div>
             <div class="d-flex flex-column flex-sm-row gap-2">
                 <form method="GET" action="{{ route('confirmations.index') }}" class="d-flex flex-column flex-sm-row gap-2">
-                    <select name="year" id="yearFilter" class="form-select form-select-sm" {{ $availableYears->isEmpty() ? 'disabled' : '' }}>
-                        @forelse($availableYears as $year)
-                            <option value="{{ $year }}" {{ (int) $selectedYear === (int) $year ? 'selected' : '' }}>{{ $year }}</option>
-                        @empty
-                            <option value="">No data</option>
-                        @endforelse
-                    </select>
                     <select name="programme" id="programmeFilter" class="form-select form-select-sm">
                         <option value="">All Programmes</option>
                         @foreach($availableProgrammes as $programme)
@@ -35,7 +25,7 @@
                         @endforeach
                     </select>
                 </form>
-                <a href="{{ route('confirmations.export', ['year' => $selectedYear, 'programme' => $selectedProgramme]) }}" id="exportCsv" class="btn btn-info btn-sm btn-md-normal">
+                <a href="{{ route('confirmations.export', ['programme' => $selectedProgramme]) }}" id="exportCsv" class="btn btn-info btn-sm btn-md-normal">
                     <i class="fas fa-download me-1 me-md-2"></i>
                     <span class="d-none d-sm-inline">Export CSV</span>
                     <span class="d-sm-none">Export</span>
@@ -260,7 +250,6 @@
                 ajax: {
                     url: '{{ route('confirmations.index') }}',
                     data: function(data) {
-                        data.year = $('#yearFilter').val();
                         data.programme = $('#programmeFilter').val();
                     }
                 },
@@ -294,13 +283,12 @@
 
             function updateExportLink() {
                 const params = new URLSearchParams({
-                    year: $('#yearFilter').val() || '',
                     programme: $('#programmeFilter').val() || ''
                 });
                 $('#exportCsv').attr('href', '{{ route('confirmations.export') }}?' + params.toString());
             }
 
-            $('#yearFilter, #programmeFilter').on('change', function() {
+            $('#programmeFilter').on('change', function() {
                 updateExportLink();
                 table.ajax.reload();
             });

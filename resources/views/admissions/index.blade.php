@@ -10,22 +10,12 @@
             <div>
                 <h4 class="text-success mb-1 fs-5 fs-md-4">Admission List</h4>
                 <p class="text-muted small mb-0">
-                    @if($availableYears->count())
-                        Showing {{ $selectedYear }}{{ $selectedProgramme ? ' - ' . ucwords(str_replace('_', ' ', $selectedProgramme)) : '' }} admissions.
-                    @else
-                        No admission records yet.
-                    @endif
+                    Session: {{ $viewingSession ? $viewingSession->label : 'No session selected' }}.
+                    <a href="{{ route('admin.registration.index') }}">Change in Settings</a>
                 </p>
             </div>
             <div class="d-flex flex-column flex-sm-row gap-2">
                 <form method="GET" action="{{ route('admissions.index') }}" class="d-flex flex-column flex-sm-row gap-2">
-                    <select name="year" id="yearFilter" class="form-select form-select-sm" {{ $availableYears->isEmpty() ? 'disabled' : '' }}>
-                        @forelse($availableYears as $year)
-                            <option value="{{ $year }}" {{ (int) $selectedYear === (int) $year ? 'selected' : '' }}>{{ $year }}</option>
-                        @empty
-                            <option value="">No data</option>
-                        @endforelse
-                    </select>
                     <select name="programme" id="programmeFilter" class="form-select form-select-sm">
                         <option value="">All Programmes</option>
                         @foreach($availableProgrammes as $programme)
@@ -39,7 +29,7 @@
                         <option value="unpaid" {{ $feeStatus === 'unpaid' ? 'selected' : '' }}>Fee unpaid</option>
                     </select>
                 </form>
-                <a href="{{ route('admissions.export', ['year' => $selectedYear, 'programme' => $selectedProgramme, 'fee_status' => $feeStatus]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
+                <a href="{{ route('admissions.export', ['programme' => $selectedProgramme, 'fee_status' => $feeStatus]) }}" id="exportCsv" class="btn btn-success btn-sm btn-md-normal">
                     <i class="fas fa-download me-1 me-md-2"></i>
                     <span class="d-none d-sm-inline">Export CSV</span>
                     <span class="d-sm-none">Export</span>
@@ -347,7 +337,6 @@
                 ajax: {
                     url: '{{ route('admissions.index') }}',
                     data: function(data) {
-                        data.year = $('#yearFilter').val();
                         data.programme = $('#programmeFilter').val();
                         data.fee_status = $('#feeStatusFilter').val();
                     }
@@ -405,7 +394,6 @@
 
             function updateExportLink() {
                 const params = new URLSearchParams({
-                    year: $('#yearFilter').val() || '',
                     programme: $('#programmeFilter').val() || '',
                     fee_status: $('#feeStatusFilter').val() || ''
                 });
@@ -433,7 +421,7 @@
                 });
             });
 
-            $('#yearFilter, #programmeFilter, #feeStatusFilter').on('change', function() {
+            $('#programmeFilter, #feeStatusFilter').on('change', function() {
                 updateExportLink();
                 table.ajax.reload();
             });

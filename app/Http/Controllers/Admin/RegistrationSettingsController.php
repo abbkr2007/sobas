@@ -23,15 +23,19 @@ class RegistrationSettingsController extends Controller
         $applicationFee = Setting::getSetting('application_fee', config('paystack.application_fee'));
         $administrationFee = Setting::getSetting('administration_fee', config('paystack.administration_fee'));
         $confirmationFee = Setting::getSetting('confirmation_fee', 1000000);
+        $legacyPlan = app(\App\Services\LegacySessionAssignment::class)->plan();
 
         return view('admin.registration-settings', [
             'registrationOpen' => $registrationOpen,
             'closedMessage' => $closedMessage,
             'sessions' => $sessions,
             'activeSession' => $activeSession,
+            'viewingSessionId' => Setting::getSetting('viewing_academic_session_id'),
             'applicationFee' => $applicationFee,
             'administrationFee' => $administrationFee,
             'confirmationFee' => $confirmationFee,
+            'legacyReadyCount' => count($legacyPlan['changes']),
+            'legacyUnresolvedCount' => count($legacyPlan['unresolved']),
         ]);
     }
 
@@ -64,22 +68,29 @@ class RegistrationSettingsController extends Controller
             'administration_fee_naira' => 'required|numeric|min:0.01|max:1000000',
             'confirmation_fee_naira' => 'required|numeric|min:0.01|max:1000000',
             'academic_session_id' => 'nullable|exists:academic_sessions,id',
+            'viewing_academic_session_id' => 'nullable|exists:academic_sessions,id',
             'new_session_start_year' => 'nullable|integer|min:2000|max:2100|unique:academic_sessions,start_year',
         ]);
 
-        Setting::setSetting('registration_open', $request->registration_open ? '1' : '0', 'boolean');
-        Setting::setSetting('registration_closed_message', $request->registration_closed_message, 'string');
-        Setting::setSetting('application_fee', (int) round($request->application_fee_naira * 100), 'integer');
-        Setting::setSetting('administration_fee', (int) round($request->administration_fee_naira * 100), 'integer');
-        Setting::setSetting('confirmation_fee', (int) round($request->confirmation_fee_naira * 100), 'integer');
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
+            Setting::setSetting('registration_open', $request->registration_open ? '1' : '0', 'boolean');
+            Setting::setSetting('registration_closed_message', $request->registration_closed_message, 'string');
+            Setting::setSetting('application_fee', (int) round($request->application_fee_naira * 100), 'integer');
+            Setting::setSetting('administration_fee', (int) round($request->administration_fee_naira * 100), 'integer');
+            Setting::setSetting('confirmation_fee', (int) round($request->confirmation_fee_naira * 100), 'integer');
 
-        if ($request->filled('new_session_start_year')) {
-            $activeSession = app(AcademicSessionService::class)->create((int) $request->new_session_start_year);
-        } elseif ($request->filled('academic_session_id')) {
-            AcademicSession::query()->update(['is_active' => false]);
-            AcademicSession::whereKey($request->academic_session_id)->update(['is_active' => true]);
-            $activeSession = AcademicSession::find($request->academic_session_id);
-        }
+            if ($request->filled('new_session_start_year')) {
+                app(AcademicSessionService::class)->create((int) $request->new_session_start_year, false);
+            }
+            if ($request->filled('academic_session_id')) {
+                AcademicSession::query()->update(['is_active' => false]);
+                AcademicSession::whereKey($request->academic_session_id)->update(['is_active' => true]);
+            }
+
+            if ($request->has('viewing_academic_session_id')) {
+                Setting::setSetting('viewing_academic_session_id', $request->input('viewing_academic_session_id') ?: null, 'integer');
+            }
+        });
 
         return back()->with('success', 'Application settings updated successfully.');
     }
@@ -87,5 +98,13 @@ class RegistrationSettingsController extends Controller
     private function authorizeAdmin(): void
     {
         abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
+    }
+
+    public function assignLegacySessions()
+    {
+        $this->authorizeAdmin();
+        \Illuminate\Support\Facades\Artisan::call('sessions:assign-legacy', ['--apply' => true]);
+
+        return back()->with('success', 'Matching legacy records have been linked to their sessions. Existing assignments, payments and admission statuses were preserved. Unresolved records remain unchanged.');
     }
 }

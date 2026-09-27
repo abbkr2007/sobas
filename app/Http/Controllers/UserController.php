@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AcademicSessionService;
 use App\Models\AcademicSession;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -17,9 +18,7 @@ class UserController extends Controller
             $users = User::with('academicSession')
                 ->select(['id','mat_id','academic_session_id','first_name','last_name','email','phone_number','plain_password']);
 
-            if ($request->filled('academic_session_id')) {
-                $users->where('academic_session_id', $request->academic_session_id);
-            }
+            app(AcademicSessionService::class)->scope($users);
 
             return DataTables::of($users)
                 ->addColumn('academic_session', function ($row) {
@@ -38,7 +37,7 @@ class UserController extends Controller
 
         return view('users.index', [
             'sessions' => \App\Models\AcademicSession::orderByDesc('start_year')->get(),
-            'activeSession' => app(\App\Services\AcademicSessionService::class)->current(),
+            'activeSession' => app(AcademicSessionService::class)->viewing(),
         ]);
     }
 
@@ -50,7 +49,8 @@ class UserController extends Controller
             'academic_session_id' => 'required|exists:academic_sessions,id',
         ]);
 
-        $session = AcademicSession::findOrFail($data['academic_session_id']);
+        $session = app(AcademicSessionService::class)->viewing();
+        abort_unless($session && (int) $session->id === (int) $data['academic_session_id'], 409, 'The viewing session changed. Reload this page.');
         $users = User::where('academic_session_id', $session->id)
             ->orderBy('mat_id')
             ->get(['id', 'mat_id', 'first_name', 'last_name', 'email', 'phone_number', 'plain_password']);
@@ -81,7 +81,7 @@ class UserController extends Controller
 public function inlineUpdate(Request $request)
 {
     try {
-        $user = User::findOrFail($request->id);
+        $user = app(AcademicSessionService::class)->scope(User::query())->findOrFail($request->id);
 
         // Allowed fields to update
         $allowed = ['mat_id','first_name','last_name','email','phone_number','plain_password'];
@@ -118,7 +118,7 @@ public function inlineUpdate(Request $request)
     {
         abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
 
-        $user = User::findOrFail($id);
+        $user = app(AcademicSessionService::class)->scope(User::query())->findOrFail($id);
         if ((int) $user->id === (int) auth()->id()) {
             return response()->json([
                 'success' => false,
@@ -142,15 +142,12 @@ public function inlineUpdate(Request $request)
             'academic_session_id' => 'required|exists:academic_sessions,id',
         ]);
 
-        $session = AcademicSession::findOrFail($data['academic_session_id']);
-        $prefix = 'MAT' . substr((string) $session->start_year, -2);
+        $session = app(AcademicSessionService::class)->viewing();
+        abort_unless($session && (int) $session->id === (int) $data['academic_session_id'], 409, 'The viewing session changed. Reload this page.');
 
         $users = User::where('user_type', 'user')
             ->where('id', '<>', auth()->id())
-            ->where(function ($query) use ($data, $prefix) {
-                $query->where('academic_session_id', $data['academic_session_id'])
-                    ->orWhere('mat_id', 'like', $prefix . '%');
-            });
+            ->where('academic_session_id', $session->id);
 
         $count = $users->count();
         $users->delete();

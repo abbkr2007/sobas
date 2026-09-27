@@ -17,6 +17,8 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 
 class ConfirmationPaymentTest extends TestCase
 {
+    use \Tests\Support\SessionFixtures;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -59,6 +61,7 @@ class ConfirmationPaymentTest extends TestCase
             $table->text('description')->nullable();
             $table->timestamps();
         });
+        $this->setUpSessionFixtures(2026);
     }
 
     public function test_verified_payment_is_recorded_without_confirming_the_admission(): void

@@ -74,6 +74,17 @@
                 </div>
             </div>
 
+            <div class="settings-panel mb-4">
+                <h5 class="panel-title">Link Older Records to Sessions</h5>
+                <p class="panel-text">Matching MAT25 records belong to 2025/2026; MAT26 records belong to 2026/2027. Create the corresponding session first. Only missing assignments with consistent evidence will be filled.</p>
+                <p>{{ $legacyReadyCount }} records ready to link. {{ $legacyUnresolvedCount }} records need review.</p>
+                <form method="POST" action="{{ route('admin.registration.assign-legacy') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-success" {{ $legacyReadyCount ? '' : 'disabled' }}>Link Matching Legacy Records</button>
+                </form>
+                <p class="form-text mb-0">Payments and admission statuses are preserved. An assignment audit is saved on the server.</p>
+            </div>
+
             <form method="POST" action="{{ route('admin.registration.update') }}">
                 @csrf
 
@@ -123,7 +134,7 @@
 
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-7">
-                                        <label class="form-label fw-bold" for="academicSession">Active Academic Session</label>
+                                        <label class="form-label fw-bold" for="academicSession">Registration Session</label>
                                         <select class="form-select" name="academic_session_id" id="academicSession">
                                             <option value="">Keep current session</option>
                                             @foreach($sessions as $session)
@@ -132,13 +143,26 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <div class="form-text">This year controls new matric and confirmation numbers.</div>
+                                        <div class="form-text">New applicants register into this session. Viewing an older session below does not change this.</div>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="form-label fw-bold" for="newSessionYear">Create New Session</label>
                                         <input class="form-control" type="number" name="new_session_start_year" id="newSessionYear" min="2000" max="2100" placeholder="2026">
-                                        <div class="form-text">Creates and activates YYYY/YYYY+1.</div>
+                                        <div class="form-text">Creates YYYY/YYYY+1 without changing registration. After saving, select it above only if it should receive new registrations.</div>
+                                        @error('new_session_start_year')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                     </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" for="viewingSession">Session to View / Manage</label>
+                                    <select class="form-select" name="viewing_academic_session_id" id="viewingSession">
+                                        <option value="">Follow registration session</option>
+                                        @foreach($sessions as $session)
+                                            <option value="{{ $session->id }}" {{ (string) old('viewing_academic_session_id', $viewingSessionId) === (string) $session->id ? 'selected' : '' }}>{{ $session->label }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="form-text">Controls dashboard totals, applicants, admissions, confirmations, users, payments and exports for all administrators. Other sessions remain saved and hidden.</div>
+                                    @error('viewing_academic_session_id')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
 
                                 <label class="form-label fw-bold" for="closedMessage">Closed Page Message</label>

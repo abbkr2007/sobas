@@ -5,14 +5,8 @@
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
             <h4 class="text-success mb-2 mb-sm-0 fs-5 fs-md-4">User Management</h4>
             <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
-                <select id="sessionFilter" class="form-select form-select-sm" aria-label="Filter users by academic session">
-                    <option value="">All Sessions</option>
-                    @foreach ($sessions as $session)
-                        <option value="{{ $session->id }}" {{ optional($activeSession)->id === $session->id ? 'selected' : '' }}>
-                            {{ $session->label }}{{ $session->is_active ? ' (Active)' : '' }}
-                        </option>
-                    @endforeach
-                </select>
+                <input type="hidden" id="sessionFilter" value="{{ optional($activeSession)->id }}">
+                <span class="text-muted small">Session: <span id="viewingSessionLabel">{{ $activeSession ? $activeSession->label : 'None selected' }}</span> &middot; <a href="{{ route('admin.registration.index') }}">Change in Settings</a></span>
                 <button type="button" id="deleteSessionUsers" class="btn btn-outline-danger btn-sm" title="Delete all regular users in the selected session">
                     <i class="fas fa-trash-alt me-1"></i>Delete Session Users
                 </button>
@@ -322,10 +316,6 @@
 
             updateExportLink();
 
-            $('#sessionFilter').on('change', function () {
-                updateExportLink();
-                table.ajax.reload();
-            });
 
             $('#exportUsers').on('click', function (event) {
                 if (!$('#sessionFilter').val()) {
@@ -336,7 +326,7 @@
 
             $('#deleteSessionUsers').on('click', function () {
                 const sessionId = $('#sessionFilter').val();
-                const sessionLabel = $('#sessionFilter option:selected').text().trim();
+                const sessionLabel = $('#viewingSessionLabel').text().trim();
 
                 if (!sessionId) {
                     alert('Select an academic session first.');

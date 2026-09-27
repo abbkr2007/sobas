@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Services\AcademicSessionService;
 use App\Models\ConfirmationFeePayment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,15 +15,18 @@ use App\Services\ConfirmationNumber;
 
 class ApplicantController extends Controller
 {
-    private function selectedYear(Request $request, $availableYears): int
+    public function __construct()
     {
-        $requestedYear = (int) $request->input('year');
+        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            abort_unless(auth()->user()->user_type === 'admin', 403);
+            return $next($request);
+        });
+    }
 
-        if ($requestedYear > 0) {
-            return $requestedYear;
-        }
-
-        return now()->year;
+    private function sessionApplications()
+    {
+        return app(AcademicSessionService::class)->scope(Application::query(), 'applications.academic_session_id');
     }
 
     private function selectedProgramme(Request $request): ?string
@@ -39,37 +43,9 @@ class ApplicantController extends Controller
             : 'paid';
     }
 
-    private function availableYears(?string $status = null)
-    {
-        $query = Application::query()
-            ->select(['application_id', 'created_at', 'updated_at']);
-    
-        if ($status) {
-            $query->where('status', $status);
-        }
-    
-        return $query->get()
-            ->flatMap(function ($application) {
-                $years = [];
-    
-                if (preg_match('/MAT(\d{2})/i', (string) $application->application_id, $matches)) {
-                    $years[] = (int) ('20' . $matches[1]);
-                } elseif ($application->created_at) {
-                    $years[] = (int) $application->created_at->format('Y');
-                }
-    
-                return $years;
-            })
-            ->filter()
-            ->push(now()->year)
-            ->unique()
-            ->sortDesc()
-            ->values();
-    }
-
     private function availableProgrammes(?string $status = null)
     {
-        $query = Application::query()
+        $query = $this->sessionApplications()
             ->whereNotNull('application_type')
             ->where('application_type', '!=', '');
 
@@ -83,21 +59,6 @@ class ApplicantController extends Controller
             ->values();
     }
 
-    private function applyYearFilter($query, int $year)
-    {
-        $shortYear = substr((string) $year, -2);
-        $startOfYear = "{$year}-01-01 00:00:00";
-        $endOfYear = "{$year}-12-31 23:59:59";
-
-        return $query->where(function ($query) use ($startOfYear, $endOfYear, $shortYear) {
-            $query->where('application_id', 'like', 'MAT' . $shortYear . '%')
-                ->orWhere(function ($query) use ($startOfYear, $endOfYear) {
-                    $query->where('application_id', 'not regexp', '^MAT[0-9]{2}')
-                        ->whereBetween('created_at', [$startOfYear, $endOfYear]);
-                });
-        });
-    }
-
     private function applyProgrammeFilter($query, ?string $programme)
     {
         if ($programme) {
@@ -109,17 +70,14 @@ class ApplicantController extends Controller
 
     public function index(Request $request)
     {
-        $availableYears = $this->availableYears('Pending');
-        $selectedYear = $this->selectedYear($request, $availableYears);
+        $viewingSession = app(AcademicSessionService::class)->viewing();
         $availableProgrammes = $this->availableProgrammes('Pending');
         $selectedProgramme = $this->selectedProgramme($request);
 
         if ($request->ajax()) {
             try {
-                $applicants = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
+                $applicants = $this->sessionApplications()->select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
                                 ->where('status', 'Pending');
-
-                $this->applyYearFilter($applicants, $selectedYear);
                 $this->applyProgrammeFilter($applicants, $selectedProgramme);
                 
                 // Debug: Check if we have data
@@ -165,8 +123,7 @@ class ApplicantController extends Controller
         }
 
         return view('applicants.index', [
-            'selectedYear' => $selectedYear,
-            'availableYears' => $availableYears,
+            'viewingSession' => $viewingSession,
             'selectedProgramme' => $selectedProgramme,
             'availableProgrammes' => $availableProgrammes,
         ]);
@@ -175,17 +132,14 @@ class ApplicantController extends Controller
     public function admissionList(Request $request)
     {
         $feeStatus = $this->selectedFeeStatus($request);
-        $availableYears = $this->availableYears('Admitted');
-        $selectedYear = $this->selectedYear($request, $availableYears);
+        $viewingSession = app(AcademicSessionService::class)->viewing();
         $availableProgrammes = $this->availableProgrammes('Admitted');
         $selectedProgramme = $this->selectedProgramme($request);
 
         if ($request->ajax()) {
             try {
-                $admissions = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
+                $admissions = $this->sessionApplications()->select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
                                 ->where('status', 'Admitted');
-
-                $this->applyYearFilter($admissions, $selectedYear);
                 $this->applyProgrammeFilter($admissions, $selectedProgramme);
                 if ($feeStatus === 'paid') {
                     $admissions->whereExists(function ($query) {
@@ -239,8 +193,7 @@ class ApplicantController extends Controller
         }
 
         return view('admissions.index', [
-            'selectedYear' => $selectedYear,
-            'availableYears' => $availableYears,
+            'viewingSession' => $viewingSession,
             'selectedProgramme' => $selectedProgramme,
             'availableProgrammes' => $availableProgrammes,
             'feeStatus' => $feeStatus,
@@ -256,7 +209,7 @@ class ApplicantController extends Controller
         ]);
 
         return \Illuminate\Support\Facades\DB::transaction(function () use ($id, $data) {
-            $application = Application::whereKey($id)->lockForUpdate()->firstOrFail();
+            $application = $this->sessionApplications()->whereKey($id)->lockForUpdate()->firstOrFail();
             if ($application->status !== 'Admitted') {
                 return response()->json(['message' => 'Only admitted applicants can be updated here.'], 422);
             }
@@ -270,17 +223,14 @@ class ApplicantController extends Controller
 
     public function confirmationList(Request $request)
     {
-        $availableYears = $this->availableYears('Confirmed');
-        $selectedYear = $this->selectedYear($request, $availableYears);
+        $viewingSession = app(AcademicSessionService::class)->viewing();
         $availableProgrammes = $this->availableProgrammes('Confirmed');
         $selectedProgramme = $this->selectedProgramme($request);
 
         if ($request->ajax()) {
             try {
-                $confirmations = Application::select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
+                $confirmations = $this->sessionApplications()->select(['id', 'application_id', 'surname', 'firstname', 'middlename', 'application_type', 'gender', 'state', 'lga', 'status', 'created_at'])
                                 ->where('status', 'Confirmed');
-
-                $this->applyYearFilter($confirmations, $selectedYear);
                 $this->applyProgrammeFilter($confirmations, $selectedProgramme);
                 
                 Log::info('Confirmed Applicants count: ' . $confirmations->count());
@@ -319,8 +269,7 @@ class ApplicantController extends Controller
         }
 
         return view('confirmations.index', [
-            'selectedYear' => $selectedYear,
-            'availableYears' => $availableYears,
+            'viewingSession' => $viewingSession,
             'selectedProgramme' => $selectedProgramme,
             'availableProgrammes' => $availableProgrammes,
         ]);
@@ -329,7 +278,7 @@ class ApplicantController extends Controller
     public function show($id)
     {
         try {
-            $applicant = Application::findOrFail($id);
+            $applicant = $this->sessionApplications()->findOrFail($id);
             
             $fullName = collect([$applicant->firstname, $applicant->middlename, $applicant->surname])
                        ->filter()
@@ -347,11 +296,10 @@ class ApplicantController extends Controller
     public function export(Request $request)
     {
         try {
-            $selectedYear = $this->selectedYear($request, $this->availableYears());
+            $viewingSession = app(AcademicSessionService::class)->viewing();
             $selectedProgramme = $this->selectedProgramme($request);
             // Get all applications with all fields
-            $applications = Application::query();
-            $this->applyYearFilter($applications, $selectedYear);
+            $applications = $this->sessionApplications()->where('status', 'Pending');
             $this->applyProgrammeFilter($applications, $selectedProgramme);
             $applications = $applications->get();
 
@@ -367,7 +315,7 @@ class ApplicantController extends Controller
             ];
 
             // Generate filename with current date
-            $filename = 'applicants_export_' . $selectedYear . '_' . date('Y-m-d_H-i-s') . '.csv';
+            $filename = 'applicants_export_' . ($viewingSession ? str_replace('/', '-', $viewingSession->label) : 'no-session') . '_' . date('Y-m-d_H-i-s') . '.csv';
 
             // Set headers for CSV download
             $headers_http = [
@@ -429,17 +377,16 @@ class ApplicantController extends Controller
     public function exportAdmissions(Request $request)
     {
         try {
-            $selectedYear = $this->selectedYear($request, $this->availableYears('Admitted'));
+            $viewingSession = app(AcademicSessionService::class)->viewing();
             $selectedProgramme = $this->selectedProgramme($request);
             $feeStatus = $this->selectedFeeStatus($request);
             // Get only admitted applications
-            $applications = Application::select('applications.*')
+            $applications = $this->sessionApplications()->select('applications.*')
                 ->selectSub(ConfirmationFeePayment::selectRaw('1')
                     ->whereColumn('application_id', 'applications.id')
                     ->where('status', 'success')
                     ->limit(1), 'confirmation_fee_paid')
                 ->where('status', 'Admitted');
-            $this->applyYearFilter($applications, $selectedYear);
             $this->applyProgrammeFilter($applications, $selectedProgramme);
             if ($feeStatus === 'paid') {
                 $applications->whereExists(function ($query) {
@@ -470,7 +417,7 @@ class ApplicantController extends Controller
             ];
 
             // Generate filename with current date
-            $filename = 'admissions_export_' . $selectedYear . '_' . date('Y-m-d_H-i-s') . '.csv';
+            $filename = 'admissions_export_' . ($viewingSession ? str_replace('/', '-', $viewingSession->label) : 'no-session') . '_' . date('Y-m-d_H-i-s') . '.csv';
 
             // Set headers for CSV download
             $headers_http = [
@@ -536,7 +483,7 @@ class ApplicantController extends Controller
     public function details($id)
     {
         try {
-            $applicant = Application::findOrFail($id);
+            $applicant = $this->sessionApplications()->findOrFail($id);
             
             // Format O'Level results
             $oLevelResults = [];
@@ -619,7 +566,7 @@ class ApplicantController extends Controller
     public function downloadBiodata($id)
     {
         try {
-            $applicant = Application::findOrFail($id);
+            $applicant = $this->sessionApplications()->findOrFail($id);
             
             // Generate PDF or return biodata file
             // For now, we'll create a simple response
@@ -654,7 +601,7 @@ class ApplicantController extends Controller
         abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
 
         try {
-            $applicant = Application::findOrFail($id);
+            $applicant = $this->sessionApplications()->findOrFail($id);
             
             // Handle both form data and JSON requests
             $field = $request->input('field') ?? $request->json('field');
@@ -746,7 +693,7 @@ class ApplicantController extends Controller
         }
         
         try {
-            $applicant = Application::findOrFail($id);
+            $applicant = $this->sessionApplications()->findOrFail($id);
             
             $fullName = collect([$applicant->firstname, $applicant->middlename, $applicant->surname])
                        ->filter()
@@ -1193,7 +1140,7 @@ HTML;
         }
         
         try {
-            $application = Application::findOrFail($id);
+            $application = $this->sessionApplications()->findOrFail($id);
             
             // Only allow download if status is "Admitted"
             if ($application->status !== 'Admitted') {
@@ -1214,7 +1161,7 @@ HTML;
         abort_unless(auth()->check() && auth()->user()->user_type === 'admin', 403);
 
         try {
-            $application = Application::findOrFail($id);
+            $application = $this->sessionApplications()->findOrFail($id);
             
             // Only allow confirming if status is "Admitted"
             if ($application->status !== 'Admitted') {
@@ -1257,7 +1204,7 @@ HTML;
         }
         
         try {
-            $application = Application::findOrFail($id);
+            $application = $this->sessionApplications()->findOrFail($id);
             
             // Only allow download if status is "Confirmed"
             if ($application->status !== 'Confirmed') {
@@ -1295,7 +1242,7 @@ HTML;
                 'status' => 'required|string|in:Pending,Admitted'
             ]);
 
-            $application = Application::findOrFail($id);
+            $application = $this->sessionApplications()->findOrFail($id);
             $application->status = $request->status;
             $application->save();
 
@@ -1317,10 +1264,9 @@ HTML;
     public function exportConfirmations(Request $request)
     {
         try {
-            $selectedYear = $this->selectedYear($request, $this->availableYears('Confirmed'));
+            $viewingSession = app(AcademicSessionService::class)->viewing();
             $selectedProgramme = $this->selectedProgramme($request);
-            $confirmations = Application::where('status', 'Confirmed');
-            $this->applyYearFilter($confirmations, $selectedYear);
+            $confirmations = $this->sessionApplications()->where('status', 'Confirmed');
             $this->applyProgrammeFilter($confirmations, $selectedProgramme);
             $confirmations = $confirmations->get();
             
@@ -1343,7 +1289,7 @@ HTML;
                 ];
             }
             
-            $filename = 'confirmations_export_' . $selectedYear . '_' . date('Y-m-d_H-i-s') . '.csv';
+            $filename = 'confirmations_export_' . ($viewingSession ? str_replace('/', '-', $viewingSession->label) : 'no-session') . '_' . date('Y-m-d_H-i-s') . '.csv';
             
             $handle = fopen('php://temp', 'r+');
             foreach ($csvData as $row) {

@@ -124,25 +124,27 @@
                             <div class="admin-welcome-icon">
                                 <i class="fas fa-user-shield fa-4x text-primary"></i>
                             </div>
+                            <p class="text-muted">Viewing {{ $currentSession ? $currentSession->label : 'no selected session' }} &middot; <a href="{{ route('admin.registration.index') }}">Change in Settings</a></p>
                             <h3 class="admin-welcome-title">Welcome back, Admin!</h3>
                             <p class="admin-welcome-message">You have administrative access to the SOBAS system. Use the navigation menu to manage applications and system settings.</p>
                             <div class="admin-stats-summary">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="stat-box">
-                                            <h4>{{ \App\Models\Application::count() }}</h4>
+                                            <h4>{{ $currentSessionApplicationCount }}</h4>
                                             <p>Total Applications</p>
+                                            <small class="text-muted">{{ $currentSession ? $currentSession->label . ' session' : 'No active session' }}</small>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="stat-box">
-                                            <h4>{{ \App\Models\Application::whereDate('created_at', today())->count() }}</h4>
+                                            <h4>{{ $sessionTodayCount }}</h4>
                                             <p>Today's Applications</p>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="stat-box">
-                                            <h4>{{ \App\Models\User::count() }}</h4>
+                                            <h4>{{ $sessionUserCount }}</h4>
                                             <p>Total Users</p>
                                         </div>
                                     </div>
