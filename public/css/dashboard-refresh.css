@@ -1,0 +1,102 @@
+/* Shared presentation for each dashboard state. Keep form behaviour in Blade. */
+.professional-dashboard-wrapper {
+    --dashboard-green: #176b4b;
+    --dashboard-ink: #20372f;
+    --dashboard-muted: #61736b;
+    --dashboard-border: #dfe8e3;
+    background: #f4f7f5;
+    min-height: auto;
+    color: var(--dashboard-ink);
+}
+.professional-dashboard-wrapper .main-content-section { padding: 1.5rem 0 2.5rem; }
+.professional-dashboard-wrapper .container-fluid { max-width: 1320px; }
+.dashboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.75rem; }
+.dashboard-eyebrow { color: var(--dashboard-green); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .6rem; }
+.dashboard-heading h1 { color: var(--dashboard-ink); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: -.035em; margin-bottom: .5rem; }
+.dashboard-heading > div > p:last-child { color: var(--dashboard-muted); margin: 0; font-size: .95rem; }
+.dashboard-portal-label { display: inline-flex; align-items: center; gap: .6rem; padding: .65rem .9rem; border: 1px solid var(--dashboard-border); border-radius: 8px; background: white; color: var(--dashboard-muted); font-size: .8rem; white-space: nowrap; }
+.professional-dashboard-wrapper .professional-form-container { border: 1px solid var(--dashboard-border); border-radius: 14px; box-shadow: 0 4px 18px rgba(27, 57, 42, .035); }
+.professional-dashboard-wrapper .success-state-container,
+.professional-dashboard-wrapper .submitted-state-container,
+.professional-dashboard-wrapper .admin-welcome-container { min-height: 0; padding: 2rem; background: white; text-align: left !important; }
+.professional-dashboard-wrapper .admin-welcome-container::before { content: none; }
+.professional-dashboard-wrapper .success-card,
+.professional-dashboard-wrapper .submitted-card,
+.professional-dashboard-wrapper .admin-welcome-card { max-width: none; padding: 0; border: 0; background: white; box-shadow: none; border-radius: 0; backdrop-filter: none; }
+.dashboard-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.dashboard-summary-item { padding: 1.15rem; border: 1px solid var(--dashboard-border); border-radius: 10px; background: #f8faf9; min-width: 0; }
+.dashboard-summary-item > span { display: block; font-size: .78rem; color: var(--dashboard-muted); margin-bottom: .6rem; }
+.dashboard-summary-item strong { font-size: .98rem; display: block; overflow-wrap: anywhere; }
+.dashboard-status { color: var(--dashboard-green); }
+.professional-dashboard-wrapper .success-icon,
+.professional-dashboard-wrapper .submitted-icon,
+.professional-dashboard-wrapper .admin-welcome-icon { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #eaf4ee; margin-bottom: 1rem; animation: none; }
+.professional-dashboard-wrapper .success-icon i,
+.professional-dashboard-wrapper .submitted-icon i,
+.professional-dashboard-wrapper .admin-welcome-icon i { color: var(--dashboard-green) !important; font-size: 1.5rem; padding: 0; background: none; box-shadow: none; animation: none; }
+.professional-dashboard-wrapper .success-title,
+.professional-dashboard-wrapper .submitted-title,
+.professional-dashboard-wrapper .admin-welcome-title { font-size: clamp(1.3rem, 2.5vw, 1.75rem); font-weight: 700; color: var(--dashboard-ink); background: none; -webkit-text-fill-color: currentColor; text-shadow: none; margin-bottom: .75rem; }
+.professional-dashboard-wrapper .success-message,
+.professional-dashboard-wrapper .submitted-message,
+.professional-dashboard-wrapper .admin-welcome-message { color: var(--dashboard-muted); font-size: .98rem; line-height: 1.7; margin-bottom: 1.25rem; max-width: 760px; }
+.dashboard-notice { display: flex; align-items: baseline; gap: .6rem; background: #f0f5f9; color: #3b5d74; border-radius: 8px; padding: .85rem 1rem; font-size: .88rem; }
+.dashboard-payment { border: 1px solid var(--dashboard-border); border-left: 3px solid var(--dashboard-green); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; background: #fafcfb; }
+.dashboard-amount { font-size: clamp(1.65rem, 4vw, 2.2rem); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; margin-bottom: .6rem; }
+.dashboard-fee-detail { font-size: .84rem; color: var(--dashboard-muted); line-height: 1.6; }
+.dashboard-unpaid { color: #8a580e; }
+.professional-dashboard-wrapper .dashboard-payment form { margin-left: 0; }
+.professional-dashboard-wrapper .submitted-actions { border-top: 1px solid var(--dashboard-border); padding-top: 1.5rem; }
+.professional-dashboard-wrapper .btn { border-radius: 8px; font-size: .9rem; font-weight: 600; padding: .75rem 1.1rem; box-shadow: none; transition: background-color .15s, border-color .15s; }
+.professional-dashboard-wrapper .btn:hover { transform: none; box-shadow: none; }
+.professional-dashboard-wrapper .btn-primary,
+.professional-dashboard-wrapper .btn-success,
+.professional-dashboard-wrapper .submit-btn { background: var(--dashboard-green) !important; border-color: var(--dashboard-green) !important; color: white !important; }
+.professional-dashboard-wrapper .btn-primary:hover,
+.professional-dashboard-wrapper .btn-success:hover,
+.professional-dashboard-wrapper .submit-btn:hover { background: #105239 !important; border-color: #105239 !important; }
+.professional-dashboard-wrapper .btn-outline-success { color: var(--dashboard-green); border: 1px solid var(--dashboard-green); background: white; }
+.professional-dashboard-wrapper .btn-outline-success:hover { color: white; background: var(--dashboard-green); }
+.professional-dashboard-wrapper :is(a, button, input, select, textarea):focus-visible { outline: 3px solid #77ab92; outline-offset: 3px; }
+.professional-dashboard-wrapper .admin-stats-summary { padding: 0; margin-top: 2rem; background: none; box-shadow: none; }
+.professional-dashboard-wrapper .admin-stats-summary .row { margin: 0 -.5rem; }
+.professional-dashboard-wrapper .admin-stats-summary .row > div { padding: 0 .5rem; }
+.professional-dashboard-wrapper .stat-box { padding: 1.5rem; background: #f8faf9; border: 1px solid var(--dashboard-border); border-radius: 10px; box-shadow: none; cursor: default; }
+.professional-dashboard-wrapper .stat-box::before { content: none; }
+.professional-dashboard-wrapper .stat-box:hover { transform: none; box-shadow: none; }
+.professional-dashboard-wrapper .stat-box h4 { font-size: 2.2rem; color: var(--dashboard-green); background: none; -webkit-text-fill-color: currentColor; }
+.professional-dashboard-wrapper .stat-box p { text-transform: none; letter-spacing: normal; color: var(--dashboard-muted); font-size: .85rem; }
+.professional-dashboard-wrapper .form-header { padding: 1.75rem 2rem; background: white; border-color: var(--dashboard-border); }
+.professional-dashboard-wrapper .form-title { color: var(--dashboard-ink); font-size: 1.4rem; }
+.professional-dashboard-wrapper .progress-container { box-shadow: none; border: 1px solid var(--dashboard-border); margin-bottom: 0; background: #f8faf9; }
+.professional-dashboard-wrapper .progress-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.professional-dashboard-wrapper .progress-bar-fill { background: var(--dashboard-green); }
+.professional-dashboard-wrapper .progress-bar-fill::after { content: none; }
+.professional-dashboard-wrapper .step-indicator.active { background: #eaf4ee; }
+.professional-dashboard-wrapper .step-indicator.active .step-icon { background: var(--dashboard-green); }
+.professional-dashboard-wrapper .step-card { padding: 2rem; }
+.professional-dashboard-wrapper .form-section { border: 1px solid var(--dashboard-border); box-shadow: none; background: white; border-radius: 10px; }
+.professional-dashboard-wrapper .form-control { border: 1px solid #ccd9d1; border-radius: 8px; padding: .75rem 1rem; }
+.professional-dashboard-wrapper .input-wrapper .form-control { padding-left: 3rem; }
+.professional-dashboard-wrapper .form-control:focus { border-color: var(--dashboard-green); box-shadow: 0 0 0 3px rgba(23, 107, 75, .12); }
+.professional-dashboard-wrapper .form-control.is-invalid { border-color: #dc3545; }
+@media (max-width: 767.98px) {
+    .dashboard-heading { align-items: flex-start; flex-direction: column; }
+    .dashboard-summary { grid-template-columns: 1fr; gap: .65rem; margin-bottom: 1.5rem; }
+    .dashboard-summary-item { padding: 1rem; }
+    .professional-dashboard-wrapper .success-state-container,
+    .professional-dashboard-wrapper .submitted-state-container,
+    .professional-dashboard-wrapper .admin-welcome-container,
+    .professional-dashboard-wrapper .form-header,
+    .professional-dashboard-wrapper .step-card { padding: 1.25rem; }
+    .professional-dashboard-wrapper .progress-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-payment { padding: 1.1rem; }
+    .professional-dashboard-wrapper .submitted-actions .btn,
+    .professional-dashboard-wrapper .success-actions .btn,
+    .professional-dashboard-wrapper .dashboard-payment .btn { width: 100%; white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .professional-dashboard-wrapper *,
+    .professional-dashboard-wrapper *::before,
+    .professional-dashboard-wrapper *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

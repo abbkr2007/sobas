@@ -4,6 +4,14 @@
         <!-- Main Content Section -->
         <section class="main-content-section">
             <div class="container-fluid px-3 px-md-4">
+                <header class="dashboard-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">SOBAS PORTAL</p>
+                        <h1>{{ auth()->user()->user_type === 'admin' ? 'Administration dashboard' : 'Applicant dashboard' }}</h1>
+                        <p>Your applications, updates and next steps in one place.</p>
+                    </div>
+                    <span class="dashboard-portal-label"><i class="fas fa-university" aria-hidden="true"></i> Admissions portal</span>
+                </header>
                 <div class="professional-form-container">
                  @if(session('success') && session('application_id'))
                     <!-- Success State with Enhanced Design -->
@@ -41,6 +49,20 @@
                     <!-- Already Submitted State -->
                     <div class="submitted-state-container text-center">
                         <div class="submitted-card mx-auto">
+                            <div class="dashboard-summary" aria-label="Application overview">
+                                <div class="dashboard-summary-item">
+                                    <span>Application number</span>
+                                    <strong>{{ $application->application_id }}</strong>
+                                </div>
+                                <div class="dashboard-summary-item">
+                                    <span>Programme</span>
+                                    <strong>{{ ucwords(str_replace('_', ' ', $application->application_type)) }}</strong>
+                                </div>
+                                <div class="dashboard-summary-item">
+                                    <span>Application status</span>
+                                    <strong class="dashboard-status">{{ $application->status ?: 'Being reviewed' }}</strong>
+                                </div>
+                            </div>
                             <div class="submitted-icon">
                                 <i class="fas {{ $application->status === 'Admitted' ? 'fa-graduation-cap' : 'fa-clipboard-check' }} fa-4x text-success"></i>
                             </div>
@@ -60,14 +82,17 @@
                                 <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
                             @endif
                             @if($application->status === 'Admitted')
-                                <p class="submitted-message text-danger fw-bold">Your application has been admitted to the {{ ucwords(str_replace('_', ' ', $application->application_type)) }} programme.</p>
-                                <p class="submitted-message text-danger fw-bold">The screening announcement will be made later.</p>
-                                <p class="fw-bold">Amount to pay: ₦{{ number_format(($confirmationFee + $administrationFee) / 100, 2) }}</p>
+                                <p class="submitted-message">Your application has been admitted to the {{ ucwords(str_replace('_', ' ', $application->application_type)) }} programme.</p>
+                                <p class="dashboard-notice"><i class="fas fa-info-circle" aria-hidden="true"></i> The screening announcement will be made later.</p>
+                                <div class="dashboard-payment">
+                                <p class="dashboard-eyebrow">Confirmation payment</p>
+                                <p class="dashboard-amount">₦{{ number_format(($confirmationFee + $administrationFee) / 100, 2) }}</p>
+                                <p class="dashboard-fee-detail">Confirmation fee: ₦{{ number_format($confirmationFee / 100, 2) }} &middot; Administration fee: ₦{{ number_format($administrationFee / 100, 2) }}</p>
                                 @if($confirmationFeePaid)
                                     <p class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Payment received</p>
                                     <p class="submitted-message">Please wait for the announcement of the screening.</p>
                                 @else
-                                    <p class="text-warning fw-bold"><i class="fas fa-clock me-1"></i>Payment not yet received</p>
+                                    <p class="dashboard-unpaid fw-bold"><i class="fas fa-clock me-1"></i>Payment not yet received</p>
                                     <form method="POST" action="{{ route('confirmation-payment.checkout') }}" class="mb-3">
                                         @csrf
                                         <button type="submit" class="btn btn-primary btn-lg">
@@ -75,6 +100,8 @@
                                         </button>
                                     </form>
                                 @endif
+                                <p class="dashboard-fee-detail mb-0">Admission confirmation is completed by the admissions office.</p>
+                                </div>
                             @elseif($application->status === 'Confirmed')
                                 <p class="submitted-message">Your admission has been confirmed. You can download your Biodata Slip below.</p>
                             @else
@@ -84,7 +111,7 @@
                                 <a href="{{ route('applications.show', $application->id) }}" target="_blank" 
                                    class="btn btn-success btn-lg">
                                     <i class="fas fa-file-alt me-2"></i>
-                                    </i>Download Biodata Slip
+                                    Download Biodata Slip
                                 </a>
                             </div>
                         </div>
@@ -2079,6 +2106,7 @@ const lgas = {
             renderApplicationPreview();
         </script>
                     </div>
+                @endif
                 </div>
             </div>
         </section>
@@ -3625,5 +3653,5 @@ const lgas = {
             }
         }
     </style>
-    @endif
+    <link rel="stylesheet" href="{{ asset('css/dashboard-refresh.css') }}">
 </x-app-layout>
