@@ -74,15 +74,30 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('admin.registration.update') }}">
+            <nav class="settings-wizard-nav" aria-label="Application Control sections" role="tablist">
+                <button type="button" class="wizard-step is-active" id="wizard-tab-1" role="tab" aria-selected="true" aria-controls="portal-access-step" data-step-target="1">
+                    <span class="wizard-step-number">01</span><span>Portal Access</span>
+                </button>
+                <button type="button" class="wizard-step" id="wizard-tab-2" role="tab" aria-selected="false" aria-controls="academic-sessions-step" data-step-target="2">
+                    <span class="wizard-step-number">02</span><span>Academic Sessions</span>
+                </button>
+                <button type="button" class="wizard-step" id="wizard-tab-3" role="tab" aria-selected="false" aria-controls="payment-fees-step" data-step-target="3">
+                    <span class="wizard-step-number">03</span><span>Payment Fees</span>
+                </button>
+                <button type="button" class="wizard-step" id="wizard-tab-4" role="tab" aria-selected="false" aria-controls="legacy-records-step" data-step-target="4">
+                    <span class="wizard-step-number">04</span><span>Legacy Records</span>
+                </button>
+            </nav>
+
+            <form method="POST" action="{{ route('admin.registration.update') }}" id="applicationControlForm" novalidate>
                 @csrf
 
-                <section class="settings-panel settings-section form-panel mb-4" aria-labelledby="portal-access-heading">
+                <section class="settings-panel settings-section form-panel mb-4 wizard-pane" id="portal-access-step" role="tabpanel" aria-labelledby="wizard-tab-1" data-step-panel="1">
                     <div class="section-heading">
                         <span class="section-number">01</span>
                         <div>
                             <p class="panel-label mb-1">Portal Access</p>
-                            <h5 class="panel-title mb-1" id="portal-access-heading">Application availability</h5>
+                            <h5 class="panel-title mb-1" id="portal-access-heading" tabindex="-1">Application availability</h5>
                             <p class="panel-text mb-0">Choose whether new applicants can submit applications and set the message shown while the portal is closed.</p>
                         </div>
                     </div>
@@ -105,14 +120,17 @@
                             @error('registration_closed_message')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                         </div>
                     </div>
+                    <div class="wizard-actions wizard-actions-end">
+                        <button type="button" class="btn btn-success wizard-next" data-next-step="2">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                    </div>
                 </section>
 
-                <section class="settings-panel settings-section form-panel mb-4" aria-labelledby="academic-sessions-heading">
+                <section class="settings-panel settings-section form-panel mb-4 wizard-pane" id="academic-sessions-step" role="tabpanel" aria-labelledby="wizard-tab-2" data-step-panel="2">
                     <div class="section-heading">
                         <span class="section-number">02</span>
                         <div>
                             <p class="panel-label mb-1">Academic Sessions</p>
-                            <h5 class="panel-title mb-1" id="academic-sessions-heading">Registration and admin view</h5>
+                            <h5 class="panel-title mb-1" id="academic-sessions-heading" tabindex="-1">Registration and admin view</h5>
                             <p class="panel-text mb-0">Set the session for new registrations separately from the session administrators are currently viewing.</p>
                         </div>
                     </div>
@@ -145,14 +163,18 @@
                             @error('viewing_academic_session_id')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                         </div>
                     </div>
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-light wizard-back" data-previous-step="1"><i class="fas fa-arrow-left me-2"></i>Back</button>
+                        <button type="button" class="btn btn-success wizard-next" data-next-step="3">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                    </div>
                 </section>
 
-                <section class="settings-panel settings-section form-panel mb-4" aria-labelledby="payment-fees-heading">
+                <section class="settings-panel settings-section form-panel mb-4 wizard-pane" id="payment-fees-step" role="tabpanel" aria-labelledby="wizard-tab-3" data-step-panel="3">
                     <div class="section-heading">
                         <span class="section-number">03</span>
                         <div>
                             <p class="panel-label mb-1">Payment Fees</p>
-                            <h5 class="panel-title mb-1" id="payment-fees-heading">Applicant charges</h5>
+                            <h5 class="panel-title mb-1" id="payment-fees-heading" tabindex="-1">Applicant charges</h5>
                             <p class="panel-text mb-0">Set the amounts used at checkout. Values are entered in naira.</p>
                         </div>
                     </div>
@@ -174,24 +196,22 @@
                             @error('confirmation_fee_naira')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                         </div>
                     </div>
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-light wizard-back" data-previous-step="2"><i class="fas fa-arrow-left me-2"></i>Back</button>
+                        <div class="settings-actions">
+                            <a href="{{ route('dashboard') }}" class="btn btn-light">Cancel</a>
+                            <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save me-2"></i>Save Changes</button>
+                        </div>
+                    </div>
                 </section>
-
-                <div class="settings-actions">
-                    <button type="submit" class="btn btn-success btn-lg">
-                        <i class="fas fa-save me-2"></i>Save Changes
-                    </button>
-                    <a href="{{ route('dashboard') }}" class="btn btn-light btn-lg">
-                        Cancel
-                    </a>
-                </div>
             </form>
 
-            <section class="settings-panel settings-section legacy-section mb-4" aria-labelledby="legacy-records-heading">
+            <section class="settings-panel settings-section legacy-section mb-4 wizard-pane" id="legacy-records-step" role="tabpanel" aria-labelledby="wizard-tab-4" data-step-panel="4">
                 <div class="section-heading">
                     <span class="section-number">04</span>
                     <div>
                         <p class="panel-label mb-1">Data Maintenance</p>
-                        <h5 class="panel-title mb-1" id="legacy-records-heading">Link older records to sessions</h5>
+                        <h5 class="panel-title mb-1" id="legacy-records-heading" tabindex="-1">Link older records to sessions</h5>
                         <p class="panel-text mb-0">Matching MAT25 records belong to 2025/2026 and MAT26 records to 2026/2027. Create the corresponding sessions first.</p>
                     </div>
                 </div>
@@ -201,8 +221,13 @@
                 </div>
                 <form method="POST" action="{{ route('admin.registration.assign-legacy') }}">
                     @csrf
-                    <button type="submit" class="btn btn-outline-success" {{ $legacyReadyCount ? '' : 'disabled' }}>Link Matching Legacy Records</button>
-                    <span class="form-text ms-md-3">Payments and admission statuses are preserved. An assignment audit is saved on the server.</span>
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-light wizard-back" data-previous-step="3"><i class="fas fa-arrow-left me-2"></i>Back</button>
+                        <div>
+                            <button type="submit" class="btn btn-outline-success" {{ $legacyReadyCount ? '' : 'disabled' }}>Link Matching Legacy Records</button>
+                            <span class="form-text ms-md-3">Payments and admission statuses are preserved. An assignment audit is saved on the server.</span>
+                        </div>
+                    </div>
                 </form>
             </section>
         </div>
@@ -280,6 +305,53 @@
         .settings-section {
             box-shadow: 0 3px 12px rgba(17, 24, 39, 0.035);
         }
+
+        .settings-wizard-nav {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-bottom: 18px;
+            overflow: hidden;
+            border: 1px solid #dce5e3;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .wizard-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 62px;
+            padding: 10px 14px;
+            border: 0;
+            border-right: 1px solid #e8eeec;
+            background: #fff;
+            color: #62736f;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .wizard-step:last-child { border-right: 0; }
+        .wizard-step:hover { background: #f6faf8; color: #176c59; }
+        .wizard-step.is-active { background: #edf6f1; color: #145c4b; }
+        .wizard-step-number {
+            display: inline-flex;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4e2dc;
+            border-radius: 50%;
+            background: #fff;
+            color: #687b75;
+            font-size: 10px;
+        }
+        .wizard-step.is-active .wizard-step-number { border-color: #176c59; background: #176c59; color: #fff; }
+        .wizard-pane[hidden] { display: none !important; }
+        .wizard-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:24px; padding-top:18px; border-top:1px solid #edf1f0; }
+        .wizard-actions-end { justify-content:flex-end; }
 
         .section-heading {
             display: flex;
@@ -411,6 +483,20 @@
         }
 
         @media (max-width: 767.98px) {
+            .settings-wizard-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .wizard-step:nth-child(2) { border-right:0; }
+            .wizard-step:nth-child(-n+2) { border-bottom:1px solid #e8eeec; }
+            .wizard-actions { align-items:stretch; flex-direction:column-reverse; }
+            .wizard-actions .btn, .wizard-actions > div { width:100%; }
+            .settings-actions { justify-content:space-between; }
+        }
+
+        @media (max-width: 420px) {
+            .wizard-step { gap:6px; padding:9px 8px; font-size:12px; }
+            .wizard-step-number { width:26px; height:26px; flex-basis:26px; }
+        }
+
+        @media (max-width: 767.98px) {
             .settings-header,
             .status-panel,
             .access-switch {
@@ -436,4 +522,79 @@
             }
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = Array.from(document.querySelectorAll('[data-step-target]'));
+            const panels = Array.from(document.querySelectorAll('[data-step-panel]'));
+            const settingsForm = document.getElementById('applicationControlForm');
+
+            function showStep(stepNumber, focusPanel) {
+                panels.forEach(function (panel) {
+                    panel.hidden = panel.dataset.stepPanel !== String(stepNumber);
+                });
+                tabs.forEach(function (tab) {
+                    const isActive = tab.dataset.stepTarget === String(stepNumber);
+                    tab.classList.toggle('is-active', isActive);
+                    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                    tab.tabIndex = isActive ? 0 : -1;
+                });
+
+                if (focusPanel) {
+                    const panel = document.querySelector('[data-step-panel="' + stepNumber + '"]');
+                    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    panel.querySelector('h5')?.focus({ preventScroll: true });
+                }
+            }
+
+            function validatePanel(panel) {
+                const fields = Array.from(panel.querySelectorAll('input, select, textarea'));
+                const invalidField = fields.find(function (field) {
+                    return !field.checkValidity();
+                });
+
+                if (invalidField) {
+                    showStep(panel.dataset.stepPanel, false);
+                    invalidField.reportValidity();
+                    invalidField.focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            tabs.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    showStep(tab.dataset.stepTarget, true);
+                });
+            });
+
+            document.querySelectorAll('[data-next-step]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const currentPanel = button.closest('[data-step-panel]');
+                    if (validatePanel(currentPanel)) {
+                        showStep(button.dataset.nextStep, true);
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-previous-step]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    showStep(button.dataset.previousStep, true);
+                });
+            });
+
+            settingsForm.addEventListener('submit', function (event) {
+                for (const panel of panels.filter(function (item) { return item.closest('#applicationControlForm'); })) {
+                    if (!validatePanel(panel)) {
+                        event.preventDefault();
+                        showStep(panel.dataset.stepPanel, true);
+                        return;
+                    }
+                }
+            });
+
+            showStep(1, false);
+        });
+    </script>
 </x-app-layout>
