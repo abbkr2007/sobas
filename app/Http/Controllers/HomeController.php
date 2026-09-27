@@ -87,36 +87,6 @@ public function downloadQR()
         return $pdf->download('user-qr-code.pdf');
     }
 
-    //  public function index(Request $request)
-    //     {
-
-    //         // Get the authenticated user
-    //         $user = Auth::user();
-
-    //         // Retrieve the documents associated with the authenticated user
-    //         $documents = Document::where('user_id', $user->id)->get();
-
-    //        // Get the count of submissions for the authenticated user
-    //         $submissionCount = Document::where('user_id', $user->id)->count();
-
-    //         // Assets for the dashboard view
-    //         $assets = ['chart', 'animation'];
-
-    //         // // Pass data to the view
-    //         // return view('dashboards.dashboard', compact('assets', 'documents'));
-    //          $sessionTodayCount = $currentSession
-        ? Application::where('academic_session_id', $currentSession->id)->whereDate('created_at', today())->count()
-        : 0;
-    $sessionUserCount = $currentSession
-        ? \App\Models\User::where('academic_session_id', $currentSession->id)->count()
-        : 0;
-
-    // Pass data to the view
-    //     return view('dashboards.dashboard', compact('assets', 'documents', 'submissionCount'));
-    //     }
-
-
-
     public function submit_paper(Request $request)
     {
         $assets = ['chart', 'animation'];
