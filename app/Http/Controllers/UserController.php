@@ -21,6 +21,7 @@ class UserController extends Controller
             app(AcademicSessionService::class)->scope($users);
 
             return DataTables::of($users)
+                ->addIndexColumn()
                 ->addColumn('academic_session', function ($row) {
                     return $row->academicSession ? $row->academicSession->label : 'Legacy';
                 })

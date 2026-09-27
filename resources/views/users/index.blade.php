@@ -3,7 +3,7 @@
     <div class="container-fluid px-2 px-md-3">
         <!-- Responsive Button Container -->
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
-            <h4 class="text-success mb-2 mb-sm-0 fs-5 fs-md-4">User Management</h4>
+            <h4 class="text-success mb-2 mb-sm-0 fs-5 fs-md-4">Users</h4>
             <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
                 <input type="hidden" id="sessionFilter" value="{{ optional($activeSession)->id }}">
                 <span class="text-muted small">Session: <span id="viewingSessionLabel">{{ $activeSession ? $activeSession->label : 'None selected' }}</span> &middot; <a href="{{ route('admin.registration.index') }}">Change in Settings</a></span>
@@ -30,7 +30,7 @@
             <table id="users-table" class="table table-bordered table-striped custom-table w-100">
                 <thead class="table-success">
                     <tr>
-                        <th class="text-nowrap">ID</th>
+                        <th class="text-nowrap">S/N</th>
                         <th class="text-nowrap">Matric No</th>
                         <th class="text-nowrap">Session</th>
                         <th class="text-nowrap d-none d-md-table-cell">First Name</th>
@@ -225,9 +225,11 @@
                 ],
                 columns: [
                     { 
-                        data: 'id', 
-                        name: 'id',
-                        title: 'ID'
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        title: 'S/N'
                     },
                     { 
                         data: 'mat_id', 

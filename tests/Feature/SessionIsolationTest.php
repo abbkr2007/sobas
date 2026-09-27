@@ -88,13 +88,16 @@ class SessionIsolationTest extends TestCase
         $this->applicant($this->current, 'Pending', '00001');
         $this->applicant($this->previous, 'Pending', '00001');
         $this->applicant($this->previous, 'Admitted', '00002');
-        User::create(['mat_id' => 'MAT2500001', 'academic_session_id' => $this->previous->id]);
+        $listedUser = User::create(['mat_id' => 'MAT2500001', 'academic_session_id' => $this->previous->id]);
         $this->get(route('dashboard', [], false))->assertOk()->assertViewHas('currentSessionApplicationCount', 1);
         Setting::setSetting('viewing_academic_session_id', $this->previous->id, 'integer');
         $this->get(route('dashboard', [], false))->assertOk()
             ->assertViewHas('currentSessionApplicationCount', 2)->assertViewHas('sessionTodayCount', 2)->assertViewHas('sessionUserCount', 1);
         $this->getJson(route('users.index', ['academic_session_id' => $this->current->id], false), ['X-Requested-With' => 'XMLHttpRequest'])
-            ->assertOk()->assertJsonPath('recordsTotal', 1)->assertJsonPath('data.0.mat_id', 'MAT2500001');
+            ->assertOk()->assertJsonPath('recordsTotal', 1)
+            ->assertJsonPath('data.0.DT_RowIndex', 1)
+            ->assertJsonPath('data.0.id', $listedUser->id)
+            ->assertJsonPath('data.0.mat_id', 'MAT2500001');
         $this->assertSame($this->current->id, app(AcademicSessionService::class)->current()->id);
         $this->assertStringStartsWith('MAT26', User::generateMatId());
     }
