@@ -33,17 +33,15 @@
         
         <!-- Responsive Table Container -->
         <div class="table-responsive list-table-scroll">
-            <table id="users-table" class="table table-bordered table-striped custom-table w-100">
-                <thead class="table-success">
+            <table id="users-table" class="table custom-table w-100">
+                <thead>
                     <tr>
                         <th class="text-nowrap">S/N</th>
                         <th class="text-nowrap">Matric No</th>
-                        <th class="text-nowrap">Session</th>
                         <th class="text-nowrap d-none d-md-table-cell">First Name</th>
                         <th class="text-nowrap d-none d-md-table-cell">Last Name</th>
                         <th class="text-nowrap d-md-none">Name</th>
                         <th class="text-nowrap">Email</th>
-                        <th class="text-nowrap d-none d-lg-table-cell">Phone Number</th>
                         <th class="text-nowrap d-none d-lg-table-cell">Plain Password</th>
                         <th class="text-nowrap">Actions</th>
                     </tr>
@@ -77,68 +75,85 @@
         .users-page-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
         .users-page-actions .btn { white-space: normal; }
 
-        /* Responsive Table Styles */
-        .table-responsive {
+        /* Compact directory table, scoped to the users list. */
+        .list-table-scroll {
+            border: 1px solid #dce5e3;
             border-radius: 8px;
-            overflow: hidden;
             overflow-x: auto;
-            overflow-y: hidden;
             max-width: 100%;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(23, 59, 53, 0.04);
         }
-        
-        .custom-table {
-            border: 1px solid #28a745 !important;
-            border-radius: 6px;
-            overflow: hidden;
-            font-size: 14px;
+
+        .list-table-scroll .dataTables_wrapper { padding: 12px; }
+        .list-table-scroll .custom-table {
+            font-size: 13px;
             margin-bottom: 0;
             min-width: 100%;
-            width: max-content;
             table-layout: auto;
+            border-collapse: collapse !important;
         }
-        
-        .custom-table th,
-        .custom-table td {
-            border: 1px solid #28a745 !important;
+
+        .list-table-scroll .custom-table th,
+        .list-table-scroll .custom-table td {
+            border: 0;
+            border-bottom: 1px solid #e9eeec;
             vertical-align: middle;
-            padding: 8px 12px;
+            padding: 5px 10px;
+            line-height: 1.4;
             white-space: nowrap;
         }
-        
-        .custom-table thead {
-            background-color: #d4edda;
-            color: #155724;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+
+        .list-table-scroll .custom-table thead th {
+            padding-top: 9px;
+            padding-bottom: 9px;
+            background: #f2f6f4;
+            color: #38554d;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border-bottom-color: #dce5e3;
         }
-        
-        .custom-table tbody tr:hover {
-            background-color: #f6fff6;
-        }
-        
-        .editable {
+
+        .list-table-scroll .custom-table tbody td { color: #354740; }
+        .list-table-scroll .custom-table tbody tr:nth-child(even) { background: #fafcfb; }
+        .list-table-scroll .custom-table tbody tr:hover { background: #f0f6f3; }
+        .list-table-scroll .custom-table tbody tr:last-child td { border-bottom: 0; }
+        .list-table-scroll .editable {
             display: inline-block;
-            min-width: 80px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
+            min-width: 70px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease;
         }
-        
+        .list-table-scroll .editable:focus {
+            outline: 2px solid #287668;
+            background: #f0fff4;
+        }
+        .list-table-scroll .delete-user {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+        }
+
         /* Mobile Optimizations */
         @media (max-width: 767.98px) {
             .users-page-header { align-items: stretch; flex-direction: column; gap: 14px; padding: 16px; }
             .users-session-tools { justify-content: flex-start; }
             .users-page-actions { width: 100%; }
             .users-page-actions .btn { flex: 1 1 auto; }
-            .custom-table {
+            .list-table-scroll .custom-table {
                 font-size: 12px;
             }
             
-            .custom-table th,
-            .custom-table td {
-                padding: 6px 8px;
+            .list-table-scroll .custom-table th,
+            .list-table-scroll .custom-table td {
+                padding: 4px 8px;
             }
             
             .dataTables_wrapper .dataTables_length,
@@ -165,43 +180,16 @@
         
         /* Tablet Optimizations */
         @media (min-width: 768px) and (max-width: 1023.98px) {
-            .custom-table {
+            .list-table-scroll .custom-table {
                 font-size: 13px;
             }
             
-            .custom-table th,
-            .custom-table td {
-                padding: 7px 10px;
+            .list-table-scroll .custom-table th,
+            .list-table-scroll .custom-table td {
+                padding: 5px 10px;
             }
         }
         
-        /* Desktop Optimizations */
-        @media (min-width: 1024px) {
-            .custom-table th,
-            .custom-table td {
-            border-radius: 4px;
-        }
-        .editable:focus {
-            outline: 2px solid #28a745;
-            background: #f0fff4;
-        }
-
-        .delete-user {
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #sessionFilter {
-            min-width: 170px;
-        }
-
-        .user-session {
-            color: #198754;
-            font-weight: 600;
-        }
     </style>
 
     @push('scripts')
@@ -243,16 +231,16 @@
                         width: '120px' 
                     },
                     { 
-                        targets: [3, 4],
+                        targets: [2, 3],
                         responsivePriority: 1,
                         className: 'd-none d-md-table-cell'
                     },
                     { 
-                        targets: [5],
+                        targets: [4],
                         responsivePriority: 2 
                     },
                     { 
-                        targets: [6, 7],
+                        targets: [6],
                         className: 'd-none d-lg-table-cell',
                         responsivePriority: 3
                     }
@@ -269,14 +257,6 @@
                         data: 'mat_id', 
                         name: 'mat_id',
                         title: 'Matric No'
-                    },
-                    {
-                        data: 'academic_session',
-                        name: 'academic_session_id',
-                        title: 'Session',
-                        render: function (data) {
-                            return `<span class="user-session">${data || 'Legacy'}</span>`;
-                        }
                     },
                     {
                         data: 'first_name', 
@@ -313,12 +293,6 @@
                         data: 'email', name: 'email',
                         render: function (data, type, row) {
                             return `<span class="editable" contenteditable="true" data-id="${row.id}" data-column="email">${data ?? ''}</span>`;
-                        }
-                    },
-                    {
-                        data: 'phone_number', name: 'phone_number',
-                        render: function (data, type, row) {
-                            return `<span class="editable" contenteditable="true" data-id="${row.id}" data-column="phone_number">${data ?? ''}</span>`;
                         }
                     },
                     {
