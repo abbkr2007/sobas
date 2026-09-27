@@ -87,7 +87,7 @@
 
         .list-table-scroll .dataTables_wrapper { padding: 12px; }
         .list-table-scroll .custom-table {
-            font-size: 13px;
+            font-size: 14px;
             margin-bottom: 0;
             min-width: 100%;
             table-layout: auto;
@@ -109,7 +109,7 @@
             padding-bottom: 9px;
             background: #f2f6f4;
             color: #38554d;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.04em;
             text-transform: uppercase;
@@ -148,7 +148,7 @@
             .users-page-actions { width: 100%; }
             .users-page-actions .btn { flex: 1 1 auto; }
             .list-table-scroll .custom-table {
-                font-size: 12px;
+                font-size: 13px;
             }
             
             .list-table-scroll .custom-table th,
@@ -181,7 +181,7 @@
         /* Tablet Optimizations */
         @media (min-width: 768px) and (max-width: 1023.98px) {
             .list-table-scroll .custom-table {
-                font-size: 13px;
+                font-size: 14px;
             }
             
             .list-table-scroll .custom-table th,
