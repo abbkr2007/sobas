@@ -1,29 +1,35 @@
 <x-app-layout :assets="['data-table']">
-    <br />
     <div class="container-fluid px-2 px-md-3">
-        <!-- Responsive Button Container -->
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
-            <h4 class="text-success mb-2 mb-sm-0 fs-5 fs-md-4">Users</h4>
-            <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
-                <input type="hidden" id="sessionFilter" value="{{ optional($activeSession)->id }}">
-                <span class="text-muted small">Session: <span id="viewingSessionLabel">{{ $activeSession ? $activeSession->label : 'None selected' }}</span> &middot; <a href="{{ route('admin.registration.index') }}">Change in Settings</a></span>
-                <button type="button" id="deleteSessionUsers" class="btn btn-outline-danger btn-sm" title="Delete all regular users in the selected session">
-                    <i class="fas fa-trash-alt me-1"></i>Delete Session Users
-                </button>
-                <a href="{{ route('users.export') }}" id="exportUsers" class="btn btn-outline-success btn-sm" title="Export users in the selected session">
-                    <i class="fas fa-download me-1"></i>Export
-                </a>
-                <a href="{{ route('bulk-users.create') }}" class="btn btn-success btn-sm btn-md-normal">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white" class="me-1 me-md-2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="m16 11 2 2 4-4"></path>
-                </svg>
-                <span class="d-none d-sm-inline">Generate Bulk Users</span>
-                <span class="d-sm-none">Add Users</span>
-                </a>
+        <header class="users-page-header">
+            <div class="users-page-title">
+                <p class="users-eyebrow">Directory</p>
+                <h1>Users</h1>
             </div>
-        </div>
+            <input type="hidden" id="sessionFilter" value="{{ optional($activeSession)->id }}">
+            <div class="users-session-tools">
+                <div class="users-session-context">
+                    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                    <div>
+                        <span>Viewing session</span>
+                        <strong id="viewingSessionLabel">{{ $activeSession ? $activeSession->label : 'None selected' }}</strong>
+                    </div>
+                </div>
+                <a href="{{ route('admin.registration.index') }}" class="btn btn-light users-change-session">
+                    <i class="fas fa-sliders-h me-2" aria-hidden="true"></i>Change session
+                </a>
+                <div class="users-page-actions">
+                    <button type="button" id="deleteSessionUsers" class="btn btn-outline-danger btn-sm" title="Delete all regular users in the selected session">
+                        <i class="fas fa-trash-alt me-1" aria-hidden="true"></i>Delete Session Users
+                    </button>
+                    <a href="{{ route('users.export') }}" id="exportUsers" class="btn btn-outline-success btn-sm" title="Export users in the selected session">
+                        <i class="fas fa-download me-1" aria-hidden="true"></i>Export
+                    </a>
+                    <a href="{{ route('bulk-users.create') }}" class="btn btn-success btn-sm">
+                        <i class="fas fa-user-plus me-1" aria-hidden="true"></i>Generate Bulk Users
+                    </a>
+                </div>
+            </div>
+        </header>
         
         <!-- Responsive Table Container -->
         <div class="table-responsive list-table-scroll">
@@ -47,6 +53,30 @@
     </div>
 
     <style>
+        .users-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 18px 0 22px;
+            padding: 18px 20px;
+            border: 1px solid #dce5e3;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .users-page-title { flex: 0 0 auto; }
+        .users-eyebrow { margin: 0 0 3px; color: #287668; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .users-page-title h1 { margin: 0; color: #173b35; font-size: 24px; font-weight: 700; }
+        .users-session-tools { min-width: 0; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+        .users-session-context { display: flex; align-items: center; gap: 10px; min-width: 150px; padding: 8px 12px; border: 1px solid #e4ece8; border-radius: 6px; background: #f5f8f6; color: #176c59; }
+        .users-session-context > div { display: grid; gap: 1px; }
+        .users-session-context span { color: #71817d; font-size: 10px; line-height: 1.2; }
+        .users-session-context strong { overflow-wrap: anywhere; color: #173b35; font-size: 13px; }
+        .users-change-session { border: 1px solid #d8e1df; color: #38554d; white-space: nowrap; }
+        .users-page-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .users-page-actions .btn { white-space: normal; }
+
         /* Responsive Table Styles */
         .table-responsive {
             border-radius: 8px;
@@ -98,6 +128,10 @@
         
         /* Mobile Optimizations */
         @media (max-width: 767.98px) {
+            .users-page-header { align-items: stretch; flex-direction: column; gap: 14px; padding: 16px; }
+            .users-session-tools { justify-content: flex-start; }
+            .users-page-actions { width: 100%; }
+            .users-page-actions .btn { flex: 1 1 auto; }
             .custom-table {
                 font-size: 12px;
             }
