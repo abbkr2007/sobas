@@ -6,13 +6,17 @@
                 <h1>Payment History</h1>
                 <p class="header-note">{{ $isAdmin ? 'Application and confirmation transactions' : 'Your application and confirmation transactions' }}</p>
             </div>
-            <div class="record-count"><strong>{{ $payments->total() }}</strong><span>transactions</span></div>
+            <div class="record-count"><strong id="history-total">{{ $payments->total() }}</strong><span>transactions</span></div>
         </header>
 
         <form method="GET" action="{{ route($isAdmin ? 'payment-history.index' : 'my-payment-history.index') }}" class="history-filters">
             @if($isAdmin)
                 <p class="mb-0">Session: {{ $viewingSession ? $viewingSession->label : 'None selected' }} &middot; <a href="{{ route('admin.registration.index') }}">Change in Settings</a></p>
             @endif
+            <label class="history-search">
+                <span>Search payments</span>
+                <input type="search" name="search" class="form-control" value="{{ $search }}" maxlength="200" placeholder="Name, email, matric number or reference" autocomplete="off" aria-controls="history-results">
+            </label>
             <label>
                 <span>Payment type</span>
                 <select name="type" class="form-select">
@@ -31,58 +35,18 @@
                 </select>
             </label>
             <button class="btn btn-dark" type="submit"><i class="fas fa-filter me-2"></i>Filter</button>
-            @if($type || $status)
-                <a class="btn btn-light" href="{{ route($isAdmin ? 'payment-history.index' : 'my-payment-history.index') }}">Clear</a>
-            @endif
+            <a class="btn btn-light history-clear" href="{{ route($isAdmin ? 'payment-history.index' : 'my-payment-history.index') }}">Clear</a>
         </form>
 
-        <div class="history-table-wrap">
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Applicant</th>
-                            <th>Matric number</th>
-                            <th>Reference</th>
-                            <th class="text-end">Amount</th>
-                            <th class="text-end">Receipt</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($payments as $payment)
-                            <tr>
-                                <td class="text-nowrap">{{ optional($payment->created_at ? \Carbon\Carbon::parse($payment->created_at) : null)->format('d M Y, H:i') ?: '—' }}</td>
-                                <td>
-                                    <div class="applicant-name">{{ trim(($payment->first_name ?? '') . ' ' . ($payment->last_name ?? '')) ?: 'Unknown applicant' }}</div>
-                                    <div class="applicant-email">{{ $payment->email ?: '—' }}</div>
-                                </td>
-                                <td>{{ $payment->matric_number ?: '—' }}</td>
-                                <td class="reference-cell">{{ $payment->reference }}</td>
-                                <td class="text-end amount-cell">{{ $payment->currency }} {{ number_format(((int) $payment->amount) / 100, 2) }}</td>
-                                <td class="text-end">
-                                    @if(strtolower($payment->status) === 'success')
-                                        <a class="receipt-link" href="{{ route($isAdmin ? 'payment-history.receipt' : 'my-payment-history.receipt', [$payment->source, $payment->payment_id]) }}" title="Download receipt" aria-label="Download receipt for {{ $payment->reference }}">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                    @else
-                                        <span class="text-muted">—</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="empty-state">No payments match these filters.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if($payments->hasPages())
-                <div class="pagination-wrap">{{ $payments->links() }}</div>
-            @endif
+        <p id="history-feedback" role="status" aria-live="polite" class="text-muted"></p>
+        <div id="history-results" aria-busy="false">
+            @include('admin.payment-history.results')
         </div>
     </div>
-
     <style>
+        .history-search { flex:1; min-width:280px !important; }
+        .pagination-wrap .pagination { margin-bottom:0; }
+        #history-results[aria-busy="true"] { opacity:0.6; }
         .payment-history-page { max-width: 1500px; padding-top: 24px; padding-bottom: 36px; }
         .payment-history-header { display:flex; align-items:end; justify-content:space-between; gap:20px; padding:0 0 22px; border-bottom:1px solid #dce5e3; }
         .payment-history-header h1 { margin:0; color:#173b35; font-size:26px; font-weight:700; }
@@ -110,7 +74,96 @@
         .receipt-link { display:inline-flex; width:32px; height:32px; align-items:center; justify-content:center; border:1px solid #cbd9d5; border-radius:4px; color:#176c59; }
         .receipt-link:hover { color:#fff; background:#176c59; border-color:#176c59; }
         .empty-state { padding:40px !important; color:#687b77 !important; text-align:center; }
-        .pagination-wrap { display:flex; justify-content:flex-end; padding:14px; border-top:1px solid #edf1f0; }
+        .pagination-wrap { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:14px; border-top:1px solid #edf1f0; }
         @media (max-width:700px) { .payment-history-header { align-items:start; flex-direction:column; } .history-filters label { min-width:100%; } }
     </style>
+    <script>
+        (() => {
+            const form = document.querySelector('.history-filters');
+            const results = document.getElementById('history-results');
+            const feedback = document.getElementById('history-feedback');
+            const search = form.elements.search;
+            let timer;
+            let controller;
+            let version = 0;
+
+            function cancelPending() {
+                clearTimeout(timer);
+                version++;
+                if (controller) controller.abort();
+            }
+
+            function filterUrl() {
+                const url = new URL(form.action);
+                new FormData(form).forEach((value, key) => {
+                    if (value) url.searchParams.set(key, value);
+                });
+                return url;
+            }
+
+            async function load(url, updateHistory = true) {
+                cancelPending();
+                const requestVersion = version;
+                controller = new AbortController();
+                results.setAttribute('aria-busy', 'true');
+                feedback.textContent = 'Loading payments…';
+                try {
+                    const response = await fetch(url, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                        signal: controller.signal,
+                    });
+                    if (!response.ok) throw new Error('Unable to load payments');
+                    const data = await response.json();
+                    if (requestVersion !== version) return;
+                    results.innerHTML = data.html;
+                    document.getElementById('history-total').textContent = data.total;
+                    feedback.textContent = data.total + ' matching transactions.';
+                    if (updateHistory) window.history.pushState({}, '', url);
+                } catch (error) {
+                    if (requestVersion !== version || error.name === 'AbortError') return;
+                    feedback.textContent = 'Could not update payments. Please press Filter to try again.';
+                } finally {
+                    if (requestVersion === version) results.setAttribute('aria-busy', 'false');
+                }
+            }
+
+            search.addEventListener('input', () => {
+                cancelPending();
+                results.setAttribute('aria-busy', 'true');
+                feedback.textContent = 'Searching payments…';
+                timer = setTimeout(() => load(filterUrl()), 300);
+            });
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                load(filterUrl());
+            });
+            form.querySelectorAll('select').forEach(select => {
+                select.addEventListener('change', () => load(filterUrl()));
+            });
+            function normalClick(event) {
+                return event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+            }
+            form.querySelector('.history-clear').addEventListener('click', event => {
+                if (!normalClick(event)) return;
+                event.preventDefault();
+                search.value = '';
+                form.elements.type.value = '';
+                form.elements.status.value = '';
+                load(filterUrl());
+            });
+            results.addEventListener('click', event => {
+                const link = event.target.closest('.pagination a');
+                if (!link || !normalClick(event)) return;
+                event.preventDefault();
+                load(link.href);
+            });
+            window.addEventListener('popstate', () => {
+                const url = new URL(window.location.href);
+                ['search', 'type', 'status'].forEach(name => {
+                    form.elements[name].value = url.searchParams.get(name) || '';
+                });
+                load(url, false);
+            });
+        })();
+    </script>
 </x-app-layout>

@@ -70,10 +70,30 @@ class PaymentHistoryController extends Controller
             $historyQuery->where('status', $status);
         }
 
-        $payments = $historyQuery->orderByDesc('created_at')->paginate(25)->appends($request->only(['type', 'status']));
+        $request->validate(['search' => 'nullable|string|max:200']);
+        $search = trim((string) $request->input('search', ''));
+        if ($search !== '') {
+            foreach (preg_split('/\s+/', $search) as $term) {
+                $historyQuery->where(function ($query) use ($term) {
+                    foreach (['first_name', 'last_name', 'email', 'matric_number', 'reference', 'transaction_id'] as $column) {
+                        $query->orWhereRaw('LOWER(' . $column . ') LIKE ?', ['%' . mb_strtolower($term) . '%']);
+                    }
+                });
+            }
+        }
+
+        $payments = $historyQuery->orderByDesc('created_at')->orderBy('source')->orderByDesc('payment_id')
+            ->paginate(25)->appends($request->only(['type', 'status', 'search']));
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.payment-history.results', compact('payments', 'isAdmin'))->render(),
+                'total' => $payments->total(),
+            ]);
+        }
 
         return view('admin.payment-history.index', compact(
-            'payments', 'type', 'status', 'isAdmin', 'viewingSession'
+            'payments', 'type', 'status', 'isAdmin', 'viewingSession', 'search'
         ));
     }
 

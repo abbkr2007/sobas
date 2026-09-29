@@ -292,6 +292,12 @@ class PaymentHistoryTest extends TestCase
             ->assertSee('OWN-CONF-REF')
             ->assertDontSee('OTHER-REF');
 
+        $this->getJson(route('my-payment-history.index', ['search' => 'OTHER-REF'], false), [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ])->assertOk()->assertJsonPath('total', 0);
+        $this->getJson(route('my-payment-history.index', ['search' => 'OWN-CONF'], false), [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ])->assertOk()->assertJsonPath('total', 1);
         $confirmationPaymentId = DB::table('confirmation_fee_payments')->where('reference', 'OWN-CONF-REF')->value('id');
         $otherPaymentId = DB::table('payments')->where('reference', 'OTHER-REF')->value('id');
         $this->get(route('my-payment-history.receipt', ['confirmation', $confirmationPaymentId], false))
@@ -301,6 +307,40 @@ class PaymentHistoryTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_search_paginates_results_and_numbers_rows_across_pages(): void
+    {
+        $userId = DB::table('users')->insertGetId([
+            'mat_id' => 'SEARCH001', 'first_name' => 'Ada', 'last_name' => 'Lovelace',
+            'email' => 'ada@example.com', 'user_type' => 'user',
+            'academic_session_id' => $this->activeSessionId,
+        ]);
+        for ($i = 1; $i <= 26; $i++) {
+            DB::table('payments')->insert([
+                'user_id' => $userId, 'amount' => 10000, 'currency' => 'NGN',
+                'status' => 'success', 'reference' => 'SEARCH-' . $i,
+                'transaction_id' => 'transaction-' . $i, 'created_at' => now(),
+            ]);
+        }
+        DB::table('payments')->insert([
+            'user_id' => $userId, 'amount' => 10000, 'currency' => 'NGN',
+            'status' => 'pending', 'reference' => 'PENDING-SEARCH', 'created_at' => now(),
+        ]);
+        $this->actingAs($this->adminUser());
+        $url = route('payment-history.index', [
+            'search' => 'ada lovelace', 'type' => 'application', 'status' => 'success', 'page' => 2,
+        ], false);
+        $this->get($url)->assertOk()
+            ->assertSee('<td class="serial-number">26</td>', false)
+            ->assertSee('Showing 26 to 26 of 26 transactions')
+            ->assertDontSee('PENDING-SEARCH');
+        $response = $this->getJson($url, ['X-Requested-With' => 'XMLHttpRequest'])
+            ->assertOk()->assertJsonPath('total', 26);
+        $this->assertStringContainsString('<td class="serial-number">26</td>', $response->json('html'));
+        $this->assertStringContainsString('search=ada', $response->json('html'));
+        $this->getJson(route('payment-history.index', ['search' => 'no-match'], false), [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ])->assertOk()->assertJsonPath('total', 0);
+    }
     private function adminUser(): User
     {
         $admin = new User(['mat_id' => 'ADMIN1', 'email' => 'admin@example.com', 'user_type' => 'admin']);
