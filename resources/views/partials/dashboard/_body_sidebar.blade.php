@@ -16,7 +16,7 @@
 
     <div class="sidebar-body">
         <div class="sidebar-navigation">
-            @include('partials.dashboard.vertical-nav') 
+            @include('partials.dashboard.vertical-nav', ['navigationContext' => 'desktop'])
         </div>
         
         <!-- Professional Sidebar Footer -->
@@ -81,7 +81,7 @@
     
     <div class="offcanvas-body p-0" style="overflow-y: auto; -webkit-overflow-scrolling: touch;">
         <div class="mobile-nav-wrapper" style="padding: 1rem;">
-            @include('partials.dashboard.vertical-nav')
+            @include('partials.dashboard.vertical-nav', ['navigationContext' => 'mobile'])
         </div>
     </div>
 </div>
